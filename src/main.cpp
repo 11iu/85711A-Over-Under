@@ -131,6 +131,7 @@ void initialize()
     cata_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // TODO - test
 
     // thread to for brain screen and position logging
+    /*
     pros::Task screenTask([&]()
                           {
       lemlib::Pose pose(0, 0, 0);
@@ -144,6 +145,7 @@ void initialize()
           // delay to save resources
           pros::delay(50);
       } });
+    */
 }
 
 void autonomous()
