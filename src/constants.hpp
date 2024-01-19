@@ -8,9 +8,7 @@
 #define IMU 17
 #define INTAKE 19
 #define CATA 11
-#define LIMIT 'b'
 #define WINGS 'a'
-#define POT 'c'
 
 // chassis
 #define JOYSTICK_THRESHOLD 15
