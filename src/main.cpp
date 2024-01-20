@@ -27,7 +27,7 @@ lemlib::Drivetrain drivetrain(
     10,                         // 10 inch track width
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    2 // chase power is 2. If we had traction wheels, it would have been 8
+    2                           // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -72,7 +72,8 @@ lemlib::OdomSensors sensors(
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors);
 
-void curvature_drive(bool flipDrive = false) {
+void arcade_drive(bool flipDrive = false)
+{
   // get joystick positions
   int leftY = lemlib::defaultDriveCurve(
       controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
@@ -80,11 +81,12 @@ void curvature_drive(bool flipDrive = false) {
       controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
   if (flipDrive)
     leftY *= -1;
-  // move the chassis with curvature  chassis
+  // move the chassis with arcade drive
   chassis.arcade(leftY, rightX);
 }
 
-void initialize() {
+void initialize()
+{
   pros::lcd::initialize(); // initialize brain screen
   pros::delay(
       500); // Stop the user from doing anything while legacy ports configure.
@@ -133,12 +135,14 @@ void initialize() {
   */
 }
 
-void autonomous() {
+void autonomous()
+{
   ez::as::auton_selector
       .call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
-void opcontrol() {
+void opcontrol()
+{
   bool flipDrive = false;
   bool wingState = LOW; // wings wingState
   pros::ADIDigitalOut wings(WINGS);
@@ -148,13 +152,17 @@ void opcontrol() {
   int delayWings = 0;
   int delayFlip = 0;
 
-  while (true) {
-    curvature_drive(flipDrive);
+  while (true)
+  {
+    arcade_drive(flipDrive);
 
     // wings
-    if (delayWings) {
+    if (delayWings)
+    {
       delayWings--;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+    {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
@@ -165,31 +173,43 @@ void opcontrol() {
     // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
     // switch
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+    {
       cata = CATAMAXVOLTAGE; // fire and continuous fire
-    } else {
+    }
+    else
+    {
       cata.brake(); // coast up
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+    {
       intake = 127;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+    {
       intake = -127;
-    } else {
+    }
+    else
+    {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    if (!delayFlip)
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+      {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    } else {
+    }
+    else
+    {
       delayFlip--;
     }
-    curvature_drive();
+    arcade_drive();
 
     pros::delay(10);
   }
