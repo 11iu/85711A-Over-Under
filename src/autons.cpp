@@ -1,6 +1,7 @@
 #include "autons.hpp"
 #include "field.hpp"
 #include "main.h"
+#include "constants.hpp" //for pin numbers
 
 void autoTest()
 {
@@ -29,66 +30,45 @@ void autoTest()
 }
 
 // start in farthest full starting tile, facing the center of the field
-void autoAttack()
+void autoAttackBlue()
 {
-    // pros::Task cataDownTask(cataDown); //bring cata down
-    //  chassis.set_drive_pid(55, DRIVE_SPEED); //forward to center of goal
-    //  chassis.wait_drive();
-    //  chassis.set_turn_pid(-90, TURN_SPEED);  // Turns right 90 degrees to face goal
-    //  chassis.wait_drive();
-    //  pros::Motor intake(INTAKE);
-    //  intake = -127; //score preload
-    //  pros::delay(1500);
-    //  intake = 0;
-    //  chassis.set_drive_pid(11, DRIVE_SPEED / 2); //shove triball in
-    //  chassis.wait_drive();
+    chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
+    chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 4000); // Moves to face the goal
+    intake = -127;                                               // score preload
+    pros::delay(1500);
+    chassis.moveToPose(fieldX / 2, blueStartLower.y - tile / 2, 180, 4000); // Shoves the triball in
+    intake = 0;
+    chassis.moveToPose(fieldX / 2, blueStartLower.y + tile, 0, 4000); // Move backwards
 }
 
-// remove triball that is in the match load area
-// touch elevation bar
-// start in closest tile, touching the match load area
-// start with no triball
-void autoDefense()
+// start in farthest full starting tile, facing the center of the field
+void autoAttackRed()
 {
-    // // make sure that the cata is down so we can load the triball
-    // // pros::ADIDigitalIn limit_switch(LIMIT);
-    // pros::ADIAnalogIn pot(POT);
-    // bool cataDown = pot.get_value() > CATA_THRESHOLD;
-    // pros::Motor cata(CATA);
-    // pros::Motor intake(INTAKE);
-    // while (!cataDown) {
-    //   cata = CATAVOLTAGE;
-    //   pros::delay(util::DELAY_TIME);
-    //   cataDown = pot.get_value() > CATA_THRESHOLD;
-    // }
-    // cata.brake();
+    chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
+    chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000); // Moves to face the goal
+    intake = -127;                                            // score preload
+    pros::delay(1500);
+    chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0, 4000); // Shoves the triball in
+    intake = 0;
+    chassis.moveToPose(fieldX / 2, redStartUpper.y - tile, 180, 4000); // Move backwards
+}
 
-    // // get new triball
-    // intake = 127;
-    // pros::delay(3000);
-    // intake = 0;
-    // cata = CATAVOLTAGE;
-    // // chassis to the rod
-    // chassis.set_drive_pid(-18, DRIVE_SPEED);  // get away from match load
-    // chassis.wait_drive();
-    // chassis.set_turn_pid(45, TURN_SPEED);  // start to the rod
-    // chassis.wait_drive();
-    // cata = 0;
-    // chassis.set_drive_pid(-7, DRIVE_SPEED);
-    // chassis.wait_drive();
-    // chassis.set_turn_pid(135, TURN_SPEED);
-    // chassis.wait_drive();
-    // chassis.set_drive_pid(-16, DRIVE_SPEED);
-    // chassis.wait_drive();
-    // chassis.set_turn_pid(45, TURN_SPEED);
-    // chassis.wait_drive();
-    // chassis.set_pid_constants(&chassis.headingPID, 11, 0, 0, 0);
+// start in closest full starting tile, facing center of the field
+// remove triball that is in the match load area and touch elevation bar
+void autoDefenseBlue()
+{
+    // TODO - remove triball from the match load area with wing
+    chassis.setPose(blueStartUpper.x, blueStartUpper.y, blueStartUpperHeading);
+    chassis.moveToPose(blueElevationHorizontalMid.x, blueElevationHorizontalMid.y, 180, 4000);
+}
 
-    // chassis.set_drive_pid(-32, DRIVE_SPEED);
-    // chassis.wait_until(-24);
-    // chassis.set_max_speed(DRIVE_SPEED / 4);  // slow down so we are there
-    // chassis.wait_drive();
-    // chassis.set_pid_constants(&chassis.headingPID, 0, 0, 0, 0);
+// start in closest full starting tile, facing center of the field
+// remove triball that is in the match load area and touch elevation bar
+void autoDefenseRed()
+{
+    // TODO - remove triball from the match load area with wing
+    chassis.setPose(redStartLower.x, redStartLower.y, redStartLowerHeading);
+    chassis.moveToPose(redElevationHorizontalMid.x, redElevationHorizontalMid.y, 0, 4000);
 }
 
 void awp()
@@ -140,19 +120,14 @@ void awp()
     //   chassis.wait_drive();
 }
 
-// setup like autoDefense, with triballs galore
+// shoots all triballs and scores with wings
 void autoSkills()
 {
-    // // shoot all triballs
-    // // go over and score them all with wings
+    // shoot for 10 sec
+    pros::Motor cata(CATA);
+    cata = CATAVOLTAGE;
+    pros::delay(10000); // wait 10 sec
+    cata = 0;
 
-    // // shoot for 10 sec
-    // pros::Motor cata(CATA);
-    // cata = CATAVOLTAGE;
-    // pros::delay(10000);  // wait 10 sec
-    // cata = 0;
-    // pros::Task cataDownTask(cataDown);  // down so we can go under
-    // // go under
-    // chassis.set_drive_pid(-6, DRIVE_SPEED);
-    // chassis.set_turn_pid(45, TURN_SPEED);  // get away from the match load area and turn to correct heading
+    // TODO - find optimal angle and create pose for that, add driving and scoring with wings
 }

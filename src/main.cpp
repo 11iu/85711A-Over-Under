@@ -95,12 +95,18 @@ void initialize()
   ez::as::auton_selector.add_autons({
       Auton("Test autonomous", autoTest),
       Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
-      Auton("Auto Attack\n\nStart in farthest full starting tile, facing the "
+      Auton("Auto Attack Blue\n\nStart in farthest full starting tile, facing the "
             "center of the field",
-            autoAttack),
-      Auton("Auto Defense\n\nStart in closest tile, touching the match load "
+            autoAttackBlue),
+      Auton("Auto Attack Red\n\nStart in farthest full starting tile, facing the "
+            "center of the field",
+            autoAttackRed),
+      Auton("Auto Defense Blue\n\nStart in closest tile, touching the match load "
             "area, no triball",
-            autoDefense),
+            autoDefenseBlue),
+      Auton("Auto Defense Red\n\nStart in closest tile, touching the match load "
+            "area, no triball",
+            autoDefenseRed),
       Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
             autoSkills),
   });
@@ -145,9 +151,6 @@ void opcontrol()
 {
   bool flipDrive = false;
   bool wingState = LOW; // wings wingState
-  pros::ADIDigitalOut wings(WINGS);
-  pros::Motor intake(INTAKE);
-  pros::Motor cata(CATA);
 
   int delayWings = 0;
   int delayFlip = 0;
