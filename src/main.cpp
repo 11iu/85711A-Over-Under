@@ -105,19 +105,25 @@ void initialize()
     pros::delay(
         500); // Stop the user from doing anything while legacy ports configure.
 
-    // Autonomous Selector using LLEMU
-    ez::as::auton_selector.add_autons({
-        Auton("Test autonomous", autoTest),
-        Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
-        Auton("Auto Attack\n\nStart in farthest full starting tile, facing the "
-              "center of the field",
-              autoAttack),
-        Auton("Auto Defense\n\nStart in closest tile, touching the match load "
-              "area, no triball",
-              autoDefense),
-        Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
-              autoSkills),
-    });
+  // Autonomous Selector using LLEMU
+  ez::as::auton_selector.add_autons({
+      Auton("Test autonomous", autoTest),
+      Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
+      Auton("Auto Attack Blue\n\nStart in farthest full starting tile, facing the "
+            "center of the field",
+            autoAttackBlue),
+      Auton("Auto Attack Red\n\nStart in farthest full starting tile, facing the "
+            "center of the field",
+            autoAttackRed),
+      Auton("Auto Defense Blue\n\nStart in closest tile, touching the match load "
+            "area, no triball",
+            autoDefenseBlue),
+      Auton("Auto Defense Red\n\nStart in closest tile, touching the match load "
+            "area, no triball",
+            autoDefenseRed),
+      Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
+            autoSkills),
+  });
 
     ez::as::initialize(); // initialize auton selector
 
