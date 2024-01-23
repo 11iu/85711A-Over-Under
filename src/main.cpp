@@ -27,7 +27,7 @@ lemlib::Drivetrain drivetrain(
     10,                         // 10 inch track width
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    2                           // chase power is 2. If we had traction wheels, it would have been 8
+    2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -67,26 +67,29 @@ lemlib::OdomSensors sensors(
              // second one
     &imu     // inertial sensor
 );
-
 // create the chassis
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors);
 
-void arcade_drive(bool flipDrive = false)
-{
+void arcade_drive(bool flipDrive = false) {
+  int y = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+  if (abs(y) < JOYSTICK_THRESHOLD)
+    y = 0;
+
+  int x = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+  if (abs(x) < JOYSTICK_THRESHOLD)
+    x = 0;
+
   // get joystick positions
-  int leftY = lemlib::defaultDriveCurve(
-      controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
-  int rightX = lemlib::defaultDriveCurve(
-      controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
+  int leftY = lemlib::defaultDriveCurve(y, 2);
+  int rightX = lemlib::defaultDriveCurve(x, 2);
   if (flipDrive)
     leftY *= -1;
   // move the chassis with arcade drive
-  chassis.arcade(leftY, rightX);
+  chassis.tank(leftY, rightX);
 }
 
-void initialize()
-{
+void initialize() {
   pros::lcd::initialize(); // initialize brain screen
   pros::delay(
       500); // Stop the user from doing anything while legacy ports configure.
@@ -95,18 +98,22 @@ void initialize()
   ez::as::auton_selector.add_autons({
       Auton("Test autonomous", autoTest),
       Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
-      Auton("Auto Attack Blue\n\nStart in farthest full starting tile, facing the "
+      Auton("Auto Attack Blue\n\nStart in farthest full starting tile, facing "
+            "the "
             "center of the field",
             autoAttackBlue),
-      Auton("Auto Attack Red\n\nStart in farthest full starting tile, facing the "
-            "center of the field",
-            autoAttackRed),
-      Auton("Auto Defense Blue\n\nStart in closest tile, touching the match load "
-            "area, no triball",
-            autoDefenseBlue),
-      Auton("Auto Defense Red\n\nStart in closest tile, touching the match load "
-            "area, no triball",
-            autoDefenseRed),
+      Auton(
+          "Auto Attack Red\n\nStart in farthest full starting tile, facing the "
+          "center of the field",
+          autoAttackRed),
+      Auton(
+          "Auto Defense Blue\n\nStart in closest tile, touching the match load "
+          "area, no triball",
+          autoDefenseBlue),
+      Auton(
+          "Auto Defense Red\n\nStart in closest tile, touching the match load "
+          "area, no triball",
+          autoDefenseRed),
       Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
             autoSkills),
   });
@@ -141,75 +148,52 @@ void initialize()
   */
 }
 
-void autonomous()
-{
+void autonomous() {
   ez::as::auton_selector
       .call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
-void opcontrol()
-{
+void opcontrol() {
   bool flipDrive = false;
   bool wingState = LOW; // wings wingState
 
   int delayWings = 0;
   int delayFlip = 0;
 
-  while (true)
-  {
+  while (true) {
     arcade_drive(flipDrive);
 
     // wings
-    if (delayWings)
-    {
+    if (delayWings) {
       delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
     }
 
-    // cata
-    // cataDown = limit_switch.get_value();
-    // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
-    // switch
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       cata = CATAMAXVOLTAGE; // fire and continuous fire
-    }
-    else
-    {
+    } else {
       cata.brake(); // coast up
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intake = -127;
-    }
-    else
-    {
+    } else {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
+    if (!delayFlip) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    }
-    else
-    {
+    } else {
       delayFlip--;
     }
     arcade_drive();

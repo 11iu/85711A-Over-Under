@@ -32,6 +32,5 @@
 
 // catapult
 #define CATA_THRESHOLD 2250
-#define CATAVOLTAGE -80
 #define CATAMAXVOLTAGE -127
 #define CATAHOLDVOLTAGE 0
