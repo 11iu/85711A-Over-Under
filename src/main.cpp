@@ -72,145 +72,168 @@ lemlib::OdomSensors sensors(
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors);
 
+void set_braking(bool brakeCoast = true)
+{
+    if (brakeCoast)
+    {
+        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    }
+    else
+    {
+        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+    }
+}
+
 void arcade_drive(bool flipDrive = false)
 {
-  // get joystick positions
-  int leftY = lemlib::defaultDriveCurve(
-      controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
-  int rightX = lemlib::defaultDriveCurve(
-      controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
-  if (flipDrive)
-    leftY *= -1;
-  // move the chassis with arcade drive
-  chassis.arcade(leftY, rightX);
+    // get joystick positions
+    int leftY = lemlib::defaultDriveCurve(
+        controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
+    int rightX = lemlib::defaultDriveCurve(
+        controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
+    if (flipDrive)
+        leftY *= -1;
+    // move the chassis with arcade drive
+    chassis.arcade(leftY, rightX);
 }
 
 void initialize()
 {
-  pros::lcd::initialize(); // initialize brain screen
-  pros::delay(
-      500); // Stop the user from doing anything while legacy ports configure.
+    pros::lcd::initialize(); // initialize brain screen
+    pros::delay(
+        500); // Stop the user from doing anything while legacy ports configure.
 
-  // Autonomous Selector using LLEMU
-  ez::as::auton_selector.add_autons({
-      Auton("Test autonomous", autoTest),
-      Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
-      Auton("Auto Attack\n\nStart in farthest full starting tile, facing the "
-            "center of the field",
-            autoAttack),
-      Auton("Auto Defense\n\nStart in closest tile, touching the match load "
-            "area, no triball",
-            autoDefense),
-      Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
-            autoSkills),
-  });
+    // Autonomous Selector using LLEMU
+    ez::as::auton_selector.add_autons({
+        Auton("Test autonomous", autoTest),
+        Auton("AWP\n\nStart for autoAttack on defense side with triball", awp),
+        Auton("Auto Attack\n\nStart in farthest full starting tile, facing the "
+              "center of the field",
+              autoAttack),
+        Auton("Auto Defense\n\nStart in closest tile, touching the match load "
+              "area, no triball",
+              autoDefense),
+        Auton("Auto Skills\n\nSetup like autoDefense, with triballs galore",
+              autoSkills),
+    });
 
-  ez::as::initialize(); // initialize auton selector
+    ez::as::initialize(); // initialize auton selector
 
-  chassis.calibrate(); // calibrate sensors
+    chassis.calibrate(); // calibrate sensors
 
-  pros::ADIDigitalOut wings_initializer(WINGS, LOW);
+    pros::ADIDigitalOut wings_initializer(WINGS, LOW);
 
-  pros::Motor inake_initializer(INTAKE, pros::E_MOTOR_GEARSET_18, false,
-                                pros ::E_MOTOR_ENCODER_DEGREES);
-  pros::Motor cata_initializer(CATA, pros::E_MOTOR_GEARSET_36, true);
-  inake_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  cata_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // TODO - test
+    pros::Motor inake_initializer(INTAKE, pros::E_MOTOR_GEARSET_18, false,
+                                  pros ::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor cata_initializer(CATA, pros::E_MOTOR_GEARSET_36, true);
+    inake_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    cata_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // TODO - test
 
-  // thread to for brain screen and position logging
-  /*
-  pros::Task screenTask([&]()
-                        {
-    lemlib::Pose pose(0, 0, 0);
-    while (true) {
-        // print robot location to the brain screen
-        pros::lcd::print(0, "X: %f",  chassis.getPose().x); // x
-        pros::lcd::print(1, "Y: %f",  chassis.getPose().y); // y
-        pros::lcd::print(2, "Theta: %f",  chassis.getPose().theta); // heading
-        // log position telemetry
-        lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-        // delay to save resources
-        pros::delay(50);
-    } });
-  */
+    // thread to for brain screen and position logging
+    /*
+    pros::Task screenTask([&]()
+                          {
+      lemlib::Pose pose(0, 0, 0);
+      while (true) {
+          // print robot location to the brain screen
+          pros::lcd::print(0, "X: %f",  chassis.getPose().x); // x
+          pros::lcd::print(1, "Y: %f",  chassis.getPose().y); // y
+          pros::lcd::print(2, "Theta: %f",  chassis.getPose().theta); // heading
+          // log position telemetry
+          lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+          // delay to save resources
+          pros::delay(50);
+      } });
+    */
 }
 
 void autonomous()
 {
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous selector.
+    ez::as::auton_selector
+        .call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
 void opcontrol()
 {
-  bool flipDrive = false;
-  bool wingState = LOW; // wings wingState
-  pros::ADIDigitalOut wings(WINGS);
-  pros::Motor intake(INTAKE);
-  pros::Motor cata(CATA);
 
-  int delayWings = 0;
-  int delayFlip = 0;
+    bool brakeCoast = true;
+    bool flipDrive = false;
+    bool wingState = LOW; // wings winSgState
+    pros::ADIDigitalOut wings(WINGS);
+    pros::Motor intake(INTAKE);
+    pros::Motor cata(CATA);
 
-  while (true)
-  {
-    arcade_drive(flipDrive);
+    int delayWings = 0;
+    int delayFlip = 0;
 
-    // wings
-    if (delayWings)
+    while (true)
     {
-      delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
-      wingState = !wingState;
-      wings.set_value(wingState);
-      delayWings = 40;
-    }
+        arcade_drive(flipDrive);
 
-    // cata
-    // cataDown = limit_switch.get_value();
-    // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
-    // switch
+        set_braking(brakeCoast);
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-    {
-      cata = CATAMAXVOLTAGE; // fire and continuous fire
-    }
-    else
-    {
-      cata.brake(); // coast up
-    }
+        // wings
+        if (delayWings)
+        {
+            delayWings--;
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        {
+            wingState = !wingState;
+            wings.set_value(wingState);
+            delayWings = 40;
+        }
 
-    // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
-      intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
-      intake = -127;
-    }
-    else
-    {
-      intake.brake();
-    }
+        // cata
+        // cataDown = limit_switch.get_value();
+        // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
+        // switch
 
-    // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
-        flipDrive = !flipDrive;
-        delayFlip = 40;
-      }
-    }
-    else
-    {
-      delayFlip--;
-    }
-    arcade_drive();
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        {
+            cata = CATAMAXVOLTAGE; // fire and continuous fire
+        }
+        else
+        {
+            cata.brake(); // coast up
+        }
 
-    pros::delay(10);
-  }
+        //braking toggle
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+            brakeCoast = !brakeCoast;
+        }
+
+        // intake
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+        {
+            intake = 127;
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+        {
+            intake = -127;
+        }
+        else
+        {
+            intake.brake();
+        }
+
+        // filpDrive
+        if (!delayFlip)
+        {
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+            {
+                flipDrive = !flipDrive;
+                delayFlip = 40;
+            }
+        }
+        else
+        {
+            delayFlip--;
+        }
+        arcade_drive();
+
+        pros::delay(10);
+    }
 }
