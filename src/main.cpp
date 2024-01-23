@@ -71,22 +71,26 @@ lemlib::OdomSensors sensors(
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors);
 
+void set_braking(bool brakeCoast = true) {
+  if (brakeCoast) {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+  } else {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+  }
+}
+
 void arcade_drive(bool flipDrive = false) {
-  int y = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-  if (abs(y) < JOYSTICK_THRESHOLD)
-    y = 0;
-
-  int x = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-  if (abs(x) < JOYSTICK_THRESHOLD)
-    x = 0;
-
   // get joystick positions
-  int leftY = lemlib::defaultDriveCurve(y, 2);
-  int rightX = lemlib::defaultDriveCurve(x, 2);
+  int leftY = lemlib::defaultDriveCurve(
+      controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
+  int rightX = lemlib::defaultDriveCurve(
+      controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
   if (flipDrive)
     leftY *= -1;
   // move the chassis with arcade drive
-  chassis.tank(leftY, rightX);
+  chassis.arcade(leftY, rightX);
 }
 
 void initialize() {
@@ -171,6 +175,11 @@ void opcontrol() {
       wings.set_value(wingState);
       delayWings = 40;
     }
+
+    // cata
+    // cataDown = limit_switch.get_value();
+    // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
+    // switch
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       cata = CATAMAXVOLTAGE; // fire and continuous fire
