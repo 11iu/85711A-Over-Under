@@ -1,6 +1,8 @@
 #include "../include/main.h"
+#include "EZ-Template/util.hpp"
 #include "autons.hpp"
 #include "constants.hpp"
+#include "pros/llemu.hpp"
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
@@ -82,6 +84,7 @@ void set_braking(bool brakeCoast = true) {
 }
 
 void arcade_drive(bool flipDrive = false) {
+  // if () // TODO: add deadzone
   // get joystick positions
   int leftY = lemlib::defaultDriveCurve(
       controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
@@ -126,13 +129,13 @@ void initialize() {
 
   chassis.calibrate(); // calibrate sensors
 
-  pros::ADIDigitalOut wings_initializer(WINGS, LOW);
+  // pros::ADIDigitalOut wings_initializer(WINGS, LOW);
 
-  pros::Motor inake_initializer(INTAKE, pros::E_MOTOR_GEARSET_18, false,
-                                pros ::E_MOTOR_ENCODER_DEGREES);
-  pros::Motor cata_initializer(CATA, pros::E_MOTOR_GEARSET_36, true);
-  inake_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  cata_initializer.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // TODO - test
+  // pros::Motor inake_initializer(INTAKE, pros::E_MOTOR_GEARSET_18, false,
+  //                               pros ::E_MOTOR_ENCODER_DEGREES);
+  // // pros::Motor cata_initializer(CATA, pros::E_MOTOR_GEARSET_36, true);
+  intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  cata.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // TODO - test
 
   // thread to for brain screen and position logging
   /*
@@ -153,8 +156,11 @@ void initialize() {
 }
 
 void autonomous() {
-  ez::as::auton_selector
-      .call_selected_auton(); // Calls selected auton from autonomous selector.
+  pros::lcd::print(0, "%s"
+                      "HHIII");
+  autoAttackBlue();
+  // ez::as::auton_selector
+  //.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
 void opcontrol() {
