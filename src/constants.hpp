@@ -1,21 +1,21 @@
 // ports
-#define LEFT_BACK 7
-#define LEFT_MIDDLE 6
-#define LEFT_FRONT 10
-#define RIGHT_BACK 5
-#define RIGHT_MIDDLE 2
-#define RIGHT_FRONT 1
+#define LEFT_BACK_PORT 7
+#define LEFT_FRONT_UPPER_PORT 6
+#define LEFT_FRONT_LOWER_PORT 10
+#define RIGHT_BACK_PORT 5
+#define RIGHT_FRONT_UPPER_PORT 2
+#define RIGHT_FRONT_LOWER_PORT 1
 
-#define IMU 4
-#define INTAKE 9
-#define CATA 8
+#define IMU_PORT 4
+#define INTAKE_PORT 9
+#define CATA_PORT 8
 #define WINGS 'a'
 
 // chassis
-#define JOYSTICK_THRESHOLD 15
+#define JOYSTICK_THRESHOLD_AMT 15
 
 // auto drive
-#define DRIVE_SPEED                                                            \
+#define DRIVE_SPEED \
   100 // This is 110/127 (around 87% of max speed).  We don't suggest making
       // this 127. If this is 127 and the robot tries to heading correct, it's
       // only correcting by making one side slower.  When this is 87%, it's
