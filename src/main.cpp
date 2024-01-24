@@ -46,7 +46,7 @@ lemlib::ControllerSettings
 lemlib::ControllerSettings
 	angularController(3,   // proportional gain (kP)
 					  0,   // integral gain (kI)
-					  10,  // derivative gain (kD)
+					  15,  // derivative gain (kD) 10 works
 					  3,   // anti windup
 					  1,   // small error range, in degrees
 					  100, // small error range timeout, in milliseconds
@@ -79,10 +79,9 @@ pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 void autoAttackBlue()
 {
 	chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
-	chassis.moveToPose(fieldX / 2, blueStartLower.y, 90, 4000);	 // Moves to face the goal
-	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 4000); // turn to face goal
+	chassis.moveToPose(fieldX / 2, blueStartLower.y, 90, 2000);	 // Moves to face the goal
+	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 2000); // turn to face goal
 	intake = -127;												 // score preload
-	pros::delay(500);
 	chassis.moveToPose(fieldX / 2, blueStartLower.y - tile / 2, 180,
 					   4000); // Shoves the triball in
 	intake = 0;
