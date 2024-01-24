@@ -23,7 +23,7 @@ pros::Imu imu(IMU_PORT);
 lemlib::Drivetrain drivetrain(
 	&leftMotors,				// left motor group
 	&rightMotors,				// right motor group
-	10,							// 10 inch track width
+	12,							// 12 inch track width (left to right wheels)
 	lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
 	360,						// drivetrain rpm is 360
 	2							// chase power is 2. If we had traction wheels, it would have been 8
@@ -31,7 +31,7 @@ lemlib::Drivetrain drivetrain(
 
 // lateral motion controller
 lemlib::ControllerSettings
-	linearController(10,  // proportional gain (kP)
+	linearController(15,  // proportional gain (kP)
 					 0,	  // integral gain (kI)
 					 3,	  // derivative gain (kD)
 					 3,	  // anti windup
@@ -44,7 +44,7 @@ lemlib::ControllerSettings
 
 // angular motion controller
 lemlib::ControllerSettings
-	angularController(2,   // proportional gain (kP)
+	angularController(3,   // proportional gain (kP)
 					  0,   // integral gain (kI)
 					  10,  // derivative gain (kD)
 					  3,   // anti windup
@@ -73,62 +73,34 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
 				   pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-// autonomous functions
-
-void autoTest()
-{
-	// example movement: Move to x: 20 and y: 15, and face heading 90. Timeout set
-	// to 4000 ms
-	chassis.moveToPose(20, 15, 90, 4000);
-	// example movement: Move to x: 0 and y: 0 and face heading 270, going
-	// backwards. Timeout set to 4000ms
-	chassis.moveToPose(0, 0, 270, 4000, {.forwards = false});
-	// cancel the movement after it has travelled 10 inches
-	chassis.waitUntil(10);
-	chassis.cancelMotion();
-	// example movement: Turn to face the point x:45, y:-45. Timeout set to 1000
-	// dont turn faster than 60 (out of a maximum of 127)
-	chassis.turnTo(45, -45, 1000, true, 60);
-	// example movement: Follow the path in path.txt. Lookahead at 15, Timeout set
-	// to 4000 following the path with the back of the robot (forwards = false)
-	// see line 116 to see how to define a path
-	// chassis.follow(example_txt, 15, 4000, false);
-	// wait until the chassis has travelled 10 inches. Otherwise the code directly
-	// after the movement will run immediately Unless its another movement, in
-	// which case it will wait
-	chassis.waitUntil(10);
-	// wait until the movement is done
-	chassis.waitUntilDone();
-}
+// Autonomous funcitons
 
 // start in farthest full starting tile, facing the center of the field
 void autoAttackBlue()
 {
-	// chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
-	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180,
-					   4000); // Moves to face the goal
-	intake = -127;			  // score preload
-	pros::delay(1500);
+	chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
+	chassis.moveToPose(fieldX / 2, blueStartLower.y, 90, 4000);	 // Moves to face the goal
+	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 4000); // turn to face goal
+	intake = -127;												 // score preload
+	pros::delay(500);
 	chassis.moveToPose(fieldX / 2, blueStartLower.y - tile / 2, 180,
 					   4000); // Shoves the triball in
 	intake = 0;
-	chassis.moveToPose(fieldX / 2, blueStartLower.y + tile, 0,
-					   4000); // Move backwards
+	chassis.moveToPose(fieldX / 2, blueStartLower.y + tile, 0, 4000, {.forwards = false}); // get ready for teleop moving back
 }
 
 // start in farthest full starting tile, facing the center of the field
 void autoAttackRed()
 {
 	chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
-	chassis.moveToPose(fieldX / 2, redStartUpper.y, 0,
-					   4000); // Moves to face the goal
-	intake = -127;			  // score preload
-	pros::delay(1500);
+	chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000); // Moves to face the goal
+	chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000);					 // turn
+	intake = -127;																 // score preload
+	pros::delay(500);
 	chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0,
 					   4000); // Shoves the triball in
 	intake = 0;
-	chassis.moveToPose(fieldX / 2, redStartUpper.y - tile, 180,
-					   4000); // Move backwards
+	chassis.moveToPose(fieldX / 2, redStartUpper.y - tile, 180, 4000, {.forwards = false}); // Move backwards
 }
 
 // start in closest full starting tile, facing center of the field
@@ -242,12 +214,6 @@ void set_braking(bool brakeCoast = true)
 	}
 }
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
 void on_center_button()
 {
 	static bool pressed = false;
@@ -262,26 +228,39 @@ void on_center_button()
 	}
 }
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
 void initialize()
 {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "initializing");
+	pros::lcd::initialize(); // initialize brain screen
+	// pros::delay(500);		 // Stop the user from doing anything while legacy ports configure.
 
 	pros::lcd::register_btn1_cb(on_center_button);
 
-	// autonomous(); // for testing auto
+	chassis.calibrate(); // calibrate imu
+
+	// thread to for brain screen and position logging
+
+	pros::Task screenTask([&]()
+						  {
+		lemlib::Pose pose(0, 0, 0);
+		while (true) {
+			// print robot location to the brain screen
+			pros::lcd::print(0, "X: %f",  chassis.getPose().x); // x
+			pros::lcd::print(1, "Y: %f",  chassis.getPose().y); // y
+			pros::lcd::print(2, "Theta: %f",  chassis.getPose().theta); // heading
+			// log position telemetry
+			lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
+			// delay to save resources
+			pros::delay(50);
+		} });
+
+	autonomous(); // for testing auto
+				  // pros::lcd::set_text(1, "auto finished");
 }
 
 void autonomous()
 {
 
-	// autoAttackBlue();
+	autoAttackBlue();
 }
 
 void opcontrol()
