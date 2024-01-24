@@ -172,15 +172,36 @@ void awp()
 }
 
 // shoots all triballs and scores with wings
-void autoSkills()
+// start in lower right corner between goal and corner facing opposite side
+void autoSkillsRed()
 {
+	chassis.setPose(redSkillsStart.x, redSkillsStart.y, redSkillsStartHeading);
 	// shoot for 10 sec
 	cata = CATAMAXVOLTAGE;
 	pros::delay(10000); // wait 10 sec
 	cata = 0;
 
-	// TODO - find optimal angle and create pose for that, add driving and scoring
-	// with wings
+	//go to the other side
+	chassis.moveToPose((fieldX - tile / 2.0), tile * 1.5, 0, 2000);
+	chassis.moveToPose((fieldX - tile / 2.0), (fieldY - tile * 1.25), -135, 4000);
+	chassis.moveToPose(blueCenterLowerTriball.x, (blueCenterLowerTriball.y + tile * 0.5), 0, 4000);
+	wings.set_value(HIGH);
+	chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 4000);
+}
+
+void autoSkillsBlue(){
+	chassis.setPose(blueSkillsStart.x, blueSkillsStart.y, blueSkillsStartHeading);
+	// shoot for 10 sec
+	cata = CATAMAXVOLTAGE;
+	pros::delay(10000); // wait 10 sec
+	cata = 0;
+
+	//go to the other side
+	chassis.moveToPose(tile * 1.5, (fieldX - tile / 2.0) , 180, 2000);
+	chassis.moveToPose((fieldY - tile * 1.25), (fieldX - tile / 2.0), 45, 4000);
+	chassis.moveToPose(redCenterUpperTriball.x, (redCenterUpperTriball.y - tile * 0.5), 180, 4000);
+	wings.set_value(HIGH);
+	chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 4000);
 }
 
 // do not use curvature drive it is buggy af

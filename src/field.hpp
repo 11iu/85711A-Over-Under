@@ -49,12 +49,12 @@ Pose2d blueUnderElevationTriball = Pose2d((tile / 2.0), (fieldY / 2.0));
 Pose2d redUnderElevationTriball = Pose2d((fieldX - tile / 2.0), (fieldY / 2.0));
 
 // triballs near the center of the field
-Pose2d blueCenterLowerTriball = Pose2d((fieldX / 2.0), (tile * 2));
-Pose2d blueCenterLeftTriball = Pose2d((tile * 2), (tile * 3 - centerPipeToTriballsY));
-Pose2d blueCenterUpperTriball = Pose2d((fieldX / 2.0), (tile * 3 - centerPipeToTriballsY));
-Pose2d redCenterLowerTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + centerPipeToTriballsY));
-Pose2d redCenterRightTriball = Pose2d((fieldX - tile * 2), (fieldY / 2.0 + centerPipeToTriballsY));
-Pose2d redCenterUpperTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + tile));
+Pose2d redCenterLowerTriball = Pose2d((fieldX / 2.0), (tile * 2));
+Pose2d redCenterLeftTriball = Pose2d((tile * 2), (tile * 3 - centerPipeToTriballsY));
+Pose2d redCenterUpperTriball = Pose2d((fieldX / 2.0), (tile * 3 - centerPipeToTriballsY));
+Pose2d blueCenterLowerTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + centerPipeToTriballsY));
+Pose2d blueCenterRightTriball = Pose2d((fieldX - tile * 2), (fieldY / 2.0 + centerPipeToTriballsY));
+Pose2d blueCenterUpperTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + tile));
 
 // starting tiles and orientation
 Pose2d redStartUpper = Pose2d((fieldX - tile / 2.0), (fieldY - tile * 1.5));
@@ -65,3 +65,8 @@ float redStartUpperHeading = -90;
 float redStartLowerHeading = -90;
 float blueStartUpperHeading = 90;
 float blueStartLowerHeading = 90;
+
+Pose2d redSkillsStart = Pose2d((fieldX - tile), (tile / 2.0));
+Pose2d blueSkillsStart = Pose2d((tile / 2.0), (fieldY - tile));
+float redSkillsStartHeading = -30;  // this is a guess
+float blueSkillsStartHeading = 120; // this is a guess
