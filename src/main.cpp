@@ -73,33 +73,34 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
 				   pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-// Autonomous funcitons
-
 // start in farthest full starting tile, facing the center of the field
+// starts at blue upper
 void autoAttackBlue()
 {
 	chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
 	chassis.moveToPose(fieldX / 2, blueStartLower.y, 90, 2000);	 // Moves to face the goal
 	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 2000); // turn to face goal
-	intake = -127;												 // score preload
-	chassis.moveToPose(fieldX / 2, blueStartLower.y - tile / 2, 180,
+	intake = -127;
+	pros::delay(1000); // score preload
+	chassis.moveToPose(fieldX / 2, blueStartLower.y - tile, 180,
 					   4000); // Shoves the triball in
 	intake = 0;
-	chassis.moveToPose(fieldX / 2, blueStartLower.y + tile, 0, 4000, {.forwards = false}); // get ready for teleop moving back
+	chassis.moveToPose(fieldX / 2, blueStartLower.y + tile / 2, 0, 4000, {.forwards = false}); // get ready for teleop moving back
 }
 
 // start in farthest full starting tile, facing the center of the field
+// starts at red upper
 void autoAttackRed()
 {
 	chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
 	chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000); // Moves to face the goal
 	chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000);					 // turn
 	intake = -127;																 // score preload
-	pros::delay(500);
-	chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0,
+	pros::delay(1000);
+	chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0,
 					   4000); // Shoves the triball in
 	intake = 0;
-	chassis.moveToPose(fieldX / 2, redStartUpper.y - tile, 180, 4000, {.forwards = false}); // Move backwards
+	chassis.moveToPose(fieldX / 2, redStartUpper.y - tile / 2, 180, 4000, {.forwards = false}); // Move backwards
 }
 
 // start in closest full starting tile, facing center of the field
@@ -181,7 +182,7 @@ void autoSkillsRed()
 	pros::delay(10000); // wait 10 sec
 	cata = 0;
 
-	//go to the other side
+	// go to the other side
 	chassis.moveToPose((fieldX - tile / 2.0), tile * 1.5, 0, 2000);
 	chassis.moveToPose((fieldX - tile / 2.0), (fieldY - tile * 1.25), -135, 4000);
 	chassis.moveToPose(blueCenterLowerTriball.x, (blueCenterLowerTriball.y + tile * 0.5), 0, 4000);
@@ -189,15 +190,16 @@ void autoSkillsRed()
 	chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 4000);
 }
 
-void autoSkillsBlue(){
+void autoSkillsBlue()
+{
 	chassis.setPose(blueSkillsStart.x, blueSkillsStart.y, blueSkillsStartHeading);
 	// shoot for 10 sec
 	cata = CATAMAXVOLTAGE;
 	pros::delay(10000); // wait 10 sec
 	cata = 0;
 
-	//go to the other side
-	chassis.moveToPose(tile * 1.5, (fieldX - tile / 2.0) , 180, 2000);
+	// go to the other side
+	chassis.moveToPose(tile * 1.5, (fieldX - tile / 2.0), 180, 2000);
 	chassis.moveToPose((fieldY - tile * 1.25), (fieldX - tile / 2.0), 45, 4000);
 	chassis.moveToPose(redCenterUpperTriball.x, (redCenterUpperTriball.y - tile * 0.5), 180, 4000);
 	wings.set_value(HIGH);
@@ -208,11 +210,13 @@ void autoSkillsBlue(){
 void arcade_drive(bool flipDrive = false)
 {
 	// if () // TODO: add deadzone
-	// get joystick positions
+
+	// int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 3);
+	// int rightX = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3);
 	int leftY = lemlib::defaultDriveCurve(
-		master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
+		master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 6);
 	int rightX = lemlib::defaultDriveCurve(
-		master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
+		master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 6);
 	if (flipDrive)
 		leftY *= -1;
 	// move the chassis with arcade drive
@@ -280,7 +284,7 @@ void initialize()
 void autonomous()
 {
 
-	autoAttackBlue();
+	// autoAttackRed();
 }
 
 void opcontrol()
