@@ -281,8 +281,8 @@ void initialize() {
 }
 
 void autonomous() {
-  autoSkillsDrive();
-  // ez::as::auton_selector.call_selected_auton();
+  //autoSkillsDrive();
+  ez::as::auton_selector.call_selected_auton();
 }
 
 void opcontrol() {
