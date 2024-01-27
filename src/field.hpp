@@ -7,14 +7,16 @@
  * All orientations are relative to facing the red offense side(0 deg);
  */
 
-struct Pose2d {
-  float x;
-  float y;
+struct Pose2d
+{
+    float x;
+    float y;
 
-  Pose2d(float xVal, float yVal) {
-    x = xVal;
-    y = yVal;
-  }
+    Pose2d(float xVal, float yVal)
+    {
+        x = xVal;
+        y = yVal;
+    }
 };
 
 float tile = 24;
@@ -80,3 +82,8 @@ float driverAutoStartHeading = 135;
 float driverAutoMidHeading = 90;
 float driverAutoMid2Heading = -90;
 float driverAutoEndHeading = 200;
+
+Pose2d blueGoalLeftSide = Pose2d((tile * 2), (tile / 2.0));
+Pose2d blueGoalRightSide = Pose2d((fieldX - tile * 2), (tile / 2.0));
+Pose2d redGoalLeftSide = Pose2d((tile * 2), (fieldY - tile / 2.0));
+Pose2d redGoalRightSide = Pose2d((fieldX - tile * 2), (fieldY - tile / 2.0));
