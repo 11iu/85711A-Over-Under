@@ -24,13 +24,13 @@
 #define TURN_SPEED 90
 #define SWING_SPEED 90
 
-// teleop drive
-#define FORWARD_FACTOR 0.75
-#define TURN_FACTOR 0.6
-#define TURBO_FORWARD_FACTOR 1.0
-#define TURBO_TURN_FACTOR 0.8
-
 // catapult
 #define CATA_THRESHOLD 2250
 #define CATAMAXVOLTAGE -127
 #define CATAHOLDVOLTAGE 0
+
+// max speeds
+#define REGULAR_FORWARD 1.0
+#define REGULAR_TURN 0.8
+#define TURBO_FORWARD 1.0
+#define TURBO_TURN 0.9

@@ -31,15 +31,15 @@ lemlib::Drivetrain drivetrain(
 
 // lateral motion controller
 lemlib::ControllerSettings
-	linearController(15,  // proportional gain (kP)
+	linearController(20,  // proportional gain (kP)
 					 0,	  // integral gain (kI)
-					 3,	  // derivative gain (kD)
+					 4,	  // derivative gain (kD)
 					 3,	  // anti windup
 					 1,	  // small error range, in inches
 					 100, // small error range timeout, in milliseconds
 					 3,	  // large error range, in inches
 					 500, // large error range timeout, in milliseconds
-					 20	  // maximum acceleration (slew)
+					 40	  // maximum acceleration (slew)
 	);
 
 // angular motion controller
@@ -80,7 +80,8 @@ void autoAttackBlue()
 	chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
 	chassis.moveToPose(fieldX / 2, blueStartLower.y, 90, 2000);	 // Moves to face the goal
 	chassis.moveToPose(fieldX / 2, blueStartLower.y, 180, 2000); // turn to face goal
-	intake = -127;
+	pros::delay(500); // wait
+	intake = 127;
 	pros::delay(1000); // score preload
 	chassis.moveToPose(fieldX / 2, blueStartLower.y - tile, 180,
 					   4000); // Shoves the triball in
@@ -95,7 +96,8 @@ void autoAttackRed()
 	chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
 	chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000); // Moves to face the goal
 	chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000);					 // turn
-	intake = -127;																 // score preload
+	pros::delay(500);
+	intake = 127;																 // score preload
 	pros::delay(1000);
 	chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0,
 					   4000); // Shoves the triball in
@@ -211,12 +213,26 @@ void arcade_drive(bool flipDrive = false)
 {
 	// if () // TODO: add deadzone
 
-	// int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 3);
-	// int rightX = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3);
+	// int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 127.0, 3) * 127;
+	// int rightX = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127.0, 3) * 127;
+
 	int leftY = lemlib::defaultDriveCurve(
 		master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 6);
 	int rightX = lemlib::defaultDriveCurve(
 		master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 6);
+
+	// turbo mode is right bottom trigger
+	if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+	{
+		leftY = leftY * TURBO_FORWARD;
+		rightX = rightX * TURBO_TURN;
+	}
+	else
+	{
+		leftY = leftY * REGULAR_FORWARD;
+		rightX = rightX * REGULAR_TURN;
+	}
+
 	if (flipDrive)
 		leftY *= -1;
 	// move the chassis with arcade drive
@@ -284,7 +300,7 @@ void initialize()
 void autonomous()
 {
 
-	// autoAttackRed();
+	//autoAttackRed();
 }
 
 void opcontrol()
