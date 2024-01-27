@@ -86,9 +86,7 @@ void autoSkillsDriverAKAOppositeOfAutoClose()
   chassis.setPose(driverAutoStart.x, driverAutoStart.y, driverAutoStartHeading);
   chassis.moveToPose(driverAutoMid.x, driverAutoMid.y, driverAutoMidHeading,
                      2000, {.minSpeed = 80}, false);
-  chassis.moveToPose(driverAutoMid2.x, driverAutoMid2.y, driverAutoMid2Heading,
-                     2000, {.forwards = false, .chasePower = 1, .minSpeed = 80},
-                     false);
+  // chassis.moveToPose(driverAutoMid2.x, driverAutoMid2.y, driverAutoMid2Heading, 2000, {.forwards = false, .chasePower = 1, .minSpeed = 80}, false);
   chassis.moveToPose(driverAutoEnd.x, driverAutoEnd.y, driverAutoEndHeading,
                      2000, {.maxSpeed = 80}, false);
   wings.set_value(HIGH);
@@ -96,39 +94,42 @@ void autoSkillsDriverAKAOppositeOfAutoClose()
 
 void autoClose()
 {
-  chassis.setPose(fieldX - driverAutoStart.x, driverAutoStart.y, -135);
-  chassis.moveToPose(fieldX - driverAutoMid.x, driverAutoMid.y, -driverAutoMidHeading,
-                     2000, {.minSpeed = 80}, false);
-  chassis.moveToPose(fieldX - driverAutoMid2.x, driverAutoMid2.y, -driverAutoMid2Heading,
-                     2000, {.forwards = false, .chasePower = 1, .minSpeed = 80},
-                     false);
-  chassis.moveToPose(fieldX - driverAutoEnd.x, driverAutoEnd.y, -driverAutoEndHeading,
-                     2000, {.maxSpeed = 80}, false);
-  wings.set_value(HIGH);
+  chassis.setPose(fieldX - driverAutoStart.x, driverAutoStart.y, -driverAutoStartHeading);
+  chassis.setPose(blueGoalRightSide.x, blueGoalRightSide.y, -90, 4000);
+  // chassis.moveToPose(fieldX - driverAutoMid.x, driverAutoMid.y, -driverAutoMidHeading,
+  //                    2000, {.minSpeed = 80}, false);
+  // chassis.moveToPose(fieldX - driverAutoMid2.x, driverAutoMid2.y, -driverAutoMid2Heading,
+  //                    2000, {.forwards = false, .chasePower = 1, .minSpeed = 80},
+  //                    false);
+  // chassis.moveToPose(fieldX - driverAutoEnd.x, driverAutoEnd.y, -driverAutoEndHeading,
+  //                    2000, {.maxSpeed = 80}, false);
+  // wings.set_value(HIGH);
 }
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
-void autoFarRed()
+void autoFar()
 {
   chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading,
-                     4000);                                 // Moves to face the goal
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000); // turn
-  pros::delay(500);
-  intake = 127; // score preload
-  pros::delay(1000);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 80}); // Shoves the triball in
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000, {.minSpeed = 100}, false); // Moves to face the goal
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {}, false);                                   // turn
+  intake = 127;                                                                                          // score preload
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0, 2000, {.minSpeed = 80}, false);          // Shoves the triball in
   intake = 0;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000, {.forwards = false});     // back up and ram
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 80}); // ram the triball in
-  chassis.moveToPose(fieldX / 2, redStartUpper.y - tile / 2, 180, 4000,
-                     {.forwards = false}); // Move backwards and get ready for teleop
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards = false, .minSpeed = 100}, false); // back up and ram
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0, 4000, {.minSpeed = 100}, false);         // ram the triball in
+  intake = -127;
+  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y, 180, 2000, {.forwards = false}, false); // Move backwards to pick up another triball
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false);                      // Shoves the triball in
+  pros::delay(500);
+  intake = 127;
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 180, 2000, {.forwards = false, .minSpeed = 100}, false); // back up
+  intake = 0;
 }
 
 // shoots all triballs and scores with wings
 // start in lower left corner between goal and corner facing the goal
-void autoSkillsRed()
+void autoSkills()
 {
   autoSkillsDriverAKAOppositeOfAutoClose();
   // cata = CATAMAXVOLTAGE;
@@ -137,7 +138,9 @@ void autoSkillsRed()
   wings.set_value(LOW);
 
   // go to the other side and push into left side
-  chassis.moveToPose(tile / 2.0, tile * 1.5, 0, 2000, {.minSpeed = 80}, false);
+  chassis.moveToPose(tile / 2.0, tile + 5, 0, 2000, {.minSpeed = 80}, false);
+  chassis.moveToPose(tile / 2.0, fieldY - tile, 0, 4000, {.maxSpeed = 80},
+                     false);
   chassis.moveToPose(tile / 2.0, fieldY - tile, 60, 4000, {.maxSpeed = 80},
                      false);
   chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 60, 4000, {}, false);
@@ -145,17 +148,17 @@ void autoSkillsRed()
                      false);
 
   // ramming into the center
-  chassis.moveToPose(tile * 1.5, fieldY / 2 + 4, 30, 4000, {}, false);
+  chassis.moveToPose(tile * 1.5, fieldY / 2.0 + 8, 30, 4000, {}, false);
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 30, 4000, {}, false);
   wings.set_value(LOW);
-  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 4, 0,
+  chassis.moveToPose(blueCenterLowerTriball.x, fieldY / 2.0 + 12, 0,
                      4000, {.forwards = false},
                      false); // line up in front of the goal
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 4000, {}, false);
   wings.set_value(LOW);
-  chassis.moveToPose(fieldX - tile * 1.5, fieldY / 2 + 4, -30, 4000,
+  chassis.moveToPose(fieldX - tile * 1.5, fieldY / 2.0 + 12, -30, 4000,
                      {.forwards = false}, false);
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -30, 4000, {}, false);
@@ -225,9 +228,9 @@ void auto_disabled()
   // do nothing
 }
 
-Auton autoFarAuton("Auto Far", autoFarRed);
+Auton autoFarAuton("Auto Far", autoFar);
 Auton autoCloseAuton("Auto Close", autoClose);
-Auton autoSkillsAuton("Auto Skills", autoSkillsRed);
+Auton autoSkillsAuton("Auto Skills", autoSkills);
 Auton autoDisabled("Disabled", auto_disabled);
 
 void initialize()
@@ -235,7 +238,7 @@ void initialize()
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
 
-  ez::as::auton_selector.add_autons({autoCloseAuton, autoFarAuton,
+  ez::as::auton_selector.add_autons({autoFarAuton, autoCloseAuton,
                                      autoSkillsAuton, autoDisabled});
   ez::as::initialize();
 
@@ -250,6 +253,8 @@ void autonomous()
 void opcontrol()
 {
   int cataHeadStart = 0;
+
+  // auto assistance at the start of driver skills
   if (ez::as::auton_selector.Autons[ez::as::auton_selector.current_auton_page]
           .Name == autoSkillsAuton.Name)
   {
