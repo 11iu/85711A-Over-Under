@@ -34,7 +34,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    2 // chase power is 2. If we had traction wheels, it would have been 8
+    2                           // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -81,75 +81,8 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-// start in farthest full starting tile, facing the center of the field
-// starts at blue upper
-void autoAttackBlue() {
-  // //start in angle facing side of goal and pick up multiple triballs
-  // chassis.setPose(blueStartLower.x, blueStartLower.y, 130);
-  // chassis.moveToPose(blueGoalLeftSide.x, blueGoalLeftSide.y, 130, 4000);
-  // pros::delay(500);
-  // intake = 127;
-  // pros::delay(500);
-  // intake = 0;
-  // chassis.moveToPose(tile, tile, 30, 3000);
-
-  chassis.setPose(blueStartLower.x, blueStartLower.y, blueStartLowerHeading);
-  chassis.moveToPose(fieldX / 2, blueStartLower.y, 90,
-                     2000); // Moves to face the goal
-  chassis.moveToPose(fieldX / 2, blueStartLower.y, 180,
-                     2000); // turn to face goal
-  pros::delay(500);         // wait
-  intake = 127;
-  pros::delay(1000); // score preload
-  chassis.moveToPose(fieldX / 2, blueStartLower.y - tile, 180,
-                     4000); // Shoves the triball in
-  intake = 0;
-  chassis.moveToPose(fieldX / 2, blueStartLower.y + tile / 2, 0, 4000,
-                     {.forwards = false}); // get ready for teleop moving back
-}
-
-// start in farthest full starting tile, facing the center of the field
-// starts at red upper
-void autoAttackRed() {
-  chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading,
-                     4000); // Moves to face the goal
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000); // turn
-  pros::delay(500);
-  intake = 127; // score preload
-  pros::delay(1000);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0,
-                     4000); // Shoves the triball in
-  intake = 0;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y - tile / 2, 180, 4000,
-                     {.forwards = false}); // Move backwards
-}
-
-// start in closest full starting tile, facing center of the field
-// remove triball that is in the match load area and touch elevation bar
-void autoDefenseBlue() {
-  // TODO - remove triball from the match load area with wing
-  chassis.setPose(blueStartUpper.x, blueStartUpper.y, blueStartUpperHeading);
-  chassis.moveToPose(blueElevationHorizontalMid.x, blueElevationHorizontalMid.y,
-                     180, 4000);
-}
-
-// start in closest full starting tile, facing center of the field
-// remove triball that is in the match load area and touch elevation bar
-void autoDefenseRed() {
-  // TODO - remove triball from the match load area with wing
-  chassis.setPose(redStartLower.x, redStartLower.y, redStartLowerHeading);
-  chassis.moveToPose(redElevationHorizontalMid.x, redElevationHorizontalMid.y,
-                     0, 4000);
-}
-
-// removed
-void awp() {
-  //   // do both autoAttack and autoDefense
-  //   // start for autoAttack on defense side
-}
-
-void autoSkillsDrive() {
+void autoSkillsDriverAKAOppositeOfAutoClose()
+{
   chassis.setPose(driverAutoStart.x, driverAutoStart.y, driverAutoStartHeading);
   chassis.moveToPose(driverAutoMid.x, driverAutoMid.y, driverAutoMidHeading,
                      2000, {.minSpeed = 80}, false);
@@ -161,10 +94,43 @@ void autoSkillsDrive() {
   wings.set_value(HIGH);
 }
 
+void autoClose()
+{
+  chassis.setPose(fieldX - driverAutoStart.x, driverAutoStart.y, -135);
+  chassis.moveToPose(fieldX - driverAutoMid.x, driverAutoMid.y, -driverAutoMidHeading,
+                     2000, {.minSpeed = 80}, false);
+  chassis.moveToPose(fieldX - driverAutoMid2.x, driverAutoMid2.y, -driverAutoMid2Heading,
+                     2000, {.forwards = false, .chasePower = 1, .minSpeed = 80},
+                     false);
+  chassis.moveToPose(fieldX - driverAutoEnd.x, driverAutoEnd.y, -driverAutoEndHeading,
+                     2000, {.maxSpeed = 80}, false);
+  wings.set_value(HIGH);
+}
+
+// start in farthest full starting tile, facing the center of the field
+// starts at upper
+void autoFarRed()
+{
+  chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading,
+                     4000);                                 // Moves to face the goal
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000); // turn
+  pros::delay(500);
+  intake = 127; // score preload
+  pros::delay(1000);
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 80}); // Shoves the triball in
+  intake = 0;
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 4000, {.forwards = false});     // back up and ram
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 80}); // ram the triball in
+  chassis.moveToPose(fieldX / 2, redStartUpper.y - tile / 2, 180, 4000,
+                     {.forwards = false}); // Move backwards and get ready for teleop
+}
+
 // shoots all triballs and scores with wings
 // start in lower left corner between goal and corner facing the goal
-void autoSkillsRed() {
-  autoSkillsDrive();
+void autoSkillsRed()
+{
+  autoSkillsDriverAKAOppositeOfAutoClose();
   // cata = CATAMAXVOLTAGE;
   // pros::delay(25000); // wait 25 sec
   // cata = 0;
@@ -195,33 +161,21 @@ void autoSkillsRed() {
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -30, 4000, {}, false);
 }
 
-// void autoSkillsBlue() {
-//   chassis.setPose(blueSkillsStart.x, blueSkillsStart.y,
-//   blueSkillsStartHeading);
-//   // shoot for 10 sec
-//   cata = CATAMAXVOLTAGE;
-//   pros::delay(10000); // wait 10 sec
-//   cata = 0;
-
-//   // go to the other side
-//   chassis.moveToPose(tile * 1.5, (fieldX - tile / 2.0), 180, 2000);
-//   chassis.moveToPose((fieldY - tile * 1.25), (fieldX - tile / 2.0), 45,
-//   4000); chassis.moveToPose(redCenterUpperTriball.x,
-//                      (redCenterUpperTriball.y - tile * 0.5), 180, 4000);
-//   wings.set_value(HIGH);
-//   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 4000);
-// }
-
-double logDrive(double v, double pow) {
-  if (v > 0) {
+double logDrive(double v, double pow)
+{
+  if (v > 0)
+  {
     return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  } else {
+  }
+  else
+  {
     return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
   }
 }
 
 // do not use curvature drive it is buggy af
-void arcade_drive(bool flipDrive = false) {
+void arcade_drive(bool flipDrive = false)
+{
   // if () // TODO: add deadzone
 
   // int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) /
@@ -234,10 +188,13 @@ void arcade_drive(bool flipDrive = false) {
       logDrive(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3);
 
   // turbo mode is right bottom trigger
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+  {
     leftY = leftY * TURBO_FORWARD;
     rightX = rightX * TURBO_TURN;
-  } else {
+  }
+  else
+  {
     leftY = leftY * REGULAR_FORWARD;
     rightX = rightX * REGULAR_TURN;
   }
@@ -249,47 +206,54 @@ void arcade_drive(bool flipDrive = false) {
 }
 
 // TODO - need to test this
-void set_braking(bool brakeCoast = true) {
-  if (brakeCoast) {
+void set_braking(bool brakeCoast = true)
+{
+  if (brakeCoast)
+  {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  } else {
+  }
+  else
+  {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
   }
 }
 
-void auto_disabled() {
+void auto_disabled()
+{
   // do nothing
 }
 
-Auton autoAttackRedAuton("Auto Attack", autoAttackRed);
-Auton autoDefenseRedAuton("Auto Defense ", autoSkillsDrive);
-Auton autoSkillsRedAuton("Auto Skills", autoSkillsRed);
-Auton awpAuton("AWP", awp); // removed
+Auton autoFarAuton("Auto Far", autoFarRed);
+Auton autoCloseAuton("Auto Close", autoClose);
+Auton autoSkillsAuton("Auto Skills", autoSkillsRed);
 Auton autoDisabled("Disabled", auto_disabled);
 
-void initialize() {
+void initialize()
+{
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
 
-  ez::as::auton_selector.add_autons({autoAttackRedAuton, autoDefenseRedAuton,
-                                     autoSkillsRedAuton, autoDisabled});
+  ez::as::auton_selector.add_autons({autoCloseAuton, autoFarAuton,
+                                     autoSkillsAuton, autoDisabled});
   ez::as::initialize();
 
   chassis.calibrate();
 }
 
-void autonomous() {
-  //autoSkillsDrive();
+void autonomous()
+{
   ez::as::auton_selector.call_selected_auton();
 }
 
-void opcontrol() {
+void opcontrol()
+{
   int cataHeadStart = 0;
   if (ez::as::auton_selector.Autons[ez::as::auton_selector.current_auton_page]
-          .Name == autoSkillsRedAuton.Name) {
-    autoSkillsDrive();
+          .Name == autoSkillsAuton.Name)
+  {
+    autoSkillsDriverAKAOppositeOfAutoClose();
     cataHeadStart = 200;
   }
   bool flipDrive = false;
@@ -298,12 +262,16 @@ void opcontrol() {
   int delayWings = 0;
   int delayFlip = 0;
 
-  while (true) {
+  while (true)
+  {
 
     // wings
-    if (delayWings) {
+    if (delayWings)
+    {
       delayWings--;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+    {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
@@ -314,33 +282,48 @@ void opcontrol() {
     // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
     // switch
 
-    if (cataHeadStart > 0) {
+    if (cataHeadStart > 0)
+    {
       cata = CATAMAXVOLTAGE;
       cataHeadStart--;
-    } else {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    }
+    else
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+      {
         cata = CATAMAXVOLTAGE; // fire and continuous fire
-      } else {
+      }
+      else
+      {
         cata.brake(); // coast up
       }
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+    {
       intake = 127;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+    {
       intake = -127;
-    } else {
+    }
+    else
+    {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    if (!delayFlip)
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+      {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    } else {
+    }
+    else
+    {
       delayFlip--;
     }
 

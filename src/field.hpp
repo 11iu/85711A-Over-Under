@@ -67,13 +67,14 @@ Pose2d redStartLower = Pose2d((fieldX - tile / 2.0), (tile * 1.5));
 Pose2d blueStartUpper = Pose2d((tile / 2.0), (fieldY - tile * 1.5));
 Pose2d blueStartLower = Pose2d((tile / 2.0), (tile * 1.5));
 float redStartUpperHeading = -90;
-float redStartLowerHeading = -90;
-float blueStartUpperHeading = 90;
+float redStartLowerHeading = -120;
+float blueStartUpperHeading = 30;
 float blueStartLowerHeading = 90;
 
 Pose2d redSkillsStart = Pose2d((fieldX - tile), (tile / 2.0));
 float redSkillsStartHeading = -30; // this is a guess
 
+//positions to push triball into the goal
 Pose2d driverAutoStart = Pose2d(tile / 2.0, tile + 5);
 Pose2d driverAutoMid = Pose2d(2 * tile - 4, tile / 2.0 + 2);
 Pose2d driverAutoMid2 = Pose2d(tile * 1.2, tile / 2.0 + 2);
