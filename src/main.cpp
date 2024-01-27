@@ -134,6 +134,7 @@ void autoDefenseRed() {
                      0, 4000);
 }
 
+// removed
 void awp() {
   //   // do both autoAttack and autoDefense
   //   // start for autoAttack on defense side
@@ -282,16 +283,16 @@ Auton autoAttackRedAuton("Auto Attack Red", autoAttackRed);
 Auton autoDefenseBlueAuton("Auto Defense Blue", autoDefenseBlue);
 Auton autoDefenseRedAuton("Auto Defense Red", autoDefenseRed);
 Auton autoSkillsRedAuton("Auto Skills Red", auto_disabled);
-Auton awpAuton("AWP", awp);
+Auton awpAuton("AWP", awp); // removed
 Auton autoDisabled("Disabled", auto_disabled);
 
 void initialize() {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
 
-  ez::as::auton_selector.add_autons(
-      {autoSkillsRedAuton, autoAttackBlueAuton, autoAttackRedAuton,
-       autoDefenseBlueAuton, autoDefenseRedAuton, awpAuton, autoDisabled});
+  ez::as::auton_selector.add_autons({autoAttackBlueAuton, autoAttackRedAuton,
+                                     autoDefenseBlueAuton, autoDefenseRedAuton,
+                                     autoSkillsRedAuton, autoDisabled});
   ez::as::initialize();
 
   chassis.calibrate(); // calibrate imu
@@ -314,10 +315,7 @@ void initialize() {
   });
 }
 
-void autonomous() {
-  // ez::as::auton_selector.call_selected_auton();
-  autoSkillsRed();
-}
+void autonomous() { ez::as::auton_selector.call_selected_auton(); }
 
 void opcontrol() {
   int cataHeadStart = 0;
