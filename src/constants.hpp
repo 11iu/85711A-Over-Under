@@ -15,7 +15,7 @@
 #define JOYSTICK_THRESHOLD_AMT 15
 
 // auto drive
-#define DRIVE_SPEED \
+#define DRIVE_SPEED                                                            \
   100 // This is 110/127 (around 87% of max speed).  We don't suggest making
       // this 127. If this is 127 and the robot tries to heading correct, it's
       // only correcting by making one side slower.  When this is 87%, it's
@@ -33,4 +33,4 @@
 #define REGULAR_FORWARD 1.0
 #define REGULAR_TURN 0.8
 #define TURBO_FORWARD 1.0
-#define TURBO_TURN 0.9
+#define TURBO_TURN 1.0
