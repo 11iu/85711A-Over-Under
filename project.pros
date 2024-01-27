@@ -228,7 +228,8 @@
     },
     "upload_options": {
       "description": "our program!",
-      "icon": "X"
+      "icon": "X",
+      "after": "none"
     }
   }
 }

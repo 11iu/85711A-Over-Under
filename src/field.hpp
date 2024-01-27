@@ -7,16 +7,14 @@
  * All orientations are relative to facing the red offense side(0 deg);
  */
 
-struct Pose2d
-{
-    float x;
-    float y;
+struct Pose2d {
+  float x;
+  float y;
 
-    Pose2d(float xVal, float yVal)
-    {
-        x = xVal;
-        y = yVal;
-    }
+  Pose2d(float xVal, float yVal) {
+    x = xVal;
+    y = yVal;
+  }
 };
 
 float tile = 24;
@@ -42,7 +40,8 @@ Pose2d redGoalCenter = Pose2d((fieldX / 2.0), (fieldY - tile));
 Pose2d redLeftCornerTriball = Pose2d((tile / 4.0), (tile / 4.0));
 Pose2d redRightCornerTriball = Pose2d((fieldX - tile / 4.0), (tile / 4.0));
 Pose2d blueLeftCornerTriball = Pose2d((tile / 4.0), (fieldY - tile / 4.0));
-Pose2d blueRightCornerTriball = Pose2d((fieldX - tile / 4.0), (fieldY - tile / 4.0));
+Pose2d blueRightCornerTriball =
+    Pose2d((fieldX - tile / 4.0), (fieldY - tile / 4.0));
 
 // triballs to the side
 Pose2d blueUnderElevationTriball = Pose2d((tile / 2.0), (fieldY / 2.0));
@@ -50,10 +49,14 @@ Pose2d redUnderElevationTriball = Pose2d((fieldX - tile / 2.0), (fieldY / 2.0));
 
 // triballs near the center of the field
 Pose2d redCenterLowerTriball = Pose2d((fieldX / 2.0), (tile * 2));
-Pose2d redCenterLeftTriball = Pose2d((tile * 2), (tile * 3 - centerPipeToTriballsY));
-Pose2d redCenterUpperTriball = Pose2d((fieldX / 2.0), (tile * 3 - centerPipeToTriballsY));
-Pose2d blueCenterLowerTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + centerPipeToTriballsY));
-Pose2d blueCenterRightTriball = Pose2d((fieldX - tile * 2), (fieldY / 2.0 + centerPipeToTriballsY));
+Pose2d redCenterLeftTriball =
+    Pose2d((tile * 2), (tile * 3 - centerPipeToTriballsY));
+Pose2d redCenterUpperTriball =
+    Pose2d((fieldX / 2.0), (tile * 3 - centerPipeToTriballsY));
+Pose2d blueCenterLowerTriball =
+    Pose2d((fieldX / 2.0), (fieldY / 2.0 + centerPipeToTriballsY));
+Pose2d blueCenterRightTriball =
+    Pose2d((fieldX - tile * 2), (fieldY / 2.0 + centerPipeToTriballsY));
 Pose2d blueCenterUpperTriball = Pose2d((fieldX / 2.0), (fieldY / 2.0 + tile));
 
 // starting tiles and orientation
@@ -67,6 +70,13 @@ float blueStartUpperHeading = 90;
 float blueStartLowerHeading = 90;
 
 Pose2d redSkillsStart = Pose2d((fieldX - tile), (tile / 2.0));
-Pose2d blueSkillsStart = Pose2d((tile / 2.0), (fieldY - tile));
-float redSkillsStartHeading = -30;  // this is a guess
-float blueSkillsStartHeading = 120; // this is a guess
+float redSkillsStartHeading = -30; // this is a guess
+
+Pose2d driverAutoStart = Pose2d(tile / 2.0, tile + 5);
+Pose2d driverAutoMid = Pose2d(2 * tile - 4, tile / 2.0 + 2);
+Pose2d driverAutoMid2 = Pose2d(tile * 1.2, tile / 2.0 + 2);
+Pose2d driverAutoEnd = Pose2d(tile - 5, tile / 2.0 - 7);
+float driverAutoStartHeading = 135;
+float driverAutoMidHeading = 90;
+float driverAutoMid2Heading = -90;
+float driverAutoEndHeading = 200;
