@@ -111,20 +111,21 @@ void autoClose()
 void autoFar()
 {
   chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000, {.minSpeed = 100}, false); // Moves to face the goal
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {}, false);                                   // turn
-  intake = 127;                                                                                          // score preload
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0, 2000, {.minSpeed = 80}, false);          // Shoves the triball in
-  intake = 0;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards = false, .minSpeed = 100}, false); // back up and ram
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile / 2, 0, 4000, {.minSpeed = 100}, false);         // ram the triball in
-  intake = -127;
-  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y, 180, 2000, {.forwards = false}, false); // Move backwards to pick up another triball
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false);                      // Shoves the triball in
-  pros::delay(500);
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000, {.minSpeed = 100}, false); // Moves to in front of goal
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {}, false);                                   // turn to face goal
   intake = 127;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 180, 2000, {.forwards = false, .minSpeed = 100}, false); // back up
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
+  // chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards = false, .minSpeed = 100}, false); // back up and ram
+  // chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 100}, false);         // ram the triball in
+  intake = -127;
+  chassis.moveToPose(blueCenterLowerTriball.x, tile * 2, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // Move backwards to pick up another triball
+  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 6, 180, 2000, {}, false);            // Move backwards to pick up another triball
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false);                    // Shoves the triball in
+  intake = 127;
+  pros::delay(500);
+  intake = 0;
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 180, 2000, {.forwards = false, .minSpeed = 100}, false); // back up
 }
 
 // shoots all triballs and scores with wings
