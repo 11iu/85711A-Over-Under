@@ -89,7 +89,7 @@ ASSET(autoSkillsPath_txt); // for path
 // goal, and sets up for match load
 void autoCloseOpposite() {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStartHeading);
-  chassis.moveToPose(blueGoalLeftSide.x + 4, blueGoalLeftSide.y, 90, 2000,
+  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
                      {.minSpeed = 100}, false); // push into the goal
   intake = 127;
   chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEndHeading, 2000,
@@ -104,9 +104,13 @@ void autoCloseOpposite() {
 void autoClose() {
   chassis.setPose(fieldX - closeOppStart.x, closeOppStart.y,
                   -closeOppStartHeading);
-  chassis.setPose(blueGoalRightSide.x, blueGoalRightSide.y, -90, 4000);
+  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 4000,
+                     {.minSpeed = 100}, false);
+  intake = 127;
   chassis.moveToPose(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEndHeading,
                      2000, {.forwards = false, .maxSpeed = 80}, false);
+  intake = 0;
+  pros::delay(400);
   wings.set_value(HIGH);
 }
 
