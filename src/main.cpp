@@ -81,6 +81,8 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
+ASSET(autoSkillsPath_txt); // for path
+
 // poses only defined for red side, as blue is the same but flipped!
 
 // starts at opposite of close side facing towards goal, pushes triball into the goal, and sets up for match load
@@ -127,7 +129,9 @@ void autoFar()
 // start in lower left corner between goal and corner facing the goal
 void autoSkills()
 {
-  autoCloseOpposite();
+  chassis.follow(autoSkillsPath_txt, 15, 6000, true);
+  /*
+  autoSkillsDriverAKAOppositeOfAutoClose();
   // cata = CATAMAXVOLTAGE;
   // pros::delay(25000); // wait 25 sec
   // cata = 0;
@@ -158,6 +162,7 @@ void autoSkills()
                      {.forwards = false}, false);
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -30, 4000, {}, false);
+  */
 }
 
 double logDrive(double v, double pow)
