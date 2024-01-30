@@ -81,29 +81,24 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-void autoSkillsDriverAKAOppositeOfAutoClose()
+// poses only defined for red side, as blue is the same but flipped!
+
+// starts at opposite of close side facing towards goal, pushes triball into the goal, and sets up for match load
+void autoCloseOpposite()
 {
-  chassis.setPose(driverAutoStart.x, driverAutoStart.y, driverAutoStartHeading);
-  chassis.moveToPose(driverAutoMid.x, driverAutoMid.y, driverAutoMidHeading,
-                     2000, {.minSpeed = 80}, false);
-  // chassis.moveToPose(driverAutoMid2.x, driverAutoMid2.y, driverAutoMid2Heading, 2000, {.forwards = false, .chasePower = 1, .minSpeed = 80}, false);
-  chassis.moveToPose(driverAutoEnd.x, driverAutoEnd.y, driverAutoEndHeading,
-                     2000, {.maxSpeed = 80}, false);
+  chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStartHeading);
+  chassis.moveToPose(blueGoalLeftSide.x, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 80}, false); // push into the goal
+  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEndHeading, 2000, {.forwards = false, .maxSpeed = 80}, false);
   wings.set_value(HIGH);
 }
 
+// starts at close side facing towards goal, pushes triball into the goal, and sets up for match load
 void autoClose()
 {
-  chassis.setPose(fieldX - driverAutoStart.x, driverAutoStart.y, -driverAutoStartHeading);
+  chassis.setPose(fieldX - closeOppStart.x, closeOppStart.y, -closeOppStartHeading);
   chassis.setPose(blueGoalRightSide.x, blueGoalRightSide.y, -90, 4000);
-  // chassis.moveToPose(fieldX - driverAutoMid.x, driverAutoMid.y, -driverAutoMidHeading,
-  //                    2000, {.minSpeed = 80}, false);
-  // chassis.moveToPose(fieldX - driverAutoMid2.x, driverAutoMid2.y, -driverAutoMid2Heading,
-  //                    2000, {.forwards = false, .chasePower = 1, .minSpeed = 80},
-  //                    false);
-  // chassis.moveToPose(fieldX - driverAutoEnd.x, driverAutoEnd.y, -driverAutoEndHeading,
-  //                    2000, {.maxSpeed = 80}, false);
-  // wings.set_value(HIGH);
+  chassis.moveToPose(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEndHeading, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  wings.set_value(HIGH);
 }
 
 // start in farthest full starting tile, facing the center of the field
@@ -132,7 +127,7 @@ void autoFar()
 // start in lower left corner between goal and corner facing the goal
 void autoSkills()
 {
-  autoSkillsDriverAKAOppositeOfAutoClose();
+  autoCloseOpposite();
   // cata = CATAMAXVOLTAGE;
   // pros::delay(25000); // wait 25 sec
   // cata = 0;
@@ -259,7 +254,7 @@ void opcontrol()
   if (ez::as::auton_selector.Autons[ez::as::auton_selector.current_auton_page]
           .Name == autoSkillsAuton.Name)
   {
-    autoSkillsDriverAKAOppositeOfAutoClose();
+    autoCloseOpposite();
     cataHeadStart = 200;
   }
   bool flipDrive = false;
