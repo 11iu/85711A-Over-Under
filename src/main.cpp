@@ -34,7 +34,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    2                           // chase power is 2. If we had traction wheels, it would have been 8
+    2 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -81,58 +81,71 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-// ASSET(autoSkillsPath_txt); // for path
+ASSET(autoSkillsPath_txt); // for path
 
 // poses only defined for red side, as blue is the same but flipped!
 
-// starts at opposite of close side facing towards goal, pushes triball into the goal, and sets up for match load
-void autoCloseOpposite()
-{
+// starts at opposite of close side facing towards goal, pushes triball into the
+// goal, and sets up for match load
+void autoCloseOpposite() {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStartHeading);
-  chassis.moveToPose(blueGoalLeftSide.x + 4, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 100}, false); // push into the goal
+  chassis.moveToPose(blueGoalLeftSide.x + 4, blueGoalLeftSide.y, 90, 2000,
+                     {.minSpeed = 100}, false); // push into the goal
   intake = 127;
-  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEndHeading, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEndHeading, 2000,
+                     {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
   pros::delay(400);
   wings.set_value(HIGH);
 }
 
-// starts at close side facing towards goal, pushes triball into the goal, and sets up for match load
-void autoClose()
-{
-  chassis.setPose(fieldX - closeOppStart.x, closeOppStart.y, -closeOppStartHeading);
+// starts at close side facing towards goal, pushes triball into the goal, and
+// sets up for match load
+void autoClose() {
+  chassis.setPose(fieldX - closeOppStart.x, closeOppStart.y,
+                  -closeOppStartHeading);
   chassis.setPose(blueGoalRightSide.x, blueGoalRightSide.y, -90, 4000);
-  chassis.moveToPose(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEndHeading, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEndHeading,
+                     2000, {.forwards = false, .maxSpeed = 80}, false);
   wings.set_value(HIGH);
 }
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
-void autoFar()
-{
+void autoFar() {
   chassis.setPose(redStartUpper.x, redStartUpper.y, redStartUpperHeading);
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000, {.minSpeed = 100}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {}, false);                                   // turn to face goal
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, redStartUpperHeading, 4000,
+                     {.minSpeed = 100}, false); // Moves to in front of goal
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {},
+                     false); // turn to face goal
   intake = 127;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false); // Shoves preload in
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000,
+                     {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
-  // chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards = false, .minSpeed = 100}, false); // back up and ram
-  // chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed = 100}, false);         // ram the triball in
+  // chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards =
+  // false, .minSpeed = 100}, false); // back up and ram
+  // chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed
+  // = 100}, false);         // ram the triball in
   intake = -127;
-  chassis.moveToPose(blueCenterLowerTriball.x, tile * 2, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // Move backwards to pick up another triball
-  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 6, 180, 2000, {}, false);            // Move backwards to pick up another triball
-  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000, {.minSpeed = 80}, false);                    // Shoves the triball in
+  chassis.moveToPose(blueCenterLowerTriball.x, tile * 2, 0, 2000,
+                     {.forwards = false, .minSpeed = 80},
+                     false); // Move backwards to pick up another triball
+  chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 6,
+                     180, 2000, {},
+                     false); // Move backwards to pick up another triball
+  chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 2000,
+                     {.minSpeed = 80}, false); // Shoves the triball in
   intake = 127;
   pros::delay(500);
   intake = 0;
-  chassis.moveToPose(fieldX / 2, redStartUpper.y, 180, 2000, {.forwards = false, .minSpeed = 100}, false); // back up
+  chassis.moveToPose(fieldX / 2, redStartUpper.y, 180, 2000,
+                     {.forwards = false, .minSpeed = 100}, false); // back up
 }
 
 // shoots all triballs and scores with wings
 // start in lower left corner between goal and corner facing the goal
-void autoSkills()
-{
-  // chassis.follow(autoSkillsPath_txt, 15, 6000, true);
+void autoSkills() {
+  chassis.follow(autoSkillsPath_txt, 15, 6000, true);
   /*
   autoSkillsDriverAKAOppositeOfAutoClose();
   // cata = CATAMAXVOLTAGE;
@@ -168,21 +181,16 @@ void autoSkills()
   */
 }
 
-double logDrive(double v, double pow)
-{
-  if (v > 0)
-  {
+double logDrive(double v, double pow) {
+  if (v > 0) {
     return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
-  else
-  {
+  } else {
     return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
   }
 }
 
 // do not use curvature drive it is buggy af
-void arcade_drive(bool flipDrive = false)
-{
+void arcade_drive(bool flipDrive = false) {
   // if () // TODO: add deadzone
 
   // int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) /
@@ -195,13 +203,10 @@ void arcade_drive(bool flipDrive = false)
       logDrive(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 3);
 
   // turbo mode is right bottom trigger
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-  {
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
     leftY = leftY * TURBO_FORWARD;
     rightX = rightX * TURBO_TURN;
-  }
-  else
-  {
+  } else {
     leftY = leftY * REGULAR_FORWARD;
     rightX = rightX * REGULAR_TURN;
   }
@@ -213,22 +218,17 @@ void arcade_drive(bool flipDrive = false)
 }
 
 // TODO - need to test this
-void set_braking(bool brakeCoast = true)
-{
-  if (brakeCoast)
-  {
+void set_braking(bool brakeCoast = true) {
+  if (brakeCoast) {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  }
-  else
-  {
+  } else {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
   }
 }
 
-void auto_disabled()
-{
+void auto_disabled() {
   // do nothing
 }
 
@@ -237,32 +237,28 @@ Auton autoCloseAuton("Auto Close", autoClose);
 Auton autoSkillsAuton("Auto Skills", autoSkills);
 Auton autoDisabled("Disabled", auto_disabled);
 
-void initialize()
-{
+void initialize() {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
 
-  ez::as::auton_selector.add_autons({autoFarAuton, autoCloseAuton,
-                                     autoSkillsAuton, autoDisabled});
+  ez::as::auton_selector.add_autons(
+      {autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabled});
   ez::as::initialize();
 
   chassis.calibrate();
 }
 
-void autonomous()
-{
-  autoCloseOpposite();
+void autonomous() {
+  autoSkills();
   // ez::as::auton_selector.call_selected_auton();
 }
 
-void opcontrol()
-{
+void opcontrol() {
   int cataHeadStart = 0;
 
   // auto assistance at the start of driver skills
   if (ez::as::auton_selector.Autons[ez::as::auton_selector.current_auton_page]
-          .Name == autoSkillsAuton.Name)
-  {
+          .Name == autoSkillsAuton.Name) {
     autoCloseOpposite();
     cataHeadStart = 200;
   }
@@ -272,16 +268,12 @@ void opcontrol()
   int delayWings = 0;
   int delayFlip = 0;
 
-  while (true)
-  {
+  while (true) {
 
     // wings
-    if (delayWings)
-    {
+    if (delayWings) {
       delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
@@ -292,48 +284,33 @@ void opcontrol()
     // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
     // switch
 
-    if (cataHeadStart > 0)
-    {
+    if (cataHeadStart > 0) {
       cata = CATAMAXVOLTAGE;
       cataHeadStart--;
-    }
-    else
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-      {
+    } else {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         cata = CATAMAXVOLTAGE; // fire and continuous fire
-      }
-      else
-      {
+      } else {
         cata.brake(); // coast up
       }
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intake = -127;
-    }
-    else
-    {
+    } else {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
+    if (!delayFlip) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    }
-    else
-    {
+    } else {
       delayFlip--;
     }
 
