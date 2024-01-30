@@ -76,7 +76,7 @@ float redSkillsStartHeading = -30; // this is a guess
 
 // positions to push triball into the goal
 Pose2d closeOppStart = Pose2d(tile / 2.0, tile + 5);
-Pose2d closeOppEnd = Pose2d(tile - 5, tile / 2.0 - 7);
+Pose2d closeOppEnd = Pose2d(tile, tile * 1.5);
 float closeOppStartHeading = 135;
 float closeOppEndHeading = -120;
 

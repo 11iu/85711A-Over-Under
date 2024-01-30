@@ -81,7 +81,7 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-ASSET(autoSkillsPath_txt); // for path
+// ASSET(autoSkillsPath_txt); // for path
 
 // poses only defined for red side, as blue is the same but flipped!
 
@@ -89,8 +89,11 @@ ASSET(autoSkillsPath_txt); // for path
 void autoCloseOpposite()
 {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStartHeading);
-  chassis.moveToPose(blueGoalLeftSide.x, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 80}, false); // push into the goal
+  chassis.moveToPose(blueGoalLeftSide.x + 4, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 100}, false); // push into the goal
+  intake = 127;
   chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEndHeading, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  intake = 0;
+  pros::delay(400);
   wings.set_value(HIGH);
 }
 
@@ -129,7 +132,7 @@ void autoFar()
 // start in lower left corner between goal and corner facing the goal
 void autoSkills()
 {
-  chassis.follow(autoSkillsPath_txt, 15, 6000, true);
+  // chassis.follow(autoSkillsPath_txt, 15, 6000, true);
   /*
   autoSkillsDriverAKAOppositeOfAutoClose();
   // cata = CATAMAXVOLTAGE;
@@ -248,7 +251,8 @@ void initialize()
 
 void autonomous()
 {
-  ez::as::auton_selector.call_selected_auton();
+  autoCloseOpposite();
+  // ez::as::auton_selector.call_selected_auton();
 }
 
 void opcontrol()
