@@ -290,7 +290,8 @@ void opcontrol()
     cataHeadStart = 200;
   }
   bool flipDrive = false;
-  bool wingState = LOW; // wings wingState
+  bool wingState = LOW;  // wings wingState
+  bool cataFire = false; // toggle for catapult
 
   int delayWings = 0;
   int delayFlip = 0;
@@ -320,16 +321,20 @@ void opcontrol()
       cata = CATAMAXVOLTAGE;
       cataHeadStart--;
     }
+
+    // cata toggle
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+    {
+      cataFire = !cataFire;
+    }
+
+    if (cataFire)
+    {
+      cata = CATAMAXVOLTAGE; // continuous fire
+    }
     else
     {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-      {
-        cata = CATAMAXVOLTAGE; // fire and continuous fire
-      }
-      else
-      {
-        cata.brake(); // coast up
-      }
+      cata.brake(); // coast up
     }
 
     // intake
