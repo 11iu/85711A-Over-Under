@@ -81,7 +81,7 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-ASSET(autoSkillsPath_txt); // for path
+// ASSET(autoSkillsPath_txt); // for path
 
 // poses only defined for red side, as blue is the same but flipped!
 
@@ -160,7 +160,7 @@ void autoSkills()
   // cata = 0;
   wings.set_value(LOW);
 
-  chassis.follow(autoSkillsPath_txt, 15, 6000, true);
+  // chassis.follow(autoSkillsPath_txt, 15, 6000, true);
 
   /*
   // go to the other side and push into left side
@@ -274,7 +274,7 @@ void initialize()
 
 void autonomous()
 {
-  autoSkills();
+  autoClose();
   // ez::as::auton_selector.call_selected_auton();
 }
 
