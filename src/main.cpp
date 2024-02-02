@@ -1,11 +1,6 @@
 #include "main.h"
-#include "EZ-Template/auton.hpp"
-#include "EZ-Template/auton_selector.hpp"
-#include "EZ-Template/sdcard.hpp"
 #include "constants.hpp"
 #include "field.hpp"
-#include "lemlib/api.hpp"
-#include "pros/adi.h"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -265,30 +260,21 @@ void initialize()
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
 
-  ez::as::auton_selector.add_autons(
-      {autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabled});
-  ez::as::initialize();
-
   chassis.calibrate();
 }
 
 void autonomous()
 {
   autoClose();
-  // ez::as::auton_selector.call_selected_auton();
 }
 
 void opcontrol()
 {
   int cataHeadStart = 0;
 
-  // auto assistance at the start of driver skills
-  if (ez::as::auton_selector.Autons[ez::as::auton_selector.current_auton_page]
-          .Name == autoSkillsAuton.Name)
-  {
-    autoCloseOpposite();
-    cataHeadStart = 200;
-  }
+  // TODO - auto assistance at the start of driver skills
+  // call auto close and fire cata
+
   bool flipDrive = false;
   bool wingState = LOW;  // wings wingState
   bool cataFire = false; // toggle for catapult
