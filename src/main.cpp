@@ -144,6 +144,14 @@ void autoFar()
                      {.forwards = false, .minSpeed = 100}, false); // back up
 }
 
+// starts in far side facing the goal, completes awp
+// Created for red side far
+void autoFarAWP()
+{
+  
+
+}
+
 // shoots all triballs and scores with wings
 // start in lower right corner between goal and corner facing the goal
 void autoSkills()

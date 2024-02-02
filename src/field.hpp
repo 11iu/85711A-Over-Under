@@ -84,3 +84,5 @@ Pose2d blueGoalLeftSide = Pose2d((tile * 2), (tile / 2.0));
 Pose2d blueGoalRightSide = Pose2d((fieldX - tile * 2), (tile / 2.0));
 Pose2d redGoalLeftSide = Pose2d((tile * 2), (fieldY - tile / 2.0));
 Pose2d redGoalRightSide = Pose2d((fieldX - tile * 2), (fieldY - tile / 2.0));
+
+Pose2d farAWPStart = Pose2d(fieldX - tile / 2.0, fieldY - tile - 5);
