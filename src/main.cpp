@@ -99,12 +99,12 @@ void autoCloseOpposite()
 // sets up for match load
 void autoClose()
 {
-  chassis.setPose(fieldX - closeOppStart.x, closeOppStart.y,
-                  -closeOppStart.angle);
+  chassis.setPose(closeStart.x, closeStart.y,
+                  closeStart.angle);
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 4000,
                      {.minSpeed = 100}, false);
   intake = 127;
-  chassis.moveToPose(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEnd.angle,
+  chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle,
                      2000, {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
   pros::delay(400);
@@ -115,13 +115,13 @@ void autoClose()
 // starts at upper
 void autoFar()
 {
-  chassis.setPose(farUpperStart.x, farUpperStart.y, farUpperStart.angle);
-  chassis.moveToPose(fieldX / 2, farUpperStart.y, farUpperStart.angle, 4000,
+  chassis.setPose(farStart.x, farStart.y, farStart.angle);
+  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
                      {.minSpeed = 100}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, farUpperStart.y, 0, 2000, {},
+  chassis.moveToPose(fieldX / 2, farStart.y, 0, 2000, {},
                      false); // turn to face goal
   intake = 127;
-  chassis.moveToPose(fieldX / 2, farUpperStart.y + tile, 0, 2000,
+  chassis.moveToPose(fieldX / 2, farStart.y + tile, 0, 2000,
                      {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
   // chassis.moveToPose(fieldX / 2, redStartUpper.y, 0, 2000, {.forwards =
@@ -135,12 +135,12 @@ void autoFar()
   chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 6,
                      180, 2000, {},
                      false); // Move backwards to pick up another triball
-  chassis.moveToPose(fieldX / 2, farUpperStart.y + tile, 0, 2000,
+  chassis.moveToPose(fieldX / 2, farStart.y + tile, 0, 2000,
                      {.minSpeed = 80}, false); // Shoves the triball in
   intake = 127;
   pros::delay(500);
   intake = 0;
-  chassis.moveToPose(fieldX / 2, farUpperStart.y, 180, 2000,
+  chassis.moveToPose(fieldX / 2, farStart.y, 180, 2000,
                      {.forwards = false, .minSpeed = 100}, false); // back up
 }
 
