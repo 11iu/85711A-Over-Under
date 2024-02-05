@@ -129,7 +129,7 @@ void autoFar()
   // chassis.moveToPose(fieldX / 2, redStartUpper.y + tile, 0, 4000, {.minSpeed
   // = 100}, false);         // ram the triball in
   intake = -127;
-  chassis.moveToPose(blueCenterLowerTriball.x, tile * 2, 0, 2000,
+  chassis.moveToPose(blueCenterLowerTriball.x - 6, tile * 2, 0, 2000,
                      {.forwards = false, .minSpeed = 80},
                      false); // Move backwards to pick up another triball
   chassis.moveToPose(blueCenterLowerTriball.x, blueCenterLowerTriball.y - 6,
@@ -155,7 +155,7 @@ void autoFarAWP()
 void autoSkills()
 {
 
-  autoClose();
+  autoCloseOpposite();
   // cata = CATAMAXVOLTAGE;
   // pros::delay(25000); // wait 25 sec
   // cata = 0;
@@ -163,7 +163,6 @@ void autoSkills()
 
   // chassis.follow(autoSkillsPath_txt, 15, 6000, true);
 
-  /*
   // go to the other side and push into left side
   chassis.moveToPose(tile / 2.0, tile + 5, 0, 2000, {.minSpeed = 80}, false);
   chassis.moveToPose(tile / 2.0, fieldY - tile, 0, 4000, {.maxSpeed = 80},
@@ -189,7 +188,6 @@ void autoSkills()
                      {.forwards = false}, false);
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -30, 4000, {}, false);
-  */
 }
 
 double logDrive(double v, double pow)
@@ -267,11 +265,13 @@ void initialize()
                     // legacy ports configure.
 
   chassis.calibrate();
+
+  autonomous();
 }
 
 void autonomous()
 {
-  autoClose();
+  autoSkills();
 }
 
 void opcontrol()
