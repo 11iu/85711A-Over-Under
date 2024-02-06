@@ -254,20 +254,34 @@ void auto_disabled()
   // do nothing
 }
 
-Auton autoFarAuton("Auto Far", autoFar);
-Auton autoCloseAuton("Auto Close", autoClose);
-Auton autoSkillsAuton("Auto Skills", autoSkills);
-Auton autoDisabled("Disabled", auto_disabled);
+struct Auto
+{
+  std::string name;
+  void *function;
+};
 
+Auto autoFarAuton("Auto Far", autoFar);
+Auto autoCloseAuton("Auto Close", autoClose);
+Auto autoSkillsAuton("Auto Skills", autoSkills);
+Auto autoDisabled("Disabled", auto_disabled);
+
+std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabled};
+int currentAuto = 0;
 void initialize()
 {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
-
   chassis.calibrate();
-
-  autonomous();
+  pros::lcd::initialize();
+  pros::lcd::print(0, "%s", autos[currentAuto]);
+  while(pros::competition::is_disabled) {
+    if() {
+      
+    }
+  }
 }
+
+
 
 void autonomous()
 {

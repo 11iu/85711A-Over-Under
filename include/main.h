@@ -36,7 +36,6 @@
 
 #include "api.h"
 
-#include "EZ-Template/api.hpp"
 #include "lemlib/api.hpp"
 
 /**
