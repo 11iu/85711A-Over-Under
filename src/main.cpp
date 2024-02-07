@@ -1,9 +1,12 @@
 #include "main.h"
 #include "constants.hpp"
+#include "display/lv_misc/lv_color.h"
 #include "field.hpp"
 #include "pros/adi.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/misc.hpp"
+#include "pros/rtos.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -240,77 +243,51 @@ void auto_disabled() {
 struct Auto {
   std::string name;
   void (*function)(void);
-  lv_color_t color;
 };
 
-Auto autoFarAuton{"Auto Far", autoFar, LV_COLOR_RED};
-Auto autoCloseAuton{"Auto Close", autoClose, LV_COLOR_BLUE};
-Auto autoSkillsAuton{"Auto Skills", autoSkills, LV_COLOR_GREEN};
-Auto autoDisabled{"Disabled", auto_disabled, LV_COLOR_BLACK};
+Auto autoFarAuton{"Auto Far", autoFar};
+Auto autoCloseAuton{"Auto Close", autoClose};
+Auto autoSkillsAuton{"Auto Skills", autoSkills};
+Auto autoDisabled{"Disabled", auto_disabled};
 
-std::vector<Auto> autos = {
-    autoFarAuton, autoCloseAuton, autoSkillsAuton,
-    autoDisabled}; // MUST BE LESS THAN 10 AUTOS AND MORE THAN -1 AUTOS
+std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
+                           autoDisabled};
 int currentAuto = 0;
 void initialize() {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
-  chassis.calibrate();
   pros::lcd::initialize();
-}
-
-void writeAuto() {
-  FILE *usd_file_write = fopen("/usd/auto.txt", "w");
-  std::string cp_str = std::to_string(currentAuto);
-  char const *cp_c = cp_str.c_str();
-  fputs(cp_c, usd_file_write);
-  fclose(usd_file_write);
+  chassis.calibrate();
 }
 
 void pgUp() {
-  currentAuto = (currentAuto - 1) % autos.size();
+  currentAuto = currentAuto + 1;
+  if (currentAuto > autos.size() - 1)
+    currentAuto = 0;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
-  pros::lcd::set_background_color(autos[currentAuto].color);
-  writeAuto();
-  pros::delay(500);
 }
 void pgDown() {
-  currentAuto = (currentAuto + 1) % autos.size();
+  currentAuto = currentAuto - 1;
+  if (currentAuto < 0)
+    currentAuto = autos.size() - 1;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
-  pros::lcd::set_background_color(autos[currentAuto].color);
-  writeAuto();
-  pros::delay(500);
 }
 
 void competition_initialize() {
-  pros::ADIDigitalIn limit_left('c');
-  pros::ADIDigitalIn limit_right('d');
+  currentAuto = 0;
+  pros::ADIDigitalIn limit_left('b');
+  pros::ADIDigitalIn limit_right('c');
   pros::lcd::register_btn0_cb(pgDown);
   pros::lcd::register_btn2_cb(pgUp);
-  pros::lcd::print(0, "%s", autos[currentAuto]);
-
-  if (pros::c::usd_is_installed()) {
-    FILE *usd_file_read = fopen("/usd/auto.txt", "r");
-    if (usd_file_read != nullptr) {
-      char buf[5];
-      fread(buf, 1, 5, usd_file_read);
-      if (isdigit(buf[0])) {
-        currentAuto = std::stof(buf);
-      }
-      fclose(usd_file_read);
-    } else {
-      writeAuto();
-      pros::lcd::print(1, "%s", "Created File");
-    }
-  } else {
-    pros::lcd::print(1, "%s", "No SD Card");
-  }
+  pros::lcd::print(0, "%s", autos[currentAuto].name);
 
   while (true) {
     if (limit_left.get_value()) {
       pgUp();
+      pros::delay(500);
     } else if (limit_right.get_value()) {
       pgDown();
+      pros::delay(500);
     }
     pros::delay(20);
   }
@@ -319,16 +296,12 @@ void competition_initialize() {
 void autonomous() { ((void (*)())autos[currentAuto].function)(); }
 
 void opcontrol() {
-  int cataHeadStart = 0;
-
-  // TODO - auto assistance at the start of driver skills
-  // call auto close and fire cata
-
   bool flipDrive = false;
   bool wingState = LOW;  // wings wingState
   bool cataFire = false; // toggle for catapult
 
   int delayWings = 0;
+  int delayCata = 0;
   int delayFlip = 0;
 
   while (true) {
@@ -342,19 +315,14 @@ void opcontrol() {
       delayWings = 40;
     }
 
-    // cata
-    // cataDown = limit_switch.get_value();
-    // cataDown = pot.get_value() > CATA_THRESHOLD;  // we are using the limit
-    // switch
-
-    if (cataHeadStart > 0) {
-      cata = CATAMAXVOLTAGE;
-      cataHeadStart--;
-    }
-
     // cata toggle
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      cataFire = !cataFire;
+    if (!delayCata) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        cataFire = !cataFire;
+        delayCata = 40;
+      }
+    } else {
+      delayCata--;
     }
 
     if (cataFire) {
