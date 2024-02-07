@@ -233,7 +233,7 @@ void set_braking(bool brakeCoast = true) {
   }
 }
 
-void auto_disabled() {
+void autoDisabled() {
   // do nothing
 }
 
@@ -246,11 +246,10 @@ struct Auto {
 Auto autoFarAuton{"Auto Far", autoFar, LV_COLOR_RED};
 Auto autoCloseAuton{"Auto Close", autoClose, LV_COLOR_BLUE};
 Auto autoSkillsAuton{"Auto Skills", autoSkills, LV_COLOR_GREEN};
-Auto autoDisabled{"Disabled", auto_disabled, LV_COLOR_BLACK};
+Auto autoDisabledAuton{"Disabled", autoDisabled, LV_COLOR_BLACK};
 
 std::vector<Auto> autos = {
-    autoFarAuton, autoCloseAuton, autoSkillsAuton,
-    autoDisabled}; // MUST BE LESS THAN 10 AUTOS AND MORE THAN -1 AUTOS
+    autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabledAuton}; // MUST BE LESS THAN 10 AUTOS AND MORE THAN -1 AUTOS
 int currentAuto = 0;
 void initialize() {
   pros::delay(500); // Stop the user from doing anything while
