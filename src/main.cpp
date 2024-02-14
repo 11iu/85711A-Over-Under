@@ -238,7 +238,7 @@ void set_braking(bool brakeCoast = true) {
   }
 }
 
-void auto_disabled() {
+void autoDisabled() {
   // do nothing
 }
 
