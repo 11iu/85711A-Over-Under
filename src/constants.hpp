@@ -10,6 +10,7 @@
 #define INTAKE_PORT 9
 #define CATA_PORT 8
 #define WINGS 'a'
+#define VERT_WINGS 'd'
 
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15

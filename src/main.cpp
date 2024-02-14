@@ -78,6 +78,8 @@ lemlib::OdomSensors sensors(
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors);
 pros::ADIDigitalOut wings(WINGS, LOW);
+pros::ADIDigitalOut vertWings(VERT_WINGS, LOW);
+
 pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
@@ -297,9 +299,11 @@ void autonomous() { ((void (*)())autos[currentAuto].function)(); }
 
 void opcontrol() {
   bool flipDrive = false;
-  bool wingState = LOW;  // wings wingState
-  bool cataFire = false; // toggle for catapult
+  bool wingState = LOW;     // wings wingState
+  bool vertWingState = LOW; // vertical wings wingState
+  bool cataFire = false;    // toggle for catapult
 
+  int delayVertWing = 0;
   int delayWings = 0;
   int delayCata = 0;
   int delayFlip = 0;
@@ -313,6 +317,15 @@ void opcontrol() {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
+    }
+
+    // wing
+    if (delayVertWing) {
+      delayVertWing--;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+      vertWingState = !vertWingState;
+      vertWings.set_value(vertWingState);
+      delayVertWing = 40;
     }
 
     // cata toggle
