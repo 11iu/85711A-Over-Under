@@ -161,7 +161,9 @@ void autoSkills() {
   // pros::delay(25000); // wait 25 sec
   // cata = 0;
   chassis.tank(-20, -30);
+  cata = CATAMAXVOLTAGE;
   pros::delay(5000); // for testing TODO: Change to 25000
+  cata = 0;
   chassis.tank(0, 0);
 
   // go to the other side and push into right side of goal
@@ -176,28 +178,28 @@ void autoSkills() {
                      {.forwards = false}, false);
 
   // ramming into the center from the right, straight on, then left
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 4000,
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000,
                      {.minSpeed = 100}, false); // line up to right of goal
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 4000, {},
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
                      false); // turn towards goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 4000,
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
                      {.minSpeed = 100}, false);
   pros::delay(200);
   wings.set_value(LOW);
-  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 4000,
+  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000,
                      {.forwards = false},
                      false); // line up in front of the goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 4000,
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
                      {.minSpeed = 100}, false);
   pros::delay(200);
   wings.set_value(LOW);
-  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 4000, {.forwards = false},
+  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false},
                      false); // line up to the left of goal
   wings.set_value(HIGH);
   pros::delay(200);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 4000,
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
                      {.minSpeed = 100}, false);
 }
 
