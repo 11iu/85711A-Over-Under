@@ -156,11 +156,17 @@ void autoFarAWP() {}
 // start the same as autoClose
 void autoSkills() {
 
-  autoClose();
-  // cata = CATAMAXVOLTAGE;
-  // pros::delay(25000); // wait 25 sec
-  // cata = 0;
-  chassis.tank(-20, -30);
+  chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
+  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
+                     {.minSpeed = 100}, false);
+  intake = 127;
+  pros::delay(500);
+  chassis.moveToPose(closeEnd.x - 6, closeEnd.y, closeOppEnd.angle, 2000,
+                     {.forwards = false, .maxSpeed = 80},
+                     false); // small change
+  intake = 0;
+
+  chassis.tank(-30, -30);
   cata = CATAMAXVOLTAGE;
   pros::delay(5000); // for testing TODO: Change to 25000
   cata = 0;
