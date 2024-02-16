@@ -95,11 +95,10 @@ void autoCloseOpposite() {
   chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
                      {.minSpeed = 100}, false); // push into the goal
   intake = 127;
+  pros::delay(500);
   chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000,
                      {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
-  pros::delay(400);
-  wings.set_value(HIGH);
 }
 
 // starts at close side facing towards goal, pushes triball into the goal, and
@@ -109,11 +108,10 @@ void autoClose() {
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 4000,
                      {.minSpeed = 100}, false);
   intake = 127;
+  pros::delay(500);
   chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle, 2000,
-                     {.forwards = false, .maxSpeed = 80}, false);
+                     {.forwards=false, .maxSpeed = 80}, false);
   intake = 0;
-  pros::delay(400);
-  wings.set_value(HIGH);
 }
 
 // start in farthest full starting tile, facing the center of the field
@@ -250,17 +248,19 @@ struct Auto {
 Auto autoFarAuton{"Auto Far", autoFar};
 Auto autoCloseAuton{"Auto Close", autoClose};
 Auto autoSkillsAuton{"Auto Skills", autoSkills};
-Auto autoDisabled{"Disabled", auto_disabled};
+Auto autoDisabledAuton{"Disabled", autoDisabled};
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
-                           autoDisabled};
-int currentAuto = 0;
+                           autoDisabledAuton};
+int currentAuto = 2;
+
 void initialize() {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
   pros::lcd::initialize();
   chassis.calibrate();
 }
+
 
 void pgUp() {
   currentAuto = currentAuto + 1;
@@ -296,6 +296,8 @@ void competition_initialize() {
 }
 
 void autonomous() { ((void (*)())autos[currentAuto].function)(); }
+
+
 
 void opcontrol() {
   bool flipDrive = false;
