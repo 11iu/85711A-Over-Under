@@ -20,10 +20,8 @@ pros::Motor rB(RIGHT_BACK_PORT, pros::E_MOTOR_GEARSET_06, false);
 
 pros::MotorGroup leftMotors({lF, lM,
                              lB}); // Creates a motor group with forwards ports
-                                   // 1 & 3 and reversed port 2
 pros::MotorGroup rightMotors({rF, rM,
                               rB}); // Creates a motor group with forwards port
-                                    // 4 and reversed ports 4 & 6
 
 // Inertial Sensor
 pros::Imu imu(IMU_PORT);
@@ -35,7 +33,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    2 // chase power is 2. If we had traction wheels, it would have been 8
+    8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
