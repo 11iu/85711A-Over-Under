@@ -167,7 +167,7 @@ void autoSkills()
   chassis.tank(0, 0);
 
   // go to the other side and push into right side of goal
-  chassis.moveToPose(fieldX - 16, tile + 5, 0, 4000, {.minSpeed = 80}, false);
+  chassis.moveToPose(fieldX - tile  / 2.0, tile + 5, 0, 4000, {.minSpeed = 80}, false);
   chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 4000, {.minSpeed = 80}, false);
   chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 4000, {.minSpeed = 80}, false);
   chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000, {.minSpeed = 100}, false);
