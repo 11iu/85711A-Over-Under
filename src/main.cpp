@@ -91,12 +91,10 @@ pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 void autoCloseOpposite()
 {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
-  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
-                     {.minSpeed = 100}, false); // push into the goal
+  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 100}, false); // push into the goal
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000,
-                     {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
 }
 
@@ -105,12 +103,10 @@ void autoCloseOpposite()
 void autoClose()
 {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
-                     {.minSpeed = 100}, false);
+  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle, 2000,
-                     {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
 }
 
@@ -119,35 +115,25 @@ void autoClose()
 void autoFar()
 {
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
-  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
-                     {.minSpeed = 80}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {},
-                     false); // turn to face goal
+  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000, {.minSpeed = 80}, false); // Moves to in front of goal
+  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {}, false); // turn to face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000,
-                     {.minSpeed = 80}, false); // Shoves preload in
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000, {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
-                     {.forwards = false}, false); // back out
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
-                     false); // turn towards center
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000, {.forwards = false}, false); // back out
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {}, false); // turn towards center
 
   // grab upper triball and score
   intake = -127;
-  chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4,
-                     180, 2000, {}, false); // move into the triball
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000,
-                     {.forwards = false}, false); // face goal
+  chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4, 180, 2000, {}, false); // move into the triball
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000, {.forwards = false}, false); // face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000,
-                     {.minSpeed = 100}, false); // score
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000, {.minSpeed = 100}, false); // score
   intake = 0;
 
   // reset for teleop
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
-                     {.forwards = false}, false); // back out
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
-                     false); // turn towards center
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000, {.forwards = false}, false); // back out
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {}, false); // turn towards center
 }
 
 // starts in far side facing the goal, completes awp
@@ -179,39 +165,29 @@ void autoSkills()
   // go to the other side and push into right side of goal
   chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80}, false);
   chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 4000, {.minSpeed = 80}, false);
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 4000,
-                     {.minSpeed = 80}, false);
-  chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000,
-                     {.minSpeed = 100}, false);
-  chassis.moveToPose(fieldX - tile, fieldY - tile, -160, 4000,
-                     {.forwards = false}, false);
+  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 4000, {.minSpeed = 80}, false);
+  chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000, {.minSpeed = 100}, false);
+  chassis.moveToPose(fieldX - tile, fieldY - tile, -160, 4000, {.forwards = false}, false);
 
   // ramming into the center from the right, straight on, then left
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000,
-                     {.minSpeed = 100}, false); // line up to right of goal
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
-                     false); // turn towards goal
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000, {.minSpeed = 100}, false); // line up to right of goal
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {}, false); // turn towards goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
-                     {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000, {.minSpeed = 100}, false);
   pros::delay(200);
+
   wings.set_value(LOW);
-  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000,
-                     {.forwards = false},
-                     false); // line up in front of the goal
+  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000, {.forwards = false}, false); // line up in front of the goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
-                     {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000, {.minSpeed = 100}, false);
   pros::delay(200);
+
   wings.set_value(LOW);
-  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false},
-                     false); // line up to the left of goal
+  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false}, false); // line up to the left of goal
   wings.set_value(HIGH);
   pros::delay(200);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
-                     {.minSpeed = 100}, false);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000,
-                     {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000, {.minSpeed = 100}, false);
 }
 
 double logDrive(double v, double pow)
