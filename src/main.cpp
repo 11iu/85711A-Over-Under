@@ -207,6 +207,8 @@ void autoSkills() {
   pros::delay(200);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
                      {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000,
+                     {.minSpeed = 100}, false);
 }
 
 double logDrive(double v, double pow) {
