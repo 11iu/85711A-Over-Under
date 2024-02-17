@@ -168,7 +168,7 @@ void autoSkills() {
 
   chassis.tank(-30, -30);
   cata = CATAMAXVOLTAGE;
-  pros::delay(5000); // for testing TODO: Change to 25000
+  pros::delay(25000); // correct timing
   cata = 0;
   chassis.tank(0, 0);
 
