@@ -168,7 +168,7 @@ void autoSkills() {
 
   chassis.tank(-30, -30);
   cata = CATAMAXVOLTAGE;
-  pros::delay(25000); // correct timing
+  pros::delay(30000); // correct timing
   cata = 0;
   chassis.tank(0, 0);
 
@@ -383,8 +383,11 @@ void opcontrol() {
 
     if (cataFire) {
       cata = CATAMAXVOLTAGE; // continuous fire
-      if (!moving && autos[currentAuto].name == autoSkillsAuton.name) { // drive backwards if we are in skills, so we can be more accurate.
-        chassis.tank(-30, -30);
+      if (!moving &&
+          autos[currentAuto].name ==
+              autoSkillsAuton.name) { // drive backwards if we are in skills, so
+                                      // we can be more accurate.
+        chassis.tank(0, -30);
       }
     } else {
       cata.brake(); // coast up
