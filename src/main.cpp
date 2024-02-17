@@ -328,8 +328,30 @@ void opcontrol() {
   int delayWings = 0;
   int delayCata = 0;
   int delayFlip = 0;
+  bool moving = true;
 
   while (true) {
+    int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+    bool moving = abs(forward) > 10 || abs(turn) > 10;
+
+    int leftY = logDrive(forward, 2);
+    int rightX = logDrive(turn, 3);
+
+    // turbo mode is right bottom trigger
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      leftY = leftY * TURBO_FORWARD;
+      rightX = rightX * TURBO_TURN;
+    } else {
+      leftY = leftY * REGULAR_FORWARD;
+      rightX = rightX * REGULAR_TURN;
+    }
+
+    if (flipDrive)
+      leftY *= -1;
+    // move the chassis with arcade drive
+    chassis.arcade(leftY, rightX);
 
     // wings
     if (delayWings) {
@@ -361,6 +383,9 @@ void opcontrol() {
 
     if (cataFire) {
       cata = CATAMAXVOLTAGE; // continuous fire
+      if (!moving && autos[currentAuto].name == autoSkillsAuton.name) { // drive backwards if we are in skills, so we can be more accurate.
+        chassis.tank(-30, -30);
+      }
     } else {
       cata.brake(); // coast up
     }
@@ -384,7 +409,6 @@ void opcontrol() {
       delayFlip--;
     }
 
-    arcade_drive(flipDrive);
     pros::delay(20);
   }
 }
