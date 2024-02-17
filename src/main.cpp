@@ -143,8 +143,12 @@ void autoFar() {
   // reset for teleop
   chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
                      {.forwards = false}, false); // back out
+
   chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
                      false); // turn towards center
+
+  chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 4, 180, 4000,
+                     {.forwards = false}, false);
 }
 
 // starts in far side facing the goal, completes awp
@@ -159,11 +163,10 @@ void autoSkills() {
                      {.minSpeed = 100}, false);
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeEnd.x - 6, closeEnd.y, closeOppEnd.angle, 2000,
+  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000,
                      {.forwards = false, .maxSpeed = 80},
                      false); // small change
   intake = 0;
-
   chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
   cata = CATAMAXVOLTAGE;
   pros::delay(30000); // correct timing
