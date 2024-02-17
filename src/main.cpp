@@ -158,12 +158,7 @@ void autoFarAWP() {}
 void autoSkills()
 {
 
-  chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
-  intake = 127;
-  pros::delay(500);
-  chassis.moveToPose(closeEnd.x - 6, closeEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
-  intake = 0;
+  autoClose();
 
   chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
   cata = CATAMAXVOLTAGE;
