@@ -144,11 +144,13 @@ void autoFar() {
   chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
                      {.forwards = false}, false); // back out
 
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 3000, {},
                      false); // turn towards center
 
-  chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 4, 180, 4000,
+  chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 2, 180, 750,
                      {.forwards = false}, false);
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 500, {},
+                     false); // turn towards center
 }
 
 // starts in far side facing the goal, completes awp
