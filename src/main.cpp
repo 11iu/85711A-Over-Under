@@ -78,16 +78,22 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController,
 pros::ADIDigitalOut wings(WINGS, LOW);
 pros::ADIDigitalOut vertWings(VERT_WINGS, LOW);
 
-pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
-                   pros ::E_MOTOR_ENCODER_DEGREES);
+pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false, pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-// ASSET(autoSkillsPath_txt); // for path
+pros::ADIUltrasonic rearSonic(REAR_ULTRASONIC_PING, REAR_ULTRASONIC_ECHO);
+pros::ADIUltrasonic rightSonic(RIGHT_ULTRASONIC_PING, RIGHT_ULTRASONIC_ECHO);
 
-// poses only defined for red side, as blue is the same but flipped!
+std::pair<float, float> localizeRobot()
+{
+  float conversionFactor = 253.9999;                              // converts from 0.0001m to inches
+  float y = rearSonic.get_value() * conversionFactor;             // returns 0 if not found
+  float x = fieldX - (rightSonic.get_value() * conversionFactor); // returns 0 if not found
 
-// starts at opposite of close side facing towards goal, pushes triball into the
-// goal, and sets up for match load
+  return std::make_pair(x, y);
+}
+
+// starts at opposite of close side facing towards goal, pushes triball into the goal, and sets up for match load
 void autoCloseOpposite()
 {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
@@ -116,17 +122,17 @@ void autoFar()
 {
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
   chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000, {.minSpeed = 80}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {}, false); // turn to face goal
+  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {}, false);                            // turn to face goal
   intake = 127;
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000, {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
   chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000, {.forwards = false}, false); // back out
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {}, false); // turn towards center
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {}, false);                // turn towards center
 
   // grab upper triball and score
   intake = -127;
   chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4, 180, 2000, {}, false); // move into the triball
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000, {.forwards = false}, false); // face goal
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000, {.forwards = false}, false);          // face goal
   intake = 127;
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000, {.minSpeed = 100}, false); // score
   intake = 0;
@@ -156,9 +162,7 @@ void autoSkills()
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000,
-                     {.forwards = false, .maxSpeed = 80},
-                     false); // small change
+  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
   intake = 0;
   chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
   cata = CATAMAXVOLTAGE;
@@ -166,10 +170,18 @@ void autoSkills()
   cata = 0;
   chassis.tank(0, 0);
 
-  // recalibrate our position by ramming backwards into the angled corner bar
-  chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 4000, {.minSpeed = 80}, false);
-  chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000, {.forwards = false, .minSpeed = 80}, false);
-  chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
+  // localizing position
+  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, 0, 2000, {.forwards = false, .maxSpeed = 80}, false); // make sure robot parallel with walls for calibration
+  std::pair<int, int> pos = localizeRobot();
+  if (pos.first != 0 && pos.second != 0)
+  {
+    chassis.setPose(pos.first, pos.second, 0);
+  } else {
+    // recalibrate our position by ramming backwards into the angled corner bar
+    chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 4000, {.minSpeed = 80}, false);
+    chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000, {.forwards = false, .minSpeed = 80}, false);
+    chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
+  }
 
   // go to the other side and push into right side of goal
   chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80}, false);
@@ -180,7 +192,7 @@ void autoSkills()
 
   // ramming into the center from the right, straight on, then left
   chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000, {.minSpeed = 100}, false); // line up to right of goal
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {}, false); // turn towards goal
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {}, false);                 // turn towards goal
   wings.set_value(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000, {.minSpeed = 100}, false);
   pros::delay(200);

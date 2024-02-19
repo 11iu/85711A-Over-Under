@@ -12,6 +12,12 @@
 #define WINGS 'a'
 #define VERT_WINGS 'd'
 
+// TODO - change these
+#define REAR_ULTRASONIC_PING 0
+#define REAR_ULTRASONIC_ECHO 0
+#define RIGHT_ULTRASONIC_PING 0
+#define RIGHT_ULTRASONIC_ECHO 0
+
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15
 
