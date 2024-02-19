@@ -87,8 +87,17 @@ pros::ADIUltrasonic rightSonic(RIGHT_ULTRASONIC_PING, RIGHT_ULTRASONIC_ECHO);
 std::pair<float, float> localizeRobot()
 {
   float conversionFactor = 253.9999;                              // converts from 0.0001m to inches
-  float y = rearSonic.get_value() * conversionFactor;             // returns 0 if not found
-  float x = fieldX - (rightSonic.get_value() * conversionFactor); // returns 0 if not found
+  int samples = 100;
+  float x = 0.0;
+  float y = 0.0;
+
+  for (int i = 0; i < samples; i++) {
+    y += rearSonic.get_value() * conversionFactor;             // returns 0 if not found
+    x += fieldX - (rightSonic.get_value() * conversionFactor); // returns 0 if not found
+  }
+
+  x /= samples;
+  y /= samples;
 
   return std::make_pair(x, y);
 }
@@ -171,9 +180,9 @@ void autoSkills()
   chassis.tank(0, 0);
 
   // localizing position
-  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, 0, 2000, {.forwards = false, .maxSpeed = 80}, false); // make sure robot parallel with walls for calibration
+  chassis.moveToPose(fieldX - tile, tile, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
   std::pair<int, int> pos = localizeRobot();
-  if (pos.first != 0 && pos.second != 0)
+  if (pos.first == 0 || pos.second == 0 || abs(chassis.getPose().theta) > 1)
   {
     chassis.setPose(pos.first, pos.second, 0);
   } else {
