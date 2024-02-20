@@ -85,7 +85,8 @@ pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
 pros::ADIUltrasonic rearSonic(REAR_ULTRASONIC_PING, REAR_ULTRASONIC_ECHO);
 pros::Distance distanceBack(DISTANCE_BACK);
-pros::ADIUltrasonic intakeSensor(INTAKE_ULTRASONIC_PING, INTAKE_ULTRASONIC_ECHO);
+pros::ADIUltrasonic intakeSensor(INTAKE_ULTRASONIC_PING,
+                                 INTAKE_ULTRASONIC_ECHO);
 
 std::pair<float, float> localizeRobot() {
   float conversionFactor = 253.9999; // converts from 0.0001m to inches
@@ -96,7 +97,7 @@ std::pair<float, float> localizeRobot() {
   return std::make_pair(x, y);
 }
 
-bool hasTriball() { return }
+bool hasTriball() { return false; }
 
 // starts at opposite of close side facing towards goal, pushes triball into
 // the goal, and sets up for match load
