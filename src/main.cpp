@@ -3,6 +3,7 @@
 #include "display/lv_misc/lv_color.h"
 #include "field.hpp"
 #include "pros/adi.hpp"
+#include "pros/distance.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/misc.hpp"
@@ -33,7 +34,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    8                           // chase power is 2. If we had traction wheels, it would have been 8
+    8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -78,63 +79,77 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController,
 pros::ADIDigitalOut wings(WINGS, LOW);
 pros::ADIDigitalOut vertWings(VERT_WINGS, LOW);
 
-pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false, pros ::E_MOTOR_ENCODER_DEGREES);
+pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
+                   pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
 pros::ADIUltrasonic rearSonic(REAR_ULTRASONIC_PING, REAR_ULTRASONIC_ECHO);
-pros::ADIUltrasonic rightSonic(RIGHT_ULTRASONIC_PING, RIGHT_ULTRASONIC_ECHO);
+pros::Distance distanceBack(DISTANCE_BACK);
+pros::ADIUltrasonic intakeSensor(INTAKE_ULTRASONIC_PING, INTAKE_ULTRASONIC_ECHO);
 
-std::pair<float, float> localizeRobot()
-{
-  float conversionFactor = 253.9999;                              // converts from 0.0001m to inches
-  float y = rearSonic.get_value() * conversionFactor;             // returns 0 if not found
-  float x = fieldX - (rightSonic.get_value() * conversionFactor); // returns 0 if not found
+std::pair<float, float> localizeRobot() {
+  float conversionFactor = 253.9999; // converts from 0.0001m to inches
+  float y = rearSonic.get_value() * conversionFactor; // returns 0 if not found
+  float x = fieldX -
+            (distanceBack.get() * conversionFactor); // returns 0 if not found
 
   return std::make_pair(x, y);
 }
 
-// starts at opposite of close side facing towards goal, pushes triball into the goal, and sets up for match load
-void autoCloseOpposite()
-{
+bool hasTriball() { return }
+
+// starts at opposite of close side facing towards goal, pushes triball into
+// the goal, and sets up for match load
+void autoCloseOpposite() {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
-  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000, {.minSpeed = 100}, false); // push into the goal
+  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
+                     {.minSpeed = 100}, false); // push into the goal
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000,
+                     {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
 }
 
 // starts at close side facing towards goal, pushes triball into the goal, and
 // sets up for match load
-void autoClose()
-{
+void autoClose() {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
+                     {.minSpeed = 100}, false);
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false);
+  chassis.moveToPose(closeEnd.x, closeEnd.y, closeOppEnd.angle, 2000,
+                     {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
 }
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
-void autoFar()
-{
+void autoFar() {
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
-  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000, {.minSpeed = 80}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {}, false);                            // turn to face goal
+  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
+                     {.minSpeed = 80}, false); // Moves to in front of goal
+  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {},
+                     false); // turn to face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000, {.minSpeed = 80}, false); // Shoves preload in
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000,
+                     {.minSpeed = 80}, false); // Shoves preload in
   intake = 0;
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000, {.forwards = false}, false); // back out
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {}, false);                // turn towards center
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
+                     {.forwards = false}, false); // back out
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
+                     false); // turn towards center
 
   // grab upper triball and score
   intake = -127;
-  chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4, 180, 2000, {}, false); // move into the triball
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000, {.forwards = false}, false);          // face goal
+  chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4,
+                     180, 2000, {}, false); // move into the triball
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000,
+                     {.forwards = false}, false); // face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000, {.minSpeed = 100}, false); // score
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000,
+                     {.minSpeed = 100}, false); // score
   intake = 0;
 
   // reset for teleop
@@ -155,14 +170,16 @@ void autoFar()
 void autoFarAWP() {}
 
 // start the same as autoClose
-void autoSkills()
-{
+void autoSkills() {
 
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
+                     {.minSpeed = 100}, false);
   intake = 127;
   pros::delay(500);
-  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
+  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000,
+                     {.forwards = false, .maxSpeed = 80},
+                     false); // small change
   intake = 0;
   chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
   cata = CATAMAXVOLTAGE;
@@ -171,61 +188,73 @@ void autoSkills()
   chassis.tank(0, 0);
 
   // localizing position
-  chassis.moveToPose(closeEnd.x - 4, closeEnd.y, 0, 2000, {.forwards = false, .maxSpeed = 80}, false); // make sure robot parallel with walls for calibration
+  chassis.moveToPose(
+      closeEnd.x - 4, closeEnd.y, 0, 2000, {.forwards = false, .maxSpeed = 80},
+      false); // make sure robot parallel with walls for calibration
   std::pair<int, int> pos = localizeRobot();
-  if (pos.first != 0 && pos.second != 0)
-  {
+  if (pos.first != 0 && pos.second != 0) {
     chassis.setPose(pos.first, pos.second, 0);
   } else {
     // recalibrate our position by ramming backwards into the angled corner bar
-    chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 4000, {.minSpeed = 80}, false);
-    chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000, {.forwards = false, .minSpeed = 80}, false);
+    chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 4000,
+                       {.minSpeed = 80}, false);
+    chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
+                       {.forwards = false, .minSpeed = 80}, false);
     chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
   }
 
   // go to the other side and push into right side of goal
-  chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80}, false);
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 4000, {.minSpeed = 80}, false);
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 4000, {.minSpeed = 80}, false);
-  chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000, {.minSpeed = 100}, false);
-  chassis.moveToPose(fieldX - tile, fieldY - tile, -160, 4000, {.forwards = false}, false);
+  chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80},
+                     false);
+  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 4000,
+                     {.minSpeed = 80}, false);
+  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 4000,
+                     {.minSpeed = 80}, false);
+  chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000,
+                     {.minSpeed = 100}, false);
+  chassis.moveToPose(fieldX - tile, fieldY - tile, -160, 4000,
+                     {.forwards = false}, false);
 
   // ramming into the center from the right, straight on, then left
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000, {.minSpeed = 100}, false); // line up to right of goal
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {}, false);                 // turn towards goal
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000,
+                     {.minSpeed = 100}, false); // line up to right of goal
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
+                     false); // turn towards goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
+                     {.minSpeed = 100}, false);
   pros::delay(200);
 
   wings.set_value(LOW);
-  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000, {.forwards = false}, false); // line up in front of the goal
+  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000,
+                     {.forwards = false},
+                     false); // line up in front of the goal
   wings.set_value(HIGH);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
+                     {.minSpeed = 100}, false);
   pros::delay(200);
 
   wings.set_value(LOW);
-  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false}, false); // line up to the left of goal
+  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false},
+                     false); // line up to the left of goal
   wings.set_value(HIGH);
   pros::delay(200);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000, {.minSpeed = 100}, false);
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
+                     {.minSpeed = 100}, false);
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000,
+                     {.minSpeed = 100}, false);
 }
 
-double logDrive(double v, double pow)
-{
-  if (v > 0)
-  {
+double logDrive(double v, double pow) {
+  if (v > 0) {
     return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
-  else
-  {
+  } else {
     return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
   }
 }
 
 // do not use curvature drive it is buggy af
-void arcade_drive(bool flipDrive = false)
-{
+void arcade_drive(bool flipDrive = false) {
   // if () // TODO: add deadzone
 
   // int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) /
@@ -238,13 +267,10 @@ void arcade_drive(bool flipDrive = false)
       logDrive(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
 
   // turbo mode is right bottom trigger
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-  {
+  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
     leftY = leftY * TURBO_FORWARD;
     rightX = rightX * TURBO_TURN;
-  }
-  else
-  {
+  } else {
     leftY = leftY * REGULAR_FORWARD;
     rightX = rightX * REGULAR_TURN;
   }
@@ -256,27 +282,21 @@ void arcade_drive(bool flipDrive = false)
 }
 
 // TODO - need to test this
-void set_braking(bool brakeCoast = true)
-{
-  if (brakeCoast)
-  {
+void set_braking(bool brakeCoast = true) {
+  if (brakeCoast) {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  }
-  else
-  {
+  } else {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
   }
 }
 
-void autoDisabled()
-{
+void autoDisabled() {
   // do nothing
 }
 
-struct Auto
-{
+struct Auto {
   std::string name;
   void (*function)(void);
 };
@@ -290,31 +310,27 @@ std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
                            autoDisabledAuton};
 int currentAuto = 2;
 
-void initialize()
-{
+void initialize() {
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
   pros::lcd::initialize();
   chassis.calibrate();
 }
 
-void pgUp()
-{
+void pgUp() {
   currentAuto = currentAuto + 1;
   if (currentAuto > autos.size() - 1)
     currentAuto = 0;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
-void pgDown()
-{
+void pgDown() {
   currentAuto = currentAuto - 1;
   if (currentAuto < 0)
     currentAuto = autos.size() - 1;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
 
-void competition_initialize()
-{
+void competition_initialize() {
   currentAuto = 0;
   pros::ADIDigitalIn limit_left('b');
   pros::ADIDigitalIn limit_right('c');
@@ -322,15 +338,11 @@ void competition_initialize()
   pros::lcd::register_btn2_cb(pgUp);
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 
-  while (true)
-  {
-    if (limit_left.get_value())
-    {
+  while (true) {
+    if (limit_left.get_value()) {
       pgUp();
       pros::delay(500);
-    }
-    else if (limit_right.get_value())
-    {
+    } else if (limit_right.get_value()) {
       pgDown();
       pros::delay(500);
     }
@@ -340,8 +352,7 @@ void competition_initialize()
 
 void autonomous() { ((void (*)())autos[currentAuto].function)(); }
 
-void opcontrol()
-{
+void opcontrol() {
   bool flipDrive = false;
   bool wingState = LOW;     // wings wingState
   bool vertWingState = LOW; // vertical wings wingState
@@ -353,8 +364,7 @@ void opcontrol()
   int delayFlip = 0;
   bool moving = true;
 
-  while (true)
-  {
+  while (true) {
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
@@ -364,13 +374,10 @@ void opcontrol()
     int rightX = logDrive(turn, 3);
 
     // turbo mode is right bottom trigger
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       leftY = leftY * TURBO_FORWARD;
       rightX = rightX * TURBO_TURN;
-    }
-    else
-    {
+    } else {
       leftY = leftY * REGULAR_FORWARD;
       rightX = rightX * REGULAR_TURN;
     }
@@ -381,84 +388,61 @@ void opcontrol()
     chassis.arcade(leftY, rightX);
 
     // wings
-    if (delayWings)
-    {
+    if (delayWings) {
       delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
       wingState = !wingState;
       wings.set_value(wingState);
       delayWings = 40;
     }
 
     // wing
-    if (delayVertWing)
-    {
+    if (delayVertWing) {
       delayVertWing--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       vertWingState = !vertWingState;
       vertWings.set_value(vertWingState);
       delayVertWing = 40;
     }
 
     // cata toggle
-    if (!delayCata)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-      {
+    if (!delayCata) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         cataFire = !cataFire;
         delayCata = 40;
       }
-    }
-    else
-    {
+    } else {
       delayCata--;
     }
 
-    if (cataFire)
-    {
+    if (cataFire) {
       cata = CATAMAXVOLTAGE; // continuous fire
       if (!moving &&
           autos[currentAuto].name ==
-              autoSkillsAuton.name)
-      { // drive backwards if we are in skills, so
+              autoSkillsAuton.name) { // drive backwards if we are in skills, so
         // we can be more accurate.
         chassis.tank(0, -30);
       }
-    }
-    else
-    {
+    } else {
       cata.brake(); // coast up
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intake = -127;
-    }
-    else
-    {
+    } else {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
+    if (!delayFlip) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    }
-    else
-    {
+    } else {
       delayFlip--;
     }
 
