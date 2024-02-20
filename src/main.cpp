@@ -90,13 +90,22 @@ pros::ADIUltrasonic intakeSensor(INTAKE_ULTRASONIC_PING,
 
 std::pair<float, float> localizeRobot() {
   float conversionFactor = 253.9999; // converts from 0.0001m to inches
-  float y = rearSonic.get_value() * conversionFactor; // returns 0 if not found
-  float x = fieldX -
-            (distanceBack.get() * conversionFactor); // returns 0 if not found
+  int samples = 100;
+  float x = 0.0;
+  float y = 0.0;
+
+  for (int i = 0; i < samples; i++) {
+    y += rearSonic.get_value() * conversionFactor; // returns 0 if not found
+    x += fieldX -
+         (distanceBack.get() * conversionFactor); // returns 0 if not found
+  }
+
+  x /= samples;
+  y /= samples;
 
   return std::make_pair(x, y);
 }
-
+// TODO: IMPLEMENT!!!!!!!!!!!
 bool hasTriball() { return false; }
 
 // starts at opposite of close side facing towards goal, pushes triball into
@@ -190,10 +199,10 @@ void autoSkills() {
 
   // localizing position
   chassis.moveToPose(
-      closeEnd.x - 4, closeEnd.y, 0, 2000, {.forwards = false, .maxSpeed = 80},
+      fieldX - tile, tile, 0, 2000, {},
       false); // make sure robot parallel with walls for calibration
   std::pair<int, int> pos = localizeRobot();
-  if (pos.first != 0 && pos.second != 0) {
+  if (pos.first == 0 || pos.second == 0 || abs(chassis.getPose().theta) > 1) {
     chassis.setPose(pos.first, pos.second, 0);
   } else {
     // recalibrate our position by ramming backwards into the angled corner bar
