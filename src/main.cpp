@@ -9,6 +9,10 @@
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
 
+///////////////////////////////////////////////////
+// Chassis
+///////////////////////////////////////////////////
+
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 //  chassis motors
@@ -34,7 +38,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    8                           // chase power is 2. If we had traction wheels, it would have been 8
+    8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -88,8 +92,11 @@ pros::Distance distanceBack(DISTANCE_BACK);
 pros::ADIUltrasonic intakeSensor(INTAKE_ULTRASONIC_PING,
                                  INTAKE_ULTRASONIC_ECHO);
 
-std::pair<float, float> localizeRobot()
-{
+///////////////////////////////////////////////////
+// Robot state functions
+///////////////////////////////////////////////////
+
+std::pair<float, float> localizeRobot() {
   float conversionFactor = 253.9999; // converts from 0.0001m to inches
   int samples = 20;
   int detected_samples = 0;
@@ -97,18 +104,20 @@ std::pair<float, float> localizeRobot()
   float y = 0.0;
 
   for (int i = 0; i < samples; i++) {
-    float x_new = fieldX - (distanceBack.get() * conversionFactor); // returns 0 if not found
-    float y_new = rearSonic.get_value() * conversionFactor; // returns 0 if not found
+    float x_new = fieldX - (distanceBack.get() *
+                            conversionFactor); // returns 0 if not found
+    float y_new =
+        rearSonic.get_value() * conversionFactor; // returns 0 if not found
 
     if (x_new != 0 && y_new != 0) {
-        x += x_new;
-        y += y_new;
-        detected_samples++;
+      x += x_new;
+      y += y_new;
+      detected_samples++;
     }
 
     pros::delay(5);
   }
-    
+
   // failed to detect
   if (x < 1 || y < 1) {
     return std::make_pair(0, 0);
@@ -121,34 +130,47 @@ std::pair<float, float> localizeRobot()
   return std::make_pair(x, y);
 }
 
-bool hasTriball()
-{
+bool hasTriball() {
   int threshold = 1500;
-  if (intakeSensor.get_value() < threshold)
-    return true;
-
-  return false;
+  return intakeSensor.get_value() < threshold;
 }
 
-void fireCata()
-{
+void fireCata() {
   u_int32_t start = pros::millis();
   u_int32_t timeout = 2000;
 
-  while (hasTriball() && (pros::millis() - start < timeout))
-  {
+  while (hasTriball() && (pros::millis() - start < timeout)) {
     intake = 127;
-    pros::delay(20);
+    pros::delay(200);
   }
   intake = 0;
 
   cata = CATAMAXVOLTAGE;
 }
 
+// wings and vert wings
+bool wingState = false;
+bool vertWingState = false;
+
+void toggleWings() {
+  wingState = !wingState;
+  wings.set_value(wingState);
+}
+void toggleVertWings() {
+  vertWingState = !vertWingState;
+  vertWings.set_value(vertWingState);
+}
+
+void setWings(bool state) { wings.set_value(state); }
+void setVertWings(bool state) { vertWings.set_value(state); }
+
+///////////////////////////////////////////////////
+// Autos Functions
+///////////////////////////////////////////////////
+
 // starts at opposite of close side facing towards goal, pushes triball into
 // the goal, and sets up for match load
-void autoCloseOpposite()
-{
+void autoCloseOpposite() {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
   chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
                      {.minSpeed = 100}, false); // push into the goal
@@ -161,8 +183,7 @@ void autoCloseOpposite()
 
 // starts at close side facing towards goal, pushes triball into the goal, and
 // sets up for match load
-void autoClose()
-{
+void autoClose() {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
                      {.minSpeed = 100}, false);
@@ -175,8 +196,7 @@ void autoClose()
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
-void autoFar()
-{
+void autoFar() {
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
   chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
                      {.minSpeed = 80}, false); // Moves to in front of goal
@@ -220,9 +240,7 @@ void autoFar()
 void autoFarAWP() {}
 
 // start the same as autoClose
-void autoSkills()
-{
-
+void autoSkills() {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
                      {.minSpeed = 100}, false);
@@ -239,14 +257,14 @@ void autoSkills()
   chassis.tank(0, 0);
 
   // localizing position
-  chassis.moveToPose(fieldX - tile, tile, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
+  chassis.moveToPose(
+      fieldX - tile, tile, 0, 2000, {},
+      false); // make sure robot parallel with walls for calibration
   std::pair<float, float> pos = localizeRobot();
-  if (pos.first == 0.0 || pos.second == 0.0 || abs(chassis.getPose().theta) > 1)
-  {
+  if (pos.first == 0.0 || pos.second == 0.0 ||
+      abs(chassis.getPose().theta) > 1) {
     chassis.setPose(pos.first, pos.second, 0);
-  }
-  else
-  {
+  } else {
     // recalibrate our position by ramming backwards into the angled corner bar
     chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 4000,
                        {.minSpeed = 80}, false);
@@ -272,24 +290,24 @@ void autoSkills()
                      {.minSpeed = 100}, false); // line up to right of goal
   chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
                      false); // turn towards goal
-  wings.set_value(HIGH);
+  setWings(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
                      {.minSpeed = 100}, false);
   pros::delay(200);
 
-  wings.set_value(LOW);
+  setWings(LOW);
   chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000,
                      {.forwards = false},
                      false); // line up in front of the goal
-  wings.set_value(HIGH);
+  setWings(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
                      {.minSpeed = 100}, false);
   pros::delay(200);
 
-  wings.set_value(LOW);
+  setWings(LOW);
   chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false},
                      false); // line up to the left of goal
-  wings.set_value(HIGH);
+  setWings(HIGH);
   pros::delay(200);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
                      {.minSpeed = 100}, false);
@@ -297,72 +315,11 @@ void autoSkills()
                      {.minSpeed = 100}, false);
 }
 
-double logDrive(double v, double pow)
-{
-  if (v > 0)
-  {
-    return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
-  else
-  {
-    return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
-}
-
-// do not use curvature drive it is buggy af
-void arcade_drive(bool flipDrive = false)
-{
-  // if () // TODO: add deadzone
-
-  // int leftY = pow(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) /
-  // 127.0, 3) * 127; int rightX =
-  // pow(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127.0, 3) *
-  // 127;
-
-  int leftY = logDrive(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), 2);
-  int rightX =
-      logDrive(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), 2);
-
-  // turbo mode is right bottom trigger
-  if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-  {
-    leftY = leftY * TURBO_FORWARD;
-    rightX = rightX * TURBO_TURN;
-  }
-  else
-  {
-    leftY = leftY * REGULAR_FORWARD;
-    rightX = rightX * REGULAR_TURN;
-  }
-
-  if (flipDrive)
-    leftY *= -1;
-  // move the chassis with arcade drive
-  chassis.arcade(leftY, rightX);
-}
-
-// TODO - need to test this
-void set_braking(bool brakeCoast = true)
-{
-  if (brakeCoast)
-  {
-    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  }
-  else
-  {
-    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-  }
-}
-
-void autoDisabled()
-{
+void autoDisabled() {
   // do nothing
 }
 
-struct Auto
-{
+struct Auto {
   std::string name;
   void (*function)(void);
 };
@@ -376,47 +333,64 @@ std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
                            autoDisabledAuton};
 int currentAuto = 0;
 
-void initialize()
-{
-  pros::delay(500); // Stop the user from doing anything while
-                    // legacy ports configure.
-  pros::lcd::initialize();
-  chassis.calibrate();
+///////////////////////////////////////////////////
+// Utility Functions
+///////////////////////////////////////////////////
+
+double logDrive(double v, double pow) {
+  if (v > 0) {
+    return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+  } else {
+    return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+  }
 }
 
-void pgUp()
-{
+void set_braking(bool brakeCoast = true) {
+  if (brakeCoast) {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+  } else {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+  }
+}
+
+void pgUp() {
   currentAuto = currentAuto + 1;
   if (currentAuto > autos.size() - 1)
     currentAuto = 0;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
-void pgDown()
-{
+void pgDown() {
   currentAuto = currentAuto - 1;
   if (currentAuto < 0)
     currentAuto = autos.size() - 1;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
 
-void competition_initialize()
-{
-  currentAuto = 0;
+///////////////////////////////////////////////////
+// Main Functions
+///////////////////////////////////////////////////
+
+void initialize() {
+  pros::delay(500); // Stop the user from doing anything while
+                    // legacy ports configure.
+  pros::lcd::initialize();
+  chassis.calibrate();
+}
+
+void competition_initialize() {
   pros::ADIDigitalIn limit_left('b');
   pros::ADIDigitalIn limit_right('c');
   pros::lcd::register_btn0_cb(pgDown);
   pros::lcd::register_btn2_cb(pgUp);
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 
-  while (true)
-  {
-    if (limit_left.get_value())
-    {
+  while (true) {
+    if (limit_left.get_value()) {
       pgUp();
       pros::delay(500);
-    }
-    else if (limit_right.get_value())
-    {
+    } else if (limit_right.get_value()) {
       pgDown();
       pros::delay(500);
     }
@@ -426,12 +400,9 @@ void competition_initialize()
 
 void autonomous() { ((void (*)())autos[currentAuto].function)(); }
 
-void opcontrol()
-{
+void opcontrol() {
   bool flipDrive = false;
-  bool wingState = LOW;     // wings wingState
-  bool vertWingState = LOW; // vertical wings wingState
-  bool cataFire = false;    // toggle for catapult
+  bool cataFire = false; // toggle for catapult
 
   int delayVertWing = 0;
   int delayWings = 0;
@@ -439,27 +410,16 @@ void opcontrol()
   int delayFlip = 0;
   bool moving = true;
 
-  while (true)
-  {
+  while (true) {
+    // drive
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
+    // deadzone
     bool moving = abs(forward) > 10 || abs(turn) > 10;
 
     int leftY = logDrive(forward, 2);
     int rightX = logDrive(turn, 3);
-
-    // turbo mode is right bottom trigger
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-    {
-      leftY = leftY * TURBO_FORWARD;
-      rightX = rightX * TURBO_TURN;
-    }
-    else
-    {
-      leftY = leftY * REGULAR_FORWARD;
-      rightX = rightX * REGULAR_TURN;
-    }
 
     if (flipDrive)
       leftY *= -1;
@@ -467,84 +427,60 @@ void opcontrol()
     chassis.arcade(leftY, rightX);
 
     // wings
-    if (delayWings)
-    {
+    if (delayWings) {
       delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
-      wingState = !wingState;
-      wings.set_value(wingState);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+      toggleWings();
       delayWings = 40;
     }
 
     // wing
-    if (delayVertWing)
-    {
+    if (delayVertWing) {
       delayVertWing--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
-    {
-      vertWingState = !vertWingState;
-      vertWings.set_value(vertWingState);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+      toggleVertWings();
       delayVertWing = 40;
     }
 
     // cata toggle
-    if (!delayCata)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-      {
+    if (!delayCata) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         cataFire = !cataFire;
         delayCata = 40;
       }
-    }
-    else
-    {
+    } else {
       delayCata--;
     }
 
-    if (cataFire)
-    {
+    // cata firing
+    if (cataFire) {
       fireCata();
       if (!moving &&
           autos[currentAuto].name ==
-              autoSkillsAuton.name)
-      { // drive backwards if we are in skills, so
+              autoSkillsAuton.name) { // drive backwards if we are in skills, so
         // we can be more accurate.
         chassis.tank(0, -30);
       }
-    }
-    else
-    {
+    } else {
       cata.brake(); // coast up
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intake = -127;
-    }
-    else
-    {
+    } else {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
+    if (!delayFlip) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    }
-    else
-    {
+    } else {
       delayFlip--;
     }
 
