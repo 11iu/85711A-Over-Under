@@ -204,10 +204,15 @@ void opcontrol()
 
     while (true)
     {
+        // testing autos
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
             autons.autoFar();
-        }
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            autons.autoClose();
+        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+            autons.autoSkills();
+        } 
 
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);

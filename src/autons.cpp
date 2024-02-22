@@ -24,7 +24,7 @@ std::pair<float, float> Autons::localizeRobot()
 
     for (int i = 0; i < samples; i++)
     {
-        float x_new = fieldX - (rightSonic.get_value() * conversionFactor) + x_offset;       // returns 0 if not found
+        float x_new = fieldX - (rightSonic.get_value() * conversionFactor) - x_offset;       // returns 0 if not found
         float y_new = distanceBack.get() * conversionFactor + y_offset;           // returns 0 if not found
 
         if (x_new != 0 && y_new != 0)
@@ -156,10 +156,11 @@ void Autons::autoFar()
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 3000, {},
                     false); // turn towards center
 
+    // give a shove back 
     chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 2, 180, 750,
                     {.forwards = false}, false);
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 500, {},
-                    false); // turn towards center
+                    false); 
 }
 
 // starts in far side facing the goal, completes awp
@@ -170,19 +171,17 @@ void Autons::autoFarAWP() {}
 void Autons::autoSkills()
 {
     chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-    chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
-                    {.minSpeed = 100}, false);
+    chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
     intake = 127;
     pros::delay(500);
-    chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeOppEnd.angle, 2000,
-                    {.forwards = false, .maxSpeed = 80},
-                    false); // small change
+    chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
     intake = 0;
-    chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
-    fireCata();
-    pros::delay(30000);
-    cata = 0;
-    chassis.tank(0, 0);
+    
+    // chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
+    // fireCata();
+    // pros::delay(30000);
+    // cata = 0;
+    // chassis.tank(0, 0);
 
     // localizing position
     chassis.moveToPose(fieldX - tile, tile, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
@@ -190,8 +189,9 @@ void Autons::autoSkills()
     std::pair<float, float> pos = localizeRobot();
     if (pos.first != 0.0 && pos.second != 0.0)
     {
-        chassis.setPose(pos.first, pos.second, 0);
+        chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
     }
+    
     else
     {
         // recalibrate our position by ramming backwards into the angled corner bar
@@ -201,6 +201,7 @@ void Autons::autoSkills()
                         {.forwards = false, .minSpeed = 80}, false);
         chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
     }
+    
 
     // go to the other side and push into right side of goal
     chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80},
