@@ -13,17 +13,17 @@
 #define VERT_WINGS 'd'
 
 // TODO - change these
-#define REAR_ULTRASONIC_PING 0
-#define REAR_ULTRASONIC_ECHO 0
-#define INTAKE_ULTRASONIC_PING 'e'
-#define INTAKE_ULTRASONIC_ECHO 'f'
-#define DISTANCE_BACK 0
+#define RIGHT_ULTRASONIC_IN 'f' 
+#define RIGHT_ULTRASONIC_OUT 'e' 
+#define INTAKE_ULTRASONIC_IN 'h'
+#define INTAKE_ULTRASONIC_OUT 'g'
+#define DISTANCE_BACK 3
 
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15
 
 // auto drive
-#define DRIVE_SPEED                                                            \
+#define DRIVE_SPEED \
   100 // This is 110/127 (around 87% of max speed).  We don't suggest making
       // this 127. If this is 127 and the robot tries to heading correct, it's
       // only correcting by making one side slower.  When this is 87%, it's
