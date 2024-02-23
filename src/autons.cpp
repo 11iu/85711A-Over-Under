@@ -61,12 +61,14 @@ void Autons::fireCata()
     u_int32_t start = pros::millis();
     u_int32_t timeout = 2000;
 
+    /*
     while (hasTriball() && (pros::millis() - start < timeout))
     {
         intake = 127;
         pros::delay(200);
     }
     intake = 0;
+    */
 
     cata = CATAMAXVOLTAGE;
 }
