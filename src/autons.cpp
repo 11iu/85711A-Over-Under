@@ -132,7 +132,7 @@ void Autons::autoFar()
     chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {},
                     false); // turn to face goal
     intake = 127;
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2, 0, 4000,
+    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 4000,
                     {.minSpeed = 80}, false); // Shoves preload in
     intake = 0;
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
@@ -147,7 +147,7 @@ void Autons::autoFar()
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000,
                     {.forwards = false}, false); // face goal
     intake = 127;
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 4, 0, 4000,
+    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 4000,
                     {.minSpeed = 100}, false); // score
     intake = 0;
 
@@ -158,7 +158,7 @@ void Autons::autoFar()
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 3000, {},
                     false); // turn towards center
 
-    // give a shove back 
+    // give a backwards shove 
     chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 2, 180, 750,
                     {.forwards = false}, false);
     chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 500, {},
@@ -179,15 +179,16 @@ void Autons::autoSkills()
     chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
     intake = 0;
     
-    // chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
-    // fireCata();
-    // pros::delay(30000);
-    // cata = 0;
-    // chassis.tank(0, 0);
+    chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
+    fireCata();
+    pros::delay(30000);
+    cata = 0;
+    chassis.tank(0, 0);
 
     // localizing position
     chassis.moveToPose(fieldX - tile, tile, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
 
+    
     std::pair<float, float> pos = localizeRobot();
     if (pos.first != 0.0 && pos.second != 0.0)
     {
@@ -203,6 +204,7 @@ void Autons::autoSkills()
                         {.forwards = false, .minSpeed = 80}, false);
         chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
     }
+    
     
 
     // go to the other side and push into right side of goal
