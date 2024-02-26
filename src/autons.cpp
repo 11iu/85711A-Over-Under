@@ -61,14 +61,14 @@ void Autons::fireCata()
     u_int32_t start = pros::millis();
     u_int32_t timeout = 2000;
 
-    /*
+    
     while (hasTriball() && (pros::millis() - start < timeout))
     {
         intake = 127;
         pros::delay(200);
     }
     intake = 0;
-    */
+    
 
     cata = CATAMAXVOLTAGE;
 }
@@ -179,7 +179,7 @@ void Autons::autoSkills()
     chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
     intake = 0;
     
-    chassis.tank(0, -30); // push back to prevent cata momentum pushing forward
+    chassis.tank(-20, -30); // push back to prevent cata momentum pushing forward
     fireCata();
     pros::delay(30000);
     cata = 0;
