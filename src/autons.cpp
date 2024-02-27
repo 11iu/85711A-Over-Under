@@ -179,13 +179,13 @@ void Autons::autoSkills()
     chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
     intake = 0;
     
-    /*
-    chassis.tank(-20, -30); // push back to prevent cata momentum pushing forward
+    
+    chassis.tank(0, -20); // push back to prevent cata momentum pushing forward
     fireCata();
     pros::delay(30000);
     cata = 0;
     chassis.tank(0, 0);
-    */
+    
 
     // localizing position
     chassis.moveToPose(fieldX - tile * 0.8, tile * 0.8, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
@@ -248,7 +248,7 @@ void Autons::autoSkills()
                     false); // line up to the left of goal
     setWings(HIGH);
     pros::delay(200);
-    chassis.moveToPose(redGoalCenter.x - tile, redGoalCenter.y, 20, 2000,
+    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
                     {.minSpeed = 120}, false);
     chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2.0, 0, 2000,
                     {.forwards=false, .minSpeed = 100}, false);
