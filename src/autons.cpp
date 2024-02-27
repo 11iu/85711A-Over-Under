@@ -176,17 +176,19 @@ void Autons::autoSkills()
     chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000, {.minSpeed = 100}, false);
     intake = 127;
     pros::delay(500);
-    chassis.moveToPose(closeEnd.x - 4, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
+    chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 2000, {.forwards = false, .maxSpeed = 80}, false); // small change
     intake = 0;
     
+    /*
     chassis.tank(-20, -30); // push back to prevent cata momentum pushing forward
     fireCata();
     pros::delay(30000);
     cata = 0;
     chassis.tank(0, 0);
+    */
 
     // localizing position
-    chassis.moveToPose(fieldX - tile, tile, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
+    chassis.moveToPose(fieldX - tile * 0.8, tile * 0.8, 0, 2000, {}, false); // make sure robot parallel with walls for calibration
 
     
     std::pair<float, float> pos = localizeRobot();
@@ -204,11 +206,13 @@ void Autons::autoSkills()
                         {.forwards = false, .minSpeed = 80}, false);
         chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
     }
-    
-    
 
     // go to the other side and push into right side of goal
-    chassis.moveToPose(fieldX - tile / 2.0, tile + 5, 0, 4000, {.minSpeed = 80},
+    // chassis.moveToPose(fieldX - tile / 2.0, tile, 90, 4000, {.minSpeed = 80},
+    //                 false);
+    chassis.moveToPose(fieldX - tile / 2.0, tile, 0, 4000, {.minSpeed = 80},
+                    false);
+    chassis.moveToPose(fieldX - tile / 2.0, fieldY / 2.0, 0, 4000, {.minSpeed = 80},
                     false);
     chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 4000,
                     {.minSpeed = 80}, false);
@@ -216,17 +220,18 @@ void Autons::autoSkills()
                     {.minSpeed = 80}, false);
     chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 4000,
                     {.minSpeed = 100}, false);
-    chassis.moveToPose(fieldX - tile, fieldY - tile, -160, 4000,
-                    {.forwards = false}, false);
+
 
     // ramming into the center from the right, straight on, then left
-    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -160, 2000,
-                    {.minSpeed = 100}, false); // line up to right of goal
+    chassis.moveToPose(redGoalRightSide.x + tile, redGoalRightSide.y, -180, 4000,
+                    {.forwards=false, .minSpeed = 100}, false);
+    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -180, 2000,
+                    {.minSpeed = 100}, false); // line up to right of goal 160
     chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
                     false); // turn towards goal
     setWings(HIGH);
     chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
-                    {.minSpeed = 100}, false);
+                    {.minSpeed = 120}, false);
     pros::delay(200);
 
     setWings(LOW);
@@ -234,8 +239,8 @@ void Autons::autoSkills()
                     {.forwards = false},
                     false); // line up in front of the goal
     setWings(HIGH);
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
-                    {.minSpeed = 100}, false);
+    chassis.moveToPose(redGoalCenter.x - tile / 2.0, redGoalCenter.y, 0, 2000,
+                    {.minSpeed = 120}, false);
     pros::delay(200);
 
     setWings(LOW);
@@ -243,10 +248,10 @@ void Autons::autoSkills()
                     false); // line up to the left of goal
     setWings(HIGH);
     pros::delay(200);
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
-                    {.minSpeed = 100}, false);
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile, 20, 2000,
-                    {.minSpeed = 100}, false);
+    chassis.moveToPose(redGoalCenter.x - tile, redGoalCenter.y, 20, 2000,
+                    {.minSpeed = 120}, false);
+    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - tile / 2.0, 0, 2000,
+                    {.forwards=false, .minSpeed = 100}, false);
 }
 
 void Autons::autoDisabled()

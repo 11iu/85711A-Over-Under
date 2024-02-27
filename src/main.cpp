@@ -255,6 +255,7 @@ void opcontrol()
             delayCata--;
         }
 
+
         // cata firing
         if (cataFire) {
             autons.fireCata();

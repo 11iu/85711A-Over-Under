@@ -82,7 +82,7 @@ Translation2d blueCenterUpperTriball = Translation2d((fieldX / 2.0), (fieldY / 2
 
 // starting and ending positions for auto
 Pose2d closeOppStart = Pose2d(tile / 2.0, tile + 5, 135);
-Pose2d closeOppEnd = Pose2d(tile - 5, tile - 12, 15); // tile - 6, tile - 16
+Pose2d closeOppEnd = Pose2d(tile - 4, tile - 10, 15); // tile - 6, tile - 12
 Pose2d closeStart = Pose2d(fieldX - closeOppStart.x, closeOppStart.y, -closeOppStart.angle);
 Pose2d closeEnd = Pose2d(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEnd.angle);
 Pose2d skillsStart = Pose2d((fieldX - tile), (tile / 2.0), -30); // right side
