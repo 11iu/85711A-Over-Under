@@ -34,6 +34,8 @@ struct Translation2d
     }
 };
 
+float botWidth = 14.7;
+float botLength = 12.5;
 float tile = 24;
 float fieldX = 144;
 float fieldY = 144;
