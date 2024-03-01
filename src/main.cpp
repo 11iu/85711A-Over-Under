@@ -188,9 +188,10 @@ void opcontrol() {
 
     while (true)
     {
+
         // log distance sensor
-        int reading = distBack.get_value();
-        pros::lcd::print(0, "%i", reading);
+        // int reading = distBack.get_value();
+        // pros::lcd::print(0, "%i", reading);
 
         // testing autos
 

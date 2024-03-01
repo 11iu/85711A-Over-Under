@@ -187,19 +187,9 @@ void Autons::autoSkills()
     intake = 0;
 
     //   chassis.tank(0, -20); // push back to mitigate cata momentum
+    
     fireCata();
-    u_int32_t start = pros::millis();
-    u_int32_t timeout = 30000;
-    while (pros::millis() - start < timeout)
-    {
-        chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 500,
-                           {
-                               .forwards = false,
-                               .maxSpeed = 50,
-                               .minSpeed = 25,
-                           },
-                           false);
-    }
+    pros::delay(30000);
     cata = 0;
     chassis.tank(0, 0);
 
