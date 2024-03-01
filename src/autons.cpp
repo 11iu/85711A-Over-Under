@@ -190,9 +190,9 @@ void Autons::autoSkills() {
   chassis.tank(0, 0);
 
   // localizing position
-  chassis.moveToPose(
-      fieldX - tile, tile, 0, 2000, {},
-      false); // make sure robot parallel with walls for calibration
+  //   chassis.moveToPose(
+  //       fieldX - tile, tile, 0, 2000, {},
+  //       false); // make sure robot parallel with walls for calibration
 
   //   std::pair<float, float> pos = localizeRobot();
   //   if (pos.first != 0.0 && pos.second != 0.0) {
@@ -211,63 +211,94 @@ void Autons::autoSkills() {
   //   }
 
   // go to the other side and push into right side of goal
-  chassis.moveToPose(fieldX - tile / 2.0, tile, 0, 2000, {.minSpeed = 80},
+  // setup for move
+  chassis.moveToPose(fieldX - tile / 2.0, tile + 20, 0, 2000, {.minSpeed = 80},
                      false);
+
+  // cross to the middle under the bar
   chassis.moveToPose(fieldX - tile / 2.0, fieldY / 2.0, 0, 2000,
                      {.minSpeed = 80}, false);
+  // go over fully
   chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, 0, 2000,
                      {.minSpeed = 80}, false);
+  // setup for right side
   chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile * 1.5, -60, 2000,
                      {.minSpeed = 80}, false);
+  // right side
   chassis.moveToPose(redGoalRightSide.x - 6, redGoalRightSide.y, -60, 2000,
                      {.minSpeed = 120}, false);
 
   // ramming into the center from the right, straight on, then left
+
+  // right
+
+  // back up and hit bar
   chassis.moveToPose(redGoalRightSide.x + tile, redGoalRightSide.y, -160, 3000,
                      {.forwards = false, .minSpeed = 50}, false);
   chassis.moveToPose(fieldX / 2.0 + tile * 1.2, fieldY / 2.0 + tile, -160, 3000,
                      {.minSpeed = 80}, false);
   chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -180, 2000,
                      {.minSpeed = 100}, false); // line up to right of goal
+                                                // line up to push
   chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
                      false); // turn towards goal
+                             // contact goal
   setWings(HIGH);
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
                      {.minSpeed = 120}, false);
   pros::delay(200);
 
   setWings(LOW);
-  chassis.moveToPose(fieldX / 2, fieldY / 2.0 + 12, 0, 2000,
+  // back up
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, 0, 2000,
                      {.forwards = false},
-                     false); // line up in front of the goal
-  setWings(HIGH);
-  chassis.moveToPose(redGoalCenter.x - tile / 2.0, redGoalCenter.y, 0, 2000,
-                     {.minSpeed = 120}, false);
-  pros::delay(200);
+                     false); // go back straight to the right of goal
 
-  setWings(LOW);
-  chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards = false},
-                     false); // line up to the left of goal
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 24, 0, 2000,
+                     {.minSpeed = 100}, false); // line up to the left of goal
+  //
+  //   setWings(HIGH);
+  //   // center
+  //   chassis.moveToPose(redGoalCenter.x - tile / 2.0, redGoalCenter.y, 0,
+  //   2000,
+  //                      {.minSpeed = 120}, false);
+  //   pros::delay(200);
+
+  //   setWings(LOW);
+  //   // back up
+  //   chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards
+  //   = false},
+  //                      false); // line up to the left of goal
   setWings(HIGH);
   pros::delay(200);
+  // right
   chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
                      {.minSpeed = 120}, false);
   setWings(LOW);
 
-  // recalibrating x with sensor and y by ramming
-  chassis.moveToPose(fieldX / 2.0, fieldY / 2.0, 0, 2000,
-                     {.forwards = false, .minSpeed = 100}, false);
+  // back up 2.0
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 36, 20, 2000,
+                     {.forwards = false, .minSpeed = 100},
+                     false); // line up to the left of goal
 
-  std::pair<float, float> posCenter = localizeRobot();
-  if (posCenter.first != 0.0) {
-    // localize the robot again for x, y is localized by ramming
-    chassis.setPose(posCenter.first, fieldY / 2.0 + botLength / 2.0,
-                    chassis.getPose().theta);
-  } else {
-    // guess that we are at the center of x
-    chassis.setPose(fieldX / 2.0, fieldY / 2.0 + botLength / 2.0,
-                    chassis.getPose().theta);
-  }
+  //   chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards =
+  //   false},
+  //                      false); // line up to the left of goal
+
+  //   // recalibrating x with sensor and y by ramming
+  //   chassis.moveToPose(fieldX / 2.0, fieldY / 2.0, 0, 2000,
+  //                      {.forwards = false, .minSpeed = 100}, false);
+
+  //   std::pair<float, float> posCenter = localizeRobot();
+  //   if (posCenter.first != 0.0) {
+  //     // localize the robot again for x, y is localized by ramming
+  //     chassis.setPose(posCenter.first, fieldY / 2.0 + botLength / 2.0,
+  //                     chassis.getPose().theta);
+  //   } else {
+  //     // guess that we are at the center of x
+  //     chassis.setPose(fieldX / 2.0, fieldY / 2.0 + botLength / 2.0,
+  //                     chassis.getPose().theta);
+  //   }
 
   // push triballs in into the left side of the goal
   chassis.moveToPose(tile, fieldY - tile, -45, 3000, {.minSpeed = 80}, false);
@@ -278,6 +309,9 @@ void Autons::autoSkills() {
   chassis.moveToPose(tile, fieldY - tile, 60, 2000, {.forwards = false}, false);
   chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 3000,
                      {.minSpeed = 100}, false);
+
+  chassis.moveToPose(redGoalLeftSide.x - tile, redGoalLeftSide.y - 12, 60, 3000,
+                     {.forwards = false, .minSpeed = 100}, false);
 }
 
 void Autons::autoDisabled() {
