@@ -12,12 +12,11 @@
 #define WINGS 'a'
 #define VERT_WINGS 'd'
 
-// TODO - change these
-#define RIGHT_ULTRASONIC_IN 'f' 
-#define RIGHT_ULTRASONIC_OUT 'e' 
+#define BACK_ULTRASONIC_IN 'f' 
+#define BACK_ULTRASONIC_OUT 'e' 
 #define INTAKE_ULTRASONIC_IN 'h'
 #define INTAKE_ULTRASONIC_OUT 'g'
-#define DISTANCE_BACK 3
+#define DISTANCE_RIGHT 3
 
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15

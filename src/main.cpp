@@ -85,11 +85,11 @@ pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
-pros::ADIUltrasonic rightSonic(RIGHT_ULTRASONIC_OUT, RIGHT_ULTRASONIC_IN);
-pros::Distance distanceBack(DISTANCE_BACK);
-pros::ADIUltrasonic intakeSonic(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
+pros::Distance distRight(DISTANCE_RIGHT);
+pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
+pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
-Autons autons(chassis, wings, vertWings, intake, cata, rightSonic, distanceBack, intakeSonic);
+Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack, distIntake);
 
 struct Auto
 {
@@ -161,7 +161,6 @@ void initialize()
                       // legacy ports configure.
     pros::lcd::initialize();
     chassis.calibrate();
-
 }
 
 void competition_initialize()
@@ -188,7 +187,6 @@ void competition_initialize()
     }
 }
 
-
 void autonomous() { autos[currentAuto].function(); }
 
 void opcontrol()
@@ -206,13 +204,18 @@ void opcontrol()
     {
         // testing autos
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+        {
             autons.autoFar();
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+        {
             autons.autoClose();
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
+        {
             autons.autoSkills();
-        } 
+        }
 
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -230,61 +233,83 @@ void opcontrol()
         chassis.arcade(leftY, rightX);
 
         // wings
-        if (delayWings) {
+        if (delayWings)
+        {
             delayWings--;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        {
             autons.toggleWings();
             delayWings = 40;
         }
 
         // wing
-        if (delayVertWing) {
+        if (delayVertWing)
+        {
             delayVertWing--;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+        {
             autons.toggleVertWings();
             delayVertWing = 40;
         }
 
         // cata toggle
-        if (!delayCata) {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            cataFire = !cataFire;
-            delayCata = 40;
+        if (!delayCata)
+        {
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+            {
+                cataFire = !cataFire;
+                delayCata = 40;
             }
-        } else {
+        }
+        else
+        {
             delayCata--;
         }
 
-
         // cata firing
-        if (cataFire) {
+        if (cataFire)
+        {
             autons.fireCata();
             if (!moving &&
                 autos[currentAuto].name ==
-                    autoSkillsAuton.name) { // drive backwards if we are in skills, so
-            // we can be more accurate.
-            chassis.tank(0, -30);
+                    autoSkillsAuton.name)
+            { // drive backwards if we are in skills, so
+                // we can be more accurate.
+                chassis.tank(0, -30);
             }
-        } else {
+        }
+        else
+        {
             cata.brake(); // coast up
         }
 
         // intake
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+        {
             intake = 127;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+        {
             intake = -127;
-        } else {
+        }
+        else
+        {
             intake.brake();
         }
 
         // filpDrive
-        if (!delayFlip) {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-            flipDrive = !flipDrive;
-            delayFlip = 40;
+        if (!delayFlip)
+        {
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+            {
+                flipDrive = !flipDrive;
+                delayFlip = 40;
             }
-        } else {
+        }
+        else
+        {
             delayFlip--;
         }
 

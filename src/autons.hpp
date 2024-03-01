@@ -5,7 +5,8 @@
 #include "constants.hpp"
 #include "pros/distance.hpp"
 
-class Autons {
+class Autons
+{
 private:
     lemlib::Chassis &chassis;
     pros::ADIDigitalOut &wings;
@@ -14,13 +15,16 @@ private:
     pros::Motor &intake;
     pros::Motor &cata;
 
-    pros::ADIUltrasonic &rightSonic;
-    pros::Distance &distanceBack;
-    pros::ADIUltrasonic &intakeSonic;
+    pros::Distance &distRight;
+    pros::ADIUltrasonic &distBack;
+    pros::ADIUltrasonic &distIntake;
 
 public:
-    Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings, pros::ADIDigitalOut &vertWings, pros::Motor &intake, pros::Motor &cata, pros::ADIUltrasonic &rightSonic, pros::Distance &distanceBack, pros::ADIUltrasonic &intakeSonic);
-    
+    Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings,
+               pros::ADIDigitalOut &vertWings, pros::Motor &intake,
+               pros::Motor &cata, pros::Distance &distRight,
+               pros::ADIUltrasonic &distBack, pros::ADIUltrasonic &distIntake);
+
     // Function declarations
     std::pair<float, float> localizeRobot();
     bool hasTriball();

@@ -4,11 +4,11 @@
 
 Autons::Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings,
                pros::ADIDigitalOut &vertWings, pros::Motor &intake,
-               pros::Motor &cata, pros::ADIUltrasonic &rightSonic,
-               pros::Distance &distanceBack, pros::ADIUltrasonic &intakeSonic)
+               pros::Motor &cata, pros::Distance &distRight,
+               pros::ADIUltrasonic &distBack, pros::ADIUltrasonic &distIntake)
     : chassis(chassis), wings(wings), vertWings(vertWings), intake(intake),
-      cata(cata), rightSonic(rightSonic), distanceBack(distanceBack),
-      intakeSonic(intakeSonic) {}
+      cata(cata), distRight(distRight), distBack(distBack),
+      distIntake(distIntake) {}
 
 ///////////////////////////////////////////////////
 // Robot state functions
@@ -29,9 +29,9 @@ std::pair<float, float> Autons::localizeRobot()
 
     for (int i = 0; i < samples; i++)
     {
-        float x_new = fieldX - (rightSonic.get_value() * conversionFactor) -
+        float x_new = fieldX - (distRight.get() * conversionFactor) -
                       x_offset; // returns 0 if not found
-        float y_new = distanceBack.get() * conversionFactor +
+        float y_new = distBack.get_value() * conversionFactor +
                       y_offset; // returns 0 if not found
 
         if (x_new != 0 && y_new != 0)
@@ -60,7 +60,7 @@ std::pair<float, float> Autons::localizeRobot()
 bool Autons::hasTriball()
 {
     int threshold = 200;
-    return intakeSonic.get_value() < threshold;
+    return distIntake.get_value() < threshold;
 }
 
 void Autons::fireCata()
