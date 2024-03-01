@@ -1,11 +1,11 @@
 #include "main.h"
+#include "autons.hpp"
 #include "display/lv_misc/lv_color.h"
 #include "pros/adi.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
-#include "autons.hpp"
 
 ///////////////////////////////////////////////////
 // Chassis
@@ -36,7 +36,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    8                           // chase power is 2. If we had traction wheels, it would have been 8
+    8 // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -89,12 +89,12 @@ pros::ADIUltrasonic rightSonic(RIGHT_ULTRASONIC_OUT, RIGHT_ULTRASONIC_IN);
 pros::Distance distanceBack(DISTANCE_BACK);
 pros::ADIUltrasonic intakeSonic(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
-Autons autons(chassis, wings, vertWings, intake, cata, rightSonic, distanceBack, intakeSonic);
+Autons autons(chassis, wings, vertWings, intake, cata, rightSonic, distanceBack,
+              intakeSonic);
 
-struct Auto
-{
-    std::string name;
-    std::function<void()> function;
+struct Auto {
+  std::string name;
+  std::function<void()> function;
 };
 
 Auto autoFarAuton{"Auto Far", std::bind(&Autons::autoFar, autons)};
@@ -110,184 +110,167 @@ int currentAuto = 0;
 // Utility Functions
 ///////////////////////////////////////////////////
 
-double logDrive(double v, double pow)
-{
-    if (v > 0)
-    {
-        return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-    }
-    else
-    {
-        return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-    }
+double logDrive(double v, double pow) {
+  if (v > 0) {
+    return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+  } else {
+    return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+  }
 }
 
-void set_braking(bool brakeCoast = true)
-{
-    if (brakeCoast)
-    {
-        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-    }
-    else
-    {
-        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-    }
+void set_braking(bool brakeCoast = true) {
+  if (brakeCoast) {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+  } else {
+    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+  }
 }
 
-void pgUp()
-{
-    currentAuto = currentAuto + 1;
-    if (currentAuto > autos.size() - 1)
-        currentAuto = 0;
-    pros::lcd::print(0, "%s", autos[currentAuto].name);
+void pgUp() {
+  currentAuto = currentAuto + 1;
+  if (currentAuto > autos.size() - 1)
+    currentAuto = 0;
+  pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
-void pgDown()
-{
-    currentAuto = currentAuto - 1;
-    if (currentAuto < 0)
-        currentAuto = autos.size() - 1;
-    pros::lcd::print(0, "%s", autos[currentAuto].name);
+void pgDown() {
+  currentAuto = currentAuto - 1;
+  if (currentAuto < 0)
+    currentAuto = autos.size() - 1;
+  pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
 
 ///////////////////////////////////////////////////
 // Main Functions
 ///////////////////////////////////////////////////
 
-void initialize()
-{
-    pros::delay(500); // Stop the user from doing anything while
-                      // legacy ports configure.
-    pros::lcd::initialize();
-    chassis.calibrate();
-
+void initialize() {
+  pros::delay(500); // Stop the user from doing anything while
+                    // legacy ports configure.
+  pros::lcd::initialize();
+  chassis.calibrate();
 }
 
-void competition_initialize()
-{
-    pros::ADIDigitalIn limit_left('b');
-    pros::ADIDigitalIn limit_right('c');
-    pros::lcd::register_btn0_cb(pgDown);
-    pros::lcd::register_btn2_cb(pgUp);
-    pros::lcd::print(0, "%s", autos[currentAuto].name);
+bool comp = false;
 
-    while (true)
-    {
-        if (limit_left.get_value())
-        {
-            pgUp();
-            pros::delay(500);
-        }
-        else if (limit_right.get_value())
-        {
-            pgDown();
-            pros::delay(500);
-        }
-        pros::delay(20);
+void competition_initialize() {
+  comp = true;
+  pros::ADIDigitalIn limit_left('b');
+  pros::ADIDigitalIn limit_right('c');
+  pros::lcd::register_btn0_cb(pgDown);
+  pros::lcd::register_btn2_cb(pgUp);
+  pros::lcd::print(0, "%s", autos[currentAuto].name);
+
+  while (true) {
+    if (limit_left.get_value()) {
+      pgUp();
+      pros::delay(500);
+    } else if (limit_right.get_value()) {
+      pgDown();
+      pros::delay(500);
     }
+    pros::delay(20);
+  }
 }
-
 
 void autonomous() { autos[currentAuto].function(); }
 
-void opcontrol()
-{
-    bool flipDrive = false;
-    bool cataFire = false; // toggle for catapult
+void opcontrol() {
+  bool flipDrive = false;
+  bool cataFire = false; // toggle for catapult
 
-    int delayVertWing = 0;
-    int delayWings = 0;
-    int delayCata = 0;
-    int delayFlip = 0;
-    bool moving = true;
+  int delayVertWing = 0;
+  int delayWings = 0;
+  int delayCata = 0;
+  int delayFlip = 0;
+  bool moving = true;
 
-    while (true)
-    {
-        // testing autos
-
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-            autons.autoFar();
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-            autons.autoClose();
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-            autons.autoSkills();
-        } 
-
-        // drive
-        int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
-        // deadzone
-        bool moving = abs(forward) > 10 || abs(turn) > 10;
-
-        int leftY = logDrive(forward, 2);
-        int rightX = logDrive(turn, 3);
-
-        if (flipDrive)
-            leftY *= -1;
-        // move the chassis with arcade drive
-        chassis.arcade(leftY, rightX);
-
-        // wings
-        if (delayWings) {
-            delayWings--;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-            autons.toggleWings();
-            delayWings = 40;
-        }
-
-        // wing
-        if (delayVertWing) {
-            delayVertWing--;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-            autons.toggleVertWings();
-            delayVertWing = 40;
-        }
-
-        // cata toggle
-        if (!delayCata) {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            cataFire = !cataFire;
-            delayCata = 40;
-            }
-        } else {
-            delayCata--;
-        }
-
-
-        // cata firing
-        if (cataFire) {
-            autons.fireCata();
-            if (!moving &&
-                autos[currentAuto].name ==
-                    autoSkillsAuton.name) { // drive backwards if we are in skills, so
-            // we can be more accurate.
-            chassis.tank(0, -30);
-            }
-        } else {
-            cata.brake(); // coast up
-        }
-
-        // intake
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-            intake = 127;
-        } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-            intake = -127;
-        } else {
-            intake.brake();
-        }
-
-        // filpDrive
-        if (!delayFlip) {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-            flipDrive = !flipDrive;
-            delayFlip = 40;
-            }
-        } else {
-            delayFlip--;
-        }
-
-        pros::delay(20);
+  while (true) {
+    // testing autos
+    if (!comp) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        autons.autoFar();
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        autons.autoClose();
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        autons.autoSkills();
+      }
     }
+
+    // drive
+    int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+    // deadzone
+    bool moving = abs(forward) > 10 || abs(turn) > 10;
+
+    int leftY = logDrive(forward, 2);
+    int rightX = logDrive(turn, 3);
+
+    if (flipDrive)
+      leftY *= -1;
+    // move the chassis with arcade drive
+    chassis.arcade(leftY, rightX);
+
+    // wings
+    if (delayWings) {
+      delayWings--;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+      autons.toggleWings();
+      delayWings = 40;
+    }
+
+    // wing
+    if (delayVertWing) {
+      delayVertWing--;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+      autons.toggleVertWings();
+      delayVertWing = 40;
+    }
+
+    // cata toggle
+    if (!delayCata) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        cataFire = !cataFire;
+        delayCata = 40;
+      }
+    } else {
+      delayCata--;
+    }
+
+    // cata firing
+    if (cataFire) {
+      autons.fireCata();
+      if (!moving &&
+          autos[currentAuto].name ==
+              autoSkillsAuton.name) { // drive backwards if we are in skills, so
+        // we can be more accurate.
+        chassis.tank(0, -30);
+      }
+    } else {
+      cata.brake(); // coast up
+    }
+
+    // intake
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      intake = 127;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intake = -127;
+    } else {
+      intake.brake();
+    }
+
+    // filpDrive
+    if (!delayFlip) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+        flipDrive = !flipDrive;
+        delayFlip = 40;
+      }
+    } else {
+      delayFlip--;
+    }
+
+    pros::delay(20);
+  }
 }
