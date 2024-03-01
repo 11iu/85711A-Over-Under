@@ -186,8 +186,13 @@ void opcontrol() {
   int delayFlip = 0;
   bool moving = true;
 
-  while (true) {
-    // testing autos
+    while (true)
+    {
+        // log distance sensor
+        int reading = distBack.get_value();
+        pros::lcd::print(0, "%i", reading);
+
+        // testing autos
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       autons.autoFar();
