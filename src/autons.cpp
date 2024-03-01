@@ -194,24 +194,21 @@ void Autons::autoSkills() {
       fieldX - tile, tile, 0, 2000, {},
       false); // make sure robot parallel with walls for calibration
 
-  std::pair<float, float> pos = localizeRobot();
-  pros::screen::print(pros::E_TEXT_MEDIUM, 1, "x: %f, y: %f", pos.first,
-                      pos.second);
-  return;
+  //   std::pair<float, float> pos = localizeRobot();
+  //   if (pos.first != 0.0 && pos.second != 0.0) {
+  //     chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
+  //   }
 
-  if (pos.first != 0.0 && pos.second != 0.0) {
-    chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
-  }
-
-  else {
-    // recalibrate our position by ramming backwards into the angled corner bar
-    // if sensor fail
-    chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
-                       {.minSpeed = 80}, false);
-    chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
-                       {.forwards = false, .minSpeed = 80}, false);
-    chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
-  }
+  //   else {
+  //     // recalibrate our position by ramming backwards into the angled corner
+  //     bar
+  //     // if sensor fail
+  //     chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
+  //                        {.minSpeed = 80}, false);
+  //     chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
+  //                        {.forwards = false, .minSpeed = 80}, false);
+  //     chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
+  //   }
 
   // go to the other side and push into right side of goal
   chassis.moveToPose(fieldX - tile / 2.0, tile, 0, 2000, {.minSpeed = 80},
