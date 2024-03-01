@@ -89,7 +89,8 @@ pros::Distance distRight(DISTANCE_RIGHT);
 pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
 pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
-Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack, distIntake);
+Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
+              distIntake);
 
 struct Auto {
   std::string name;
@@ -144,12 +145,11 @@ void pgDown() {
 // Main Functions
 ///////////////////////////////////////////////////
 
-void initialize()
-{
-    pros::delay(500); // Stop the user from doing anything while
-                      // legacy ports configure.
-    pros::lcd::initialize();
-    chassis.calibrate();
+void initialize() {
+  pros::delay(500); // Stop the user from doing anything while
+                    // legacy ports configure.
+  pros::lcd::initialize();
+  chassis.calibrate();
 }
 
 bool comp = false;
@@ -186,120 +186,15 @@ void opcontrol() {
   int delayFlip = 0;
   bool moving = true;
 
-    while (true)
-    {
-        // testing autos
+  while (true) {
+    // testing autos
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
-        {
-            autons.autoFar();
-        }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
-        {
-            autons.autoClose();
-        }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
-        {
-            autons.autoSkills();
-        }
-
-        // drive
-        int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
-        // deadzone
-        bool moving = abs(forward) > 10 || abs(turn) > 10;
-
-        int leftY = logDrive(forward, 2);
-        int rightX = logDrive(turn, 3);
-
-        if (flipDrive)
-            leftY *= -1;
-        // move the chassis with arcade drive
-        chassis.arcade(leftY, rightX);
-
-        // wings
-        if (delayWings)
-        {
-            delayWings--;
-        }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-        {
-            autons.toggleWings();
-            delayWings = 40;
-        }
-
-        // wing
-        if (delayVertWing)
-        {
-            delayVertWing--;
-        }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
-        {
-            autons.toggleVertWings();
-            delayVertWing = 40;
-        }
-
-        // cata toggle
-        if (!delayCata)
-        {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-            {
-                cataFire = !cataFire;
-                delayCata = 40;
-            }
-        }
-        else
-        {
-            delayCata--;
-        }
-
-        // cata firing
-        if (cataFire)
-        {
-            autons.fireCata();
-            if (!moving &&
-                autos[currentAuto].name ==
-                    autoSkillsAuton.name)
-            { // drive backwards if we are in skills, so
-                // we can be more accurate.
-                chassis.tank(0, -30);
-            }
-        }
-        else
-        {
-            cata.brake(); // coast up
-        }
-
-        // intake
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-        {
-            intake = 127;
-        }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-        {
-            intake = -127;
-        }
-        else
-        {
-            intake.brake();
-        }
-
-        // filpDrive
-        if (!delayFlip)
-        {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-            {
-                flipDrive = !flipDrive;
-                delayFlip = 40;
-            }
-        }
-        else
-        {
-            delayFlip--;
-        }
-
-        pros::delay(20);
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+      autons.autoFar();
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      autons.autoClose();
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      autons.autoSkills();
     }
 
     // drive
@@ -307,7 +202,7 @@ void opcontrol() {
     int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
     // deadzone
-    bool moving = abs(forward) > 10 || abs(turn) > 10;
+    moving = abs(forward) > 10 || abs(turn) > 10;
 
     int leftY = logDrive(forward, 2);
     int rightX = logDrive(turn, 3);
@@ -376,4 +271,5 @@ void opcontrol() {
     }
 
     pros::delay(20);
+  }
 }
