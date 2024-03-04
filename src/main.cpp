@@ -13,6 +13,8 @@
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+
+
 //  chassis motors
 pros::Motor lF(LEFT_FRONT_LOWER_PORT, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor lM(LEFT_FRONT_UPPER_PORT, pros::E_MOTOR_GEARSET_06, false);
@@ -101,9 +103,10 @@ Auto autoFarAuton{"Auto Far", std::bind(&Autons::autoFar, autons)};
 Auto autoCloseAuton{"Auto Close", std::bind(&Autons::autoClose, autons)};
 Auto autoSkillsAuton{"Auto Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
+Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
-                           autoDisabledAuton};
+                           autoDisabledAuton, autoTestAuton};
 int currentAuto = 0;
 
 ///////////////////////////////////////////////////
@@ -193,13 +196,14 @@ void opcontrol() {
     // pros::lcd::print(0, "%i", reading);
 
     // testing autos
-
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       autons.autoFar();
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       autons.autoClose();
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
       autons.autoSkills();
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
+      autons.autoTest();
     }
 
     // drive

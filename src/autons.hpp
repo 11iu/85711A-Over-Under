@@ -39,6 +39,7 @@ public:
     void autoFarAWP();
     void autoSkills();
     void autoDisabled();
+    void autoTest();
 };
 
 #endif // AUTONS_HPP
