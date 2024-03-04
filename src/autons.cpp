@@ -199,8 +199,7 @@ void Autons::autoSkills()
     intake = 0;
     chassis.tank(0, -20); // push back to mitigate cata momentum
     fireCata();
-    //   u_int32_t timeout = 30000; // testing
-    pros::delay(20);
+    pros::delay(20); // change to 30000 for skills
     cata = 0;
     chassis.tank(0, 0);
 
@@ -292,13 +291,8 @@ void Autons::autoSkills()
     setWings(LOW);
 
     // back up 2.0
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 36, 20, 2000,
-                       {.forwards = false, .minSpeed = 100},
-                       false); // line up to the left of goal
-
-    //   chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards =
-    //   false},
-    //                      false); // line up to the left of goal
+    chassis.moveToPose(redGoalCenter.x - tile, fieldY / 2.0, 20, 2000, {.forwards = false, .minSpeed = 100},
+                       false); // back up to center of field
 
     //   // recalibrating x with sensor and y by ramming
     //   chassis.moveToPose(fieldX / 2.0, fieldY / 2.0, 0, 2000,
@@ -316,15 +310,15 @@ void Autons::autoSkills()
     //   }
 
     // push triballs in into the left side of the goal
-    chassis.moveToPose(tile, fieldY - tile, -45, 3000, {.minSpeed = 80}, false);
-    chassis.moveToPose(tile, fieldY - tile, 60, 2000, {}, false);
-    chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 3000,
-                       {.minSpeed = 100}, false);
+    chassis.moveToPose(tile, fieldY - tile  * 1.5, 0, 3000, {.minSpeed = 80}, false);
+    chassis.moveToPose(tile, fieldY - tile * 1.5, -90, 2000, {}, false);
+    chassis.moveToPose(tile * 0.5, fieldY - tile * 1.5, 45, 2000, {}, false);
+    chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 3000, {.minSpeed = 100}, false);
     // back up and ram again
     chassis.moveToPose(tile, fieldY - tile, 60, 2000, {.forwards = false}, false);
-    chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 3000,
-                       {.minSpeed = 100}, false);
+    chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 3000, {.minSpeed = 100}, false);
 
+    // back up clear of the other triballs
     chassis.moveToPose(redGoalLeftSide.x - tile, redGoalLeftSide.y - 12, 60, 3000,
                        {.forwards = false, .minSpeed = 100}, false);
 }
@@ -336,14 +330,14 @@ void Autons::autoDisabled()
 
 void Autons::autoTest()
 {
-    chassis.follow(path_txt, 15, 60000);
+    chassis.follow(path_txt, 15, 60000, true, false);
     chassis.waitUntil(35);
     intake = 127;
     chassis.waitUntil(40);
     intake = 0;
     chassis.waitUntil(53);
     fireCata();
-    pros::delay(30000);
+    pros::delay(20); // change to 30000 for skills
     cata = 0;
     chassis.waitUntil(266);
     setWings(HIGH);

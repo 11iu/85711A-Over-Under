@@ -200,6 +200,8 @@ void opcontrol() {
     // log distance sensor
     // int reading = distBack.get_value();
     // pros::lcd::print(0, "%i", reading);
+    // int right = distRight.get();
+    // pros::lcd::print(0, "%i", right);
 
     // testing autos
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
