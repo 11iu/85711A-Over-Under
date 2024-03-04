@@ -189,6 +189,11 @@ void opcontrol() {
   int delayFlip = 0;
   bool moving = true;
 
+  // auto close at start of driver skills
+  if (autos[currentAuto].name == autoSkillsAuton.name) {
+    autoCloseAuton.function();
+  }
+
   while (true) {
 
     // log distance sensor
