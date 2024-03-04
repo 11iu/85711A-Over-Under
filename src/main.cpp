@@ -192,6 +192,7 @@ void opcontrol() {
   // auto close at start of driver skills
   if (autos[currentAuto].name == autoSkillsAuton.name) {
     autoCloseAuton.function();
+    cataFire = true;
   }
 
   while (true) {
