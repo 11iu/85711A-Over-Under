@@ -13,8 +13,6 @@
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-
-
 //  chassis motors
 pros::Motor lF(LEFT_FRONT_LOWER_PORT, pros::E_MOTOR_GEARSET_06, true);
 pros::Motor lM(LEFT_FRONT_UPPER_PORT, pros::E_MOTOR_GEARSET_06, false);
@@ -192,7 +190,11 @@ void opcontrol() {
   // auto close at start of driver skills
   if (autos[currentAuto].name == autoSkillsAuton.name) {
     autoCloseAuton.function();
-    cataFire = true;
+    chassis.tank(-5, -10); // push back to mitigate cata momentum
+    cata = CATAMAXVOLTAGE;
+    pros::delay(29000); // change to 29000 for skills
+    cata = 0;
+    chassis.tank(0, 0);
   }
 
   while (true) {
@@ -210,7 +212,7 @@ void opcontrol() {
       autons.autoClose();
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
       autons.autoSkills();
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       autons.autoTest();
     }
 
