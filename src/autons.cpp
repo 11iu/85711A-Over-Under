@@ -228,7 +228,6 @@ void Autons::autoSkills()
     // setup for move
     chassis.moveToPose(fieldX - tile / 2.0, tile + 20, 0, 2000, {.minSpeed = 80},
                        false);
-
     // cross to the middle under the bar
     chassis.moveToPose(fieldX - tile / 2.0, fieldY / 2.0, 0, 2000,
                        {.minSpeed = 80}, false);
@@ -251,45 +250,27 @@ void Autons::autoSkills()
                        {.forwards = false, .minSpeed = 50}, false);
     chassis.moveToPose(fieldX / 2.0 + tile * 1.2, fieldY / 2.0 + tile, -160, 3000,
                        {.minSpeed = 80}, false);
-    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -180, 2000,
-                       {.minSpeed = 100}, false); // line up to right of goal
-                                                  // line up to push
-    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, -20, 2000, {},
+    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, -180, 2000,
+                       {.minSpeed = 100}, false); // line up to push
+    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, -20, 2000, {},
                        false); // turn towards goal
-                               // contact goal
     setWings(HIGH);
     chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, -20, 2000,
                        {.minSpeed = 120}, false);
     pros::delay(200);
-
     setWings(LOW);
-    // back up
-    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + 12, 0, 2000,
+
+
+    // push in from left center
+    chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, 0, 2000,
                        {.forwards = false},
-                       false); // go back straight to the right of goal
-
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 24, 0, 2000,
-                       {.minSpeed = 100}, false); // line up to the left of goal
-    //
-    //   setWings(HIGH);
-    //   // center
-    //   chassis.moveToPose(redGoalCenter.x - tile / 2.0, redGoalCenter.y, 0,
-    //   2000,
-    //                      {.minSpeed = 120}, false);
-    //   pros::delay(200);
-
-    //   setWings(LOW);
-    //   // back up
-    //   chassis.moveToPose(tile * 2, fieldY / 2.0 + 12, 20, 2000, {.forwards
-    //   = false},
-    //                      false); // line up to the left of goal
+                       false); // go back to left of goal
     setWings(HIGH);
     pros::delay(200);
-    // right
-    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 20, 2000,
-                       {.minSpeed = 120}, false);
+    chassis.moveToPose(redGoalCenter.x, redGoalCenter.y, 0, 2000,
+                       {.minSpeed = 120}, false); // shove into goal
     setWings(LOW);
-
+    
     // back up 2.0
     chassis.moveToPose(redGoalCenter.x - tile, fieldY / 2.0, 20, 2000, {.forwards = false, .minSpeed = 100},
                        false); // back up to center of field
