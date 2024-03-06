@@ -208,9 +208,8 @@ void Autons::autoSkills() {
   //   }
 
   // go to the other side and push into right side of goal
-  // setup for move
   chassis.moveToPose(fieldX - tile / 2.0, tile + 20, 0, 2000, {.minSpeed = 80},
-                     false);
+                     false); // setup for move
   chassis.moveToPose(fieldX - tile / 2.0, fieldY / 2.0, 0, 2000,
                      {.minSpeed = 80},
                      false); // cross to the middle under the bar
@@ -225,19 +224,11 @@ void Autons::autoSkills() {
                      2000, {.forwards = false}, false); // back up
   chassis.moveToPose(redGoalRightSide.x + tile * 0.7, redGoalRightSide.y, -180,
                      2000, {}, false); // back up
-  chassis.moveToPose(fieldX / 2.0 + tile * 1.2, fieldY / 2.0 + tile, -180, 3000,
+  chassis.moveToPose(fieldX / 2.0 + tile * 1.2, fieldY / 2.0 + botLength / 2.0, -180, 3000,
                      {.minSpeed = 80}, false);
   intake = 0;
 
   // push in from right center
-  // chassis.moveToPose(redGoalRightSide.x + tile * 1.2, redGoalRightSide.y,
-  // -160, 3000,
-  //                    {.forwards = false, .minSpeed = 50}, false); // back up
-  // chassis.moveToPose(fieldX / 2.0 + tile * 1.2, fieldY / 2.0 + tile, -160,
-  // 3000,
-  //                    {.minSpeed = 80}, false);
-  // chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, -180, 2000,
-  //                    {.minSpeed = 100}, false); // line up to push
   chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, -20, 2000, {},
                      false); // turn towards goal
   setWings(HIGH);
@@ -248,7 +239,7 @@ void Autons::autoSkills() {
   setWings(LOW);
 
   // push in from center center
-  chassis.moveToPose(redGoalCenter.x + tile, fieldY / 2.0, -20, 3000,
+  chassis.moveToPose(redGoalCenter.x + tile, fieldY / 2.0 + botLength / 2.0, -20, 3000,
                      {.forwards = false}, false); // back up
   setWings(HIGH);
   intake = 127;
@@ -258,7 +249,7 @@ void Autons::autoSkills() {
   setWings(LOW);
 
   // push in from left center
-  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0, -90, 2000,
+  chassis.moveToPose(fieldX - tile * 2, fieldY / 2.0 + botLength / 2.0, -90, 2000,
                      {.forwards = false},
                      false); // go back to right side
   chassis.moveToPose(tile * 2, fieldY / 2.0, -90, 2000, {},
