@@ -19,7 +19,8 @@ Autons::Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings,
 // Robot state functions
 ///////////////////////////////////////////////////
 
-std::pair<float, float> Autons::localizeRobot() {
+std::pair<float, float> Autons::localizeRobot()
+{
   float conversionFactor = 0.0393701; // converts from mm to inches
 
   // offsets from sensor to center of robot
@@ -31,16 +32,20 @@ std::pair<float, float> Autons::localizeRobot() {
   float x = 0.0;
   float y = 0.0;
 
-  for (int i = 0; i < samples; i++) {
+  for (int i = 0; i < samples; i++)
+  {
     float x_new = fieldX - (distRight.get() * conversionFactor) -
                   x_offset; // returns 0 if not found
     float y_new = distBack.get_value() * conversionFactor +
                   y_offset; // returns 0 if not found
 
-    if (x_new != 0 && y_new != 0) {
+    if (x_new != 0 && y_new != 0)
+    {
       x += x_new;
       y += y_new;
-    } else {
+    }
+    else
+    {
       break;
     }
 
@@ -48,7 +53,8 @@ std::pair<float, float> Autons::localizeRobot() {
   }
 
   // failed to detect
-  if (x < 1 || y < 1) {
+  if (x < 1 || y < 1)
+  {
     return std::make_pair(5.5, 3.5);
   }
 
@@ -58,16 +64,19 @@ std::pair<float, float> Autons::localizeRobot() {
   return std::make_pair(x, y);
 }
 
-bool Autons::hasTriball() {
+bool Autons::hasTriball()
+{
   int threshold = 200;
   return distIntake.get_value() < threshold;
 }
 
-void Autons::fireCata() {
+void Autons::fireCata()
+{
   u_int32_t start = pros::millis();
   u_int32_t timeout = 2000;
 
-  while (hasTriball() && (pros::millis() - start < timeout)) {
+  while (hasTriball() && (pros::millis() - start < timeout))
+  {
     intake = 127;
     pros::delay(200);
   }
@@ -80,11 +89,13 @@ void Autons::fireCata() {
 bool wingState = false;
 bool vertWingState = false;
 
-void Autons::toggleWings() {
+void Autons::toggleWings()
+{
   wingState = !wingState;
   wings.set_value(wingState);
 }
-void Autons::toggleVertWings() {
+void Autons::toggleVertWings()
+{
   vertWingState = !vertWingState;
   vertWings.set_value(vertWingState);
 }
@@ -99,12 +110,13 @@ ASSET(path_txt);
 
 // starts at opposite of close side facing towards goal, pushes triball into
 // the goal, and sets up for match load
-void Autons::autoCloseOpposite() {
+void Autons::autoCloseOpposite()
+{
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
-  chassis.moveToPose(blueGoalLeftSide.x + 5, blueGoalLeftSide.y, 90, 2000,
+  chassis.moveToPose(blueGoalLeftSide.x, blueGoalLeftSide.y, 90, 2000,
                      {.minSpeed = 100}, false); // push into the goal
   intake = 127;
-  pros::delay(500);
+  pros::delay(200);
   chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 2000,
                      {.forwards = false, .maxSpeed = 80}, false);
   intake = 0;
@@ -112,11 +124,13 @@ void Autons::autoCloseOpposite() {
 
 // starts at close side facing towards goal, pushes triball into the goal, and
 // sets up for match load
-void Autons::autoClose() {
+void Autons::autoClose()
+{
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
+  chassis.moveToPose(blueGoalRightSide.x, blueGoalRightSide.y, -90, 2000,
                      {.minSpeed = 100}, false);
   intake = 127;
+  pros::delay(200);
   chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 2000,
                      {.forwards = false, .maxSpeed = 80}, false); // TODO: check
   intake = 0;
@@ -124,7 +138,8 @@ void Autons::autoClose() {
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
-void Autons::autoFar() {
+void Autons::autoFar()
+{
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
   chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
                      {.minSpeed = 80}, false); // Moves to in front of goal
@@ -172,7 +187,8 @@ void Autons::autoFarAWP() {}
 // }
 
 // start the same as autoClose
-void Autons::autoSkills() {
+void Autons::autoSkills()
+{
   Autons::autoClose();
   chassis.tank(-5, -10); // push back to mitigate cata momentum
   fireCata();
@@ -301,11 +317,13 @@ void Autons::autoSkills() {
                      {.forwards = false}, false);
 }
 
-void Autons::autoDisabled() {
+void Autons::autoDisabled()
+{
   // do nothing
 }
 
-void Autons::autoTest() {
+void Autons::autoTest()
+{
   chassis.follow(path_txt, 15, 60000, true, false);
   chassis.waitUntil(35);
   intake = 127;
