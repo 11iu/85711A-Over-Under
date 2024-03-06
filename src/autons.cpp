@@ -117,7 +117,7 @@ void Autons::autoClose() {
   chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
                      {.minSpeed = 100}, false);
   intake = 127;
-  chassis.moveToPose(closeEnd.x - 6, closeEnd.y - 4, closeEnd.angle, 2000,
+  chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 2000,
                      {.forwards = false, .maxSpeed = 80}, false); // TODO: check
   intake = 0;
 }
@@ -173,39 +173,34 @@ void Autons::autoFarAWP() {}
 
 // start the same as autoClose
 void Autons::autoSkills() {
-  chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  chassis.moveToPose(blueGoalRightSide.x - 5, blueGoalRightSide.y, -90, 2000,
-                     {.minSpeed = 100}, false);
-  intake = 127;
-  chassis.moveToPose(closeEnd.x - 2, closeEnd.y - 4, closeEnd.angle, 2000,
-                     {.forwards = false, .maxSpeed = 80}, false); // TODO: check
-  intake = 0;
+  Autons::autoClose();
   chassis.tank(-5, -10); // push back to mitigate cata momentum
   fireCata();
   pros::delay(29000); // change to 29000 for skills
   cata = 0;
   chassis.tank(0, 0);
 
-  // localizing position
-  //   chassis.moveToPose(
-  //       fieldX - tile, tile, 0, 2000, {},
-  //       false); // make sure robot parallel with walls for calibration
+  /*
+  //localizing position
+    chassis.moveToPose(
+        fieldX - tile, tile, 0, 2000, {},
+        false); // make sure robot parallel with walls for calibration
 
-  //   std::pair<float, float> pos = localizeRobot();
-  //   if (pos.first != 0.0 && pos.second != 0.0) {
-  //     chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
-  //   }
+    std::pair<float, float> pos = localizeRobot();
+    if (pos.first != 0.0 && pos.second != 0.0) {
+      chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
+    }
 
-  //   else {
-  //     // recalibrate our position by ramming backwards into the angled corner
-  //     bar
-  //     // if sensor fail
-  //     chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
-  //                        {.minSpeed = 80}, false);
-  //     chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
-  //                        {.forwards = false, .minSpeed = 80}, false);
-  //     chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
-  //   }
+    else { // recalibrate by ramming into angled corner bar
+
+      // if sensor fail
+      chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
+                         {.minSpeed = 80}, false);
+      chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
+                         {.forwards = false, .minSpeed = 80}, false);
+      chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
+    }
+  */
 
   // go to the other side and push into right side of goal
   chassis.moveToPose(fieldX - tile / 2.0, tile + 20, 0, 2000, {.minSpeed = 80},
@@ -263,20 +258,22 @@ void Autons::autoSkills() {
   intake = 0;
   setWings(LOW);
 
-  //   // recalibrating x with sensor and y by ramming
-  //   chassis.moveToPose(fieldX / 2.0, fieldY / 2.0, 0, 2000,
-  //                      {.forwards = false, .minSpeed = 100}, false);
+  /*
+  // recalibrating x with sensor and y by ramming
+  chassis.moveToPose(fieldX / 2.0, fieldY / 2.0, 0, 2000,
+                      {.forwards = false, .minSpeed = 100}, false);
 
-  //   std::pair<float, float> posCenter = localizeRobot();
-  //   if (posCenter.first != 0.0) {
-  //     // localize the robot again for x, y is localized by ramming
-  //     chassis.setPose(posCenter.first, fieldY / 2.0 + botLength / 2.0,
-  //                     chassis.getPose().theta);
-  //   } else {
-  //     // guess that we are at the center of x
-  //     chassis.setPose(fieldX / 2.0, fieldY / 2.0 + botLength / 2.0,
-  //                     chassis.getPose().theta);
-  //   }
+  std::pair<float, float> posCenter = localizeRobot();
+  if (posCenter.first != 0.0) {
+    // localize the robot again for x, y is localized by ramming
+    chassis.setPose(posCenter.first, fieldY / 2.0 + botLength / 2.0,
+                    chassis.getPose().theta);
+  } else {
+    // guess that we are at the center of x
+    chassis.setPose(fieldX / 2.0, fieldY / 2.0 + botLength / 2.0,
+                    chassis.getPose().theta);
+  }
+  */
 
   // push triballs in into the left side of the goal
   chassis.moveToPose(
