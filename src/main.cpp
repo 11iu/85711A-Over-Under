@@ -98,16 +98,18 @@ struct Auto
   std::function<void()> function;
 };
 
-Auto autoFarAuton{"Auto Far", std::bind(&Autons::autoFar, autons)};
-Auto autoCloseAuton{"Auto Close", std::bind(&Autons::autoClose, autons)};
-Auto autoSkillsAuton{"Auto Skills", std::bind(&Autons::autoSkills, autons)};
+Auto autoFarAuton{"Far simple", std::bind(&Autons::autoFar, autons)};
+Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
+Auto autoFarAWPAuton("Far AWP", std::bind(&Autons::autoFarAWP, autons));
+Auto autoCloseAuton{"Close simple", std::bind(&Autons::autoClose, autons)};
+Auto autoCloseInsaneAuton("Close insane", std::bind(&Autons::autoCloseInsane, autons));
+Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
 Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
-Auto autoFarInsaneAuton{"insane far", std::bind(&Autons::autoFarInsane, autons)};
 
-std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton,
-                           autoDisabledAuton, autoTestAuton, autoFarInsaneAuton};
-int currentAuto = 0;
+std::vector<Auto> autos = {autoFarAuton, autoFarInsaneAuton, autoFarAWPAuton, autoCloseInsaneAuton,
+                           autoDisabledAuton, autoTestAuton};
+int currentAuto = 3;
 
 ///////////////////////////////////////////////////
 // Utility Functions

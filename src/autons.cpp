@@ -145,12 +145,53 @@ void Autons::autoClose()
   intake = 0;
 }
 
+// auto far but for auto close
+// set up like auto far
+void Autons::autoCloseInsane() {
+  chassis.setPose(closeInsane.x, closeInsane.y, closeInsane.angle);
+  chassis.moveToPose(fieldX / 2, farStart.y, closeInsane.angle, 2000,
+                     {.minSpeed = 80}, false); // Moves to in front of goal
+  chassis.moveToPose(fieldX / 2, farStart.y, 180, 1000, {},
+                     false); // turn to face goal
+  intake = 127;
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 6, 180, 1500,
+                     {.minSpeed = 100}, false); // Shoves preload in
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 180, 1500,
+                     {.forwards = false}, false); // back out
+  intake = 0;
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 0, 1000, {},
+                     false); // turn towards center
+
+  // grab upper triball and score
+  intake = -127;
+  chassis.moveToPose(redCenterUpperTriball.x + 3, redCenterUpperTriball.y - 4,
+                     0, 2000, {}, false); // move into the triball
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 180, 1000,
+                     {.forwards = false}, false); // face goal
+  intake = 127;
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 6, 180, 2000,
+                     {.minSpeed = 100}, false); // score
+  intake = 0;
+
+  // reset for teleop
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 180, 1500,
+                     {.forwards = false}, false); // back out
+
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 0, 1000, {},
+                     false); // turn towards center
+
+  // give a backwards shove
+  chassis.moveToPose(fieldX / 2.0, blueGoalCenter.y + 2, 0, 1000,
+                     {.forwards = false}, false);
+  chassis.moveToPose(fieldX / 2, blueGoalCenter.y + tile, 0, 1000, {}, false); // back out
+}
+
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
 void Autons::autoFar()
 {
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
-  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
+  chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 2000,
                      {.minSpeed = 80}, false); // Moves to in front of goal
   chassis.moveToPose(fieldX / 2, farStart.y, 0, 1000, {},
                      false); // turn to face goal
@@ -163,7 +204,7 @@ void Autons::autoFar()
   chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 1000, {},
                      false); // turn towards center
 
-  // grab upper triball and score
+  // grab lower triball and score
   intake = -127;
   chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4,
                      180, 2000, {}, false); // move into the triball

@@ -35,6 +35,7 @@ public:
     void setVertWings(bool state);
     void autoCloseOpposite();
     void autoClose();
+    void autoCloseInsane();
     void autoFar();
     void autoFarInsane();
     void autoFarAWP();
