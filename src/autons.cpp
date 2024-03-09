@@ -113,14 +113,14 @@ ASSET(path_txt);
 void Autons::autoCloseOpposite()
 {
   chassis.setPose(closeOppStart.x, closeOppStart.y, closeOppStart.angle);
-  chassis.moveToPose(blueGoalLeftSide.x + 2, 13, 90, 2000,
+  chassis.moveToPose(blueGoalLeftSide.x + 2, 13, 90, 1500,
                      {.minSpeed = 80}, false); // push into the goal
   intake = 127;
 
   // reshove in
-  chassis.moveToPose(blueGoalLeftSide.x - tile, 13, 90, 2000,
+  chassis.moveToPose(blueGoalLeftSide.x - tile, 13, 90, 1000,
                      {.forwards = false, .minSpeed = 80}, false);
-  chassis.moveToPose(blueGoalLeftSide.x - 4, 13, 90, 2000,
+  chassis.moveToPose(blueGoalLeftSide.x - 4, 13, 90, 1000,
                      {.minSpeed = 100}, false);
   chassis.moveToPose(closeOppEnd.x, closeOppEnd.y, closeOppEnd.angle, 1500,
                      {.forwards = false, .maxSpeed = 80}, false);
@@ -132,18 +132,13 @@ void Autons::autoCloseOpposite()
 void Autons::autoClose()
 {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle);
-  // chassis.moveToPose(fieldX - tile, 16, -45, 2000,
-  //                    {.minSpeed = 80}, false);
-  // chassis.moveToPose(fieldX - tile, 13, -90, 2000,
-  //                    {.minSpeed = 80}, false);
-
-  chassis.moveToPose(blueGoalRightSide.x + 2, 13, -90, 2000,
+  chassis.moveToPose(blueGoalRightSide.x + 2, 13, -90, 1500,
                      {.minSpeed = 80}, false);
   intake = 127;
   // reshove in
-  chassis.moveToPose(blueGoalRightSide.x + tile, 13, -90, 800,
+  chassis.moveToPose(blueGoalRightSide.x + tile, 13, -90, 1000,
                      {.forwards = false, .minSpeed = 80}, false);
-  chassis.moveToPose(blueGoalRightSide.x - 4, 13, -90, 800,
+  chassis.moveToPose(blueGoalRightSide.x - 4, 13, -90, 1000,
                      {.minSpeed = 100}, false);
   chassis.moveToPose(closeEnd.x, closeEnd.y, closeEnd.angle, 1500,
                      {.forwards = false, .maxSpeed = 80}, false);
@@ -157,39 +152,39 @@ void Autons::autoFar()
   chassis.setPose(farStart.x, farStart.y, farStart.angle);
   chassis.moveToPose(fieldX / 2, farStart.y, farStart.angle, 4000,
                      {.minSpeed = 80}, false); // Moves to in front of goal
-  chassis.moveToPose(fieldX / 2, farStart.y, 0, 4000, {},
+  chassis.moveToPose(fieldX / 2, farStart.y, 0, 1000, {},
                      false); // turn to face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 4000,
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 1500,
                      {.minSpeed = 100}, false); // Shoves preload in
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 1500,
                      {.forwards = false}, false); // back out
   intake = 0;
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 4000, {},
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 1000, {},
                      false); // turn towards center
 
   // grab upper triball and score
   intake = -127;
   chassis.moveToPose(blueCenterLowerTriball.x - 3, blueCenterLowerTriball.y + 4,
                      180, 2000, {}, false); // move into the triball
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 2000,
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 1000,
                      {.forwards = false}, false); // face goal
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 4000,
+  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 6, 0, 2000,
                      {.minSpeed = 100}, false); // score
   intake = 0;
 
   // reset for teleop
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 4000,
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 0, 1500,
                      {.forwards = false}, false); // back out
 
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 3000, {},
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 1000, {},
                      false); // turn towards center
 
   // give a backwards shove
-  chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 2, 180, 750,
+  chassis.moveToPose(fieldX / 2.0, redGoalCenter.y - 2, 180, 1000,
                      {.forwards = false}, false);
-  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 500, {}, false);
+  chassis.moveToPose(fieldX / 2, redGoalCenter.y - tile, 180, 1000, {}, false);
 }
 
 // 4 triball auto lmao
@@ -206,13 +201,13 @@ void Autons::autoFarInsane() {
   setWings(LOW);
 
   // get the triball closer to pipe
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {}, false); // turn towards field center
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 80}, false); // back up
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {}, false); // turn towards field center
   intake = 127;
   chassis.moveToPose(blueCenterUpperTriball.x, blueCenterUpperTriball.y - 4, 0, 2000, {}, false); // get the triball
   intake = 0;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 2000, {}, false); // turn towards goal
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {}, false); // turn towards goal
   setWings(HIGH);
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 2000, {.minSpeed = 100}, false); // score
   setWings(LOW);
@@ -338,7 +333,7 @@ void Autons::autoSkills()
   chassis.moveToPose(tile * 0.5, redGoalCenter.y - tile / 2.0, 45, 1000,
                      {}, false); // turn towards left of goal
   intake = 127;
-  chassis.moveToPose(redGoalLeftSide.x - 2, redGoalLeftSide.y, 90, 3000,
+  chassis.moveToPose(redGoalLeftSide.x - 2, redGoalLeftSide.y, 90, 2000,
                      {.minSpeed = 120}, false);
   intake = 0;
   // back up and ram again
