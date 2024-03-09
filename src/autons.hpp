@@ -36,6 +36,7 @@ public:
     void autoCloseOpposite();
     void autoClose();
     void autoFar();
+    void autoFarInsane();
     void autoFarAWP();
     void autoSkills();
     void autoDisabled();
