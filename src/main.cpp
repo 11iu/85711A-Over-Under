@@ -98,18 +98,19 @@ struct Auto
   std::function<void()> function;
 };
 
-Auto autoFarAuton{"Far simple", std::bind(&Autons::autoFar, autons)};
-Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-Auto autoFarAWPAuton("Far AWP", std::bind(&Autons::autoFarAWP, autons));
-Auto autoCloseAuton{"Close simple", std::bind(&Autons::autoClose, autons)};
-Auto autoCloseInsaneAuton("Close insane", std::bind(&Autons::autoCloseInsane, autons));
+Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
+Auto autoCloseAuton{"Close", std::bind(&Autons::autoClose, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
-Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
-std::vector<Auto> autos = {autoFarAuton, autoFarInsaneAuton, autoFarAWPAuton, autoCloseInsaneAuton,
-                           autoDisabledAuton, autoTestAuton};
-int currentAuto = 3;
+Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
+// Auto autoFarAWPAuton{"Far AWP", std::bind(&Autons::autoFarAWP, autons)};
+// Auto autoCloseInsaneAuton{"Close insane", std::bind(&Autons::autoCloseInsane, autons)};
+// Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
+
+std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
+                           autoSkillsAuton, autoDisabledAuton, autoFarInsaneAuton};
+int currentAuto = 1;
 
 ///////////////////////////////////////////////////
 // Utility Functions
@@ -226,6 +227,7 @@ void opcontrol()
     // int right = distRight.get();
     // pros::lcd::print(0, "%i", right);
 
+    /*
     // testing autos
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
     {
@@ -243,6 +245,7 @@ void opcontrol()
     {
       autons.autoTest();
     }
+    */
 
     // drive
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);

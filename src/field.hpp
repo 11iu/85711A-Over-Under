@@ -84,9 +84,9 @@ Translation2d blueCenterUpperTriball = Translation2d((fieldX / 2.0), (fieldY / 2
 
 // starting and ending positions for auto
 Pose2d closeOppStart = Pose2d(tile / 2.0, tile + 3, 135);
-Pose2d closeOppEnd = Pose2d(tile + 3, tile - 18, 12); // tile - 6, tile - 12
+Pose2d closeOppEnd = Pose2d(tile + 3, tile - 18, 11); // tile - 6, tile - 12
 Pose2d closeStart = Pose2d(fieldX - closeOppStart.x, closeOppStart.y, -closeOppStart.angle);
 Pose2d closeEnd = Pose2d(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEnd.angle);
 Pose2d closeInsane = Pose2d((fieldX - botLength / 2.0), tile * 1.5, -90);
-Pose2d farStart = Pose2d((fieldX - botLength / 2.0), (fieldY - tile * 1.5), -90);
+Pose2d farStart = Pose2d((fieldX - tile / 2.0), (fieldY - tile * 1.5), -90);
 Pose2d farAWPStart = Pose2d(fieldX - tile / 2.0, fieldY - tile - 5, -45);

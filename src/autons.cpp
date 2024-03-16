@@ -234,21 +234,21 @@ void Autons::autoFarInsane() {
   autoCloseOpposite();
   // pick up triball to the side and push in triball closer to goal using wings
   intake = 127;
-  chassis.moveToPose(redCenterLeftTriball.x - 3, redCenterLeftTriball.y - 4, 22.5, 2000, {.minSpeed = 80}, false); // pick up
+  chassis.moveToPose(redCenterLeftTriball.x - 3, redCenterLeftTriball.y - 4, 22.5, 2000, {.maxSpeed = 80}, false); // pick up
   intake = 0;
-  chassis.moveToPose(redCenterLeftTriball.x + tile / 2.0, tile * 2, 135, 1000, {}, false); // go towards 2nd ball
+  chassis.moveToPose(redCenterLeftTriball.x + tile * 0.7, tile * 2, 135, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
   setWings(HIGH);
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 2, 180, 2000, {.minSpeed = 100}, false); // score
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 2, 180, 2000, {}, false); // score
   setWings(LOW);
 
   // get the triball closer to pipe
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 80}, false); // back up
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {}, false); // turn towards field center
   intake = 127;
-  chassis.moveToPose(blueCenterUpperTriball.x, blueCenterUpperTriball.y - 4, 0, 2000, {}, false); // get the triball
+  chassis.moveToPose(blueCenterUpperTriball.x, blueCenterUpperTriball.y -  8, 0, 2000, {.maxSpeed = 80}, false); // get the triball
   intake = 0;
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {}, false); // turn towards goal
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 1.5, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 1.5, 180, 1000, {}, false); // turn towards goal
   setWings(HIGH);
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 2000, {.minSpeed = 100}, false); // score
   setWings(LOW);
@@ -256,11 +256,9 @@ void Autons::autoFarInsane() {
 
 // starts in far side facing the goal, completes awp
 // Created for red side far
-void Autons::autoFarAWP() {}
+void Autons::autoFarAWP() {
 
-// std::pair<Pose2d, double> Autons::calculatePositionAngle() {
-//   double angle = pros::c::imu_get_heading(pros::Imu(IMU_PORT));
-// }
+}
 
 // start the same as autoClose
 void Autons::autoSkills()
@@ -268,59 +266,73 @@ void Autons::autoSkills()
   Autons::autoClose();
   chassis.tank(-5, -10); // push back to mitigate cata momentum
   fireCata();
-  pros::delay(2000); // change to 28000 for skills
+  pros::delay(28000); // change to 28000 for skills
   cata = 0;
   chassis.tank(0, 0);
 
   /*
+  //ram to align
+  chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
+                      {.minSpeed = 80}, false);
+  chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
+                      {.forwards = false, .minSpeed = 80}, false);
+  chassis.tank(-60, -60);
+  pros::delay(1500);
+  chassis.tank(0, 0);
+  chassis.setPose(fieldX - tile * 0.6, tile * 0.6, -45);
+  */
+
+  /*
   //localizing position
-    chassis.moveToPose(
-        fieldX - tile, tile, 0, 2000, {},
-        false); // make sure robot parallel with walls for calibration
+  chassis.moveToPose(fieldX - tile, tile, 0, 2000, {},
+      false); // make sure robot parallel with walls for calibration
 
-    std::pair<float, float> pos = localizeRobot();
-    if (pos.first != 0.0 && pos.second != 0.0) {
-      chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
-    }
+  std::pair<float, float> pos = localizeRobot();
+  if (pos.first != 0.0 && pos.second != 0.0) {
+    chassis.setPose(pos.first, pos.second, chassis.getPose().theta);
+  }
 
-    else { // recalibrate by ramming into angled corner bar
+  else { // recalibrate by ramming into angled corner bar
 
-      // if sensor fail
-      chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
-                         {.minSpeed = 80}, false);
-      chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
-                         {.forwards = false, .minSpeed = 80}, false);
-      chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
-    }
+    // if sensor fail
+    chassis.moveToPose(fieldX - tile * 1.2, tile * 1.2, -45, 2000,
+                        {.minSpeed = 80}, false);
+    chassis.moveToPose(fieldX - tile * 0.6, tile * 0.6, -45, 2000,
+                        {.forwards = false, .minSpeed = 80}, false);
+    chassis.setPose(fieldX - tile * 0.9, tile * 0.9, -45);
+  }
   */
 
   // go to the other side and push into right side of goal
-  chassis.moveToPose(fieldX - tile / 2.0, tile * 2, 0, 1000,
-                     {.minSpeed = 80}, false); // setup for move
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY / 2.0, 0, 1000,
+  chassis.moveToPose(fieldX - 12, tile * 1.4, 45, 1000,
+                     {}, false); // setup for move
+  chassis.moveToPose(fieldX - 12, tile * 1.4, 0, 1000,
+                     {}, false); // setup for move
+  pros::delay(200);
+  chassis.moveToPose(fieldX - 12, fieldY / 2.0, 0, 1000,
                      {.minSpeed = 80},
                      false); // cross to the middle under the bar
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile, 0, 1500,
+  chassis.moveToPose(fieldX - 12, fieldY - tile, 0, 1500,
                      {.minSpeed = 80}, false); // go over fully
-  chassis.moveToPose(fieldX - tile / 2.0, fieldY - tile, -60, 1000,
+  chassis.moveToPose(fieldX - 12, fieldY - tile, -60, 1000,
                      {.minSpeed = 80}, false); // turn towards right side of goal
   intake = 127;
-  chassis.moveToPose(redGoalRightSide.x + 2, redGoalRightSide.y, -90, 2000,
+  chassis.moveToPose(redGoalRightSide.x + 2, redGoalRightSide.y - 2, -90, 2000,
                      {.minSpeed = 100}, false); // right side push in
-  chassis.moveToPose(redGoalRightSide.x + tile * 0.7, redGoalRightSide.y, -90,
+  chassis.moveToPose(redGoalRightSide.x + tile * 0.5, redGoalRightSide.y - 2, -90,
                      1500, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(redGoalRightSide.x + tile * 0.7, redGoalRightSide.y, -180,
+  chassis.moveToPose(redGoalRightSide.x + tile * 0.5, redGoalRightSide.y - 2, -180,
                      1000, {}, false); // turn towards center
-  chassis.moveToPose(redGoalRightSide.x + tile * 0.7, fieldY / 2.0 + botLength / 2.0, -180,
+  chassis.moveToPose(redGoalRightSide.x + tile * 0.5, fieldY / 2.0 + botLength / 2.0, -180,
                      1500, {.minSpeed = 80}, false);
   intake = 0;
 
   // push in from right center
-  chassis.moveToPose(redGoalRightSide.x + tile * 0.7, fieldY / 2.0 + botLength / 2.0, -20, 1000, {},
+  chassis.moveToPose(redGoalRightSide.x + tile * 0.5, fieldY / 2.0 + botLength / 2.0, -20, 1000, {},
                      false); // turn towards goal
   setWings(HIGH);
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x + tile, redGoalCenter.y - 2, -20, 2000,
+  chassis.moveToPose(redGoalCenter.x + tile / 2.0, redGoalCenter.y - 2, -20, 2000,
                      {.minSpeed = 120}, false);
   intake = 0;
   setWings(LOW);
@@ -330,7 +342,7 @@ void Autons::autoSkills()
                      {.forwards = false}, false); // back up
   setWings(HIGH);
   intake = 127;
-  chassis.moveToPose(redGoalCenter.x, redGoalCenter.y - 2, 0, 2000,
+  chassis.moveToPose(redGoalCenter.x + tile / 2.0, redGoalCenter.y - 2, 0, 2000,
                      {.minSpeed = 120}, false);
   intake = 0;
   setWings(LOW);
@@ -340,7 +352,7 @@ void Autons::autoSkills()
                      {.forwards = false}, false); // go back to right side
   chassis.moveToPose(redGoalCenter.x - tile, fieldY / 2.0 + botLength / 2.0, -90, 1500, {.minSpeed = 80},
                      false); // go along center pipe to the left side
-  chassis.moveToPose(redGoalCenter.x - tile, fieldY / 2.0 + botLength / 2.0, 20, 1000, {},
+  chassis.moveToPose(redGoalCenter.x - tile / 2.0, fieldY / 2.0 + botLength / 2.0, 20, 1000, {},
                      false); // turn towards goal
   setWings(HIGH);
   intake = 127;
@@ -374,13 +386,20 @@ void Autons::autoSkills()
   chassis.moveToPose(tile * 0.5, redGoalCenter.y - tile / 2.0, 45, 1000,
                      {}, false); // turn towards left of goal
   intake = 127;
-  chassis.moveToPose(redGoalLeftSide.x - 2, redGoalLeftSide.y, 90, 2000,
+  chassis.moveToPose(redGoalLeftSide.x - 2, redGoalLeftSide.y - 2, 90, 2000,
                      {.minSpeed = 120}, false);
   intake = 0;
   // back up and ram again
   chassis.moveToPose(tile, fieldY - tile, 60, 2000, {.forwards = false}, false);
   intake = 127;
-  chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y, 90, 2000,
+  chassis.moveToPose(redGoalLeftSide.x, redGoalLeftSide.y - 2, 90, 2000,
+                     {.minSpeed = 120}, false);
+  intake = 0;
+
+  // back up and ram again
+  chassis.moveToPose(tile * 0.5, fieldY - tile * 1.5, 60, 2000, {.forwards = false}, false);
+  intake = 127;
+  chassis.moveToPose(redGoalLeftSide.x + 4, redGoalLeftSide.y - 2, 90, 2000,
                      {.minSpeed = 120}, false);
   intake = 0;
 
