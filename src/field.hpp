@@ -89,4 +89,4 @@ Pose2d closeStart = Pose2d(fieldX - closeOppStart.x, closeOppStart.y, -closeOppS
 Pose2d closeEnd = Pose2d(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEnd.angle);
 Pose2d closeInsane = Pose2d((fieldX - botLength / 2.0), tile * 1.5, -90);
 Pose2d farStart = Pose2d((fieldX - tile / 2.0), (fieldY - tile * 1.5), -90);
-Pose2d farAWPStart = Pose2d(fieldX - tile / 2.0, fieldY - tile - 5, -45);
+Pose2d farAWPStart = Pose2d(fieldX - tile / 2.0, fieldY - tile - 3, 135);
