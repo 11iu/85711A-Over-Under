@@ -110,7 +110,7 @@ Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)}
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
                            autoSkillsAuton, autoDisabledAuton, autoFarInsaneAuton};
-int currentAuto = 1;
+int currentAuto = 4;
 
 ///////////////////////////////////////////////////
 // Utility Functions

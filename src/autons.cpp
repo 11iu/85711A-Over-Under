@@ -235,25 +235,29 @@ void Autons::autoFarInsane()
 {
   autoCloseOpposite();
   // pick up triball to the side and push in triball closer to goal using wings
-  intake = 127;
-  chassis.moveToPose(redCenterLeftTriball.x - 3, redCenterLeftTriball.y - 4, 22.5, 2000, {.maxSpeed = 80}, false); // pick up
+  intake = -127;
+  chassis.moveToPose(redCenterLeftTriball.x, redCenterLeftTriball.y - 10, 22.5, 2000, {.maxSpeed = 80}, false); // pick up
   intake = 0;
-  chassis.moveToPose(redCenterLeftTriball.x + tile * 0.7, tile * 2, 135, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
+  chassis.moveToPose(redCenterLeftTriball.x + tile * 0.9, tile * 2.3, 150, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
   setWings(HIGH);
+  intake = 127;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 2, 180, 2000, {}, false); // score
   setWings(LOW);
+  intake = 0;
 
   // get the triball closer to pipe
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 80}, false); // back up
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {}, false);                                    // turn towards field center
-  intake = 127;
-  chassis.moveToPose(blueCenterUpperTriball.x, blueCenterUpperTriball.y - 8, 0, 2000, {.maxSpeed = 80}, false); // get the triball
+  intake = -127;
+  chassis.moveToPose(blueCenterUpperTriball.x, blueCenterUpperTriball.y - 12, 0, 2000, {.maxSpeed = 80}, false); // get the triball
   intake = 0;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 1.5, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 1.5, 180, 1000, {}, false);                                // turn towards goal
   setWings(HIGH);
+  intake = 127;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 2000, {.minSpeed = 100}, false); // score
   setWings(LOW);
+  intake = 0;
 }
 
 // starts in far side facing the goal, completes awp(score, descore, touch bar)
