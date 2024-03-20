@@ -21,9 +21,9 @@ private:
 
 public:
     Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings,
-               pros::ADIDigitalOut &vertWings, pros::Motor &intake,
-               pros::Motor &cata, pros::Distance &distRight,
-               pros::ADIUltrasonic &distBack, pros::ADIUltrasonic &distIntake);
+           pros::ADIDigitalOut &vertWings, pros::Motor &intake,
+           pros::Motor &cata, pros::Distance &distRight,
+           pros::ADIUltrasonic &distBack, pros::ADIUltrasonic &distIntake);
 
     // Function declarations
     std::pair<float, float> localizeRobot();
@@ -35,10 +35,10 @@ public:
     void setVertWings(bool state);
     void autoCloseOpposite();
     void autoClose();
-    void autoCloseInsane();
+    void autoCloseBackwards();
     void autoFar();
     void autoFarInsane();
-    void autoFarAWP();
+    void autoAWP();
     void autoSkills();
     void autoDisabled();
     void autoTest();

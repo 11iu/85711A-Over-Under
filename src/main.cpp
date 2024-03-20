@@ -99,17 +99,14 @@ struct Auto
 };
 
 Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
-Auto autoCloseAuton{"Close", std::bind(&Autons::autoClose, autons)};
+Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
+Auto autoCloseAuton{"Close", std::bind(&Autons::autoCloseBackwards, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
-
-Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-// Auto autoFarAWPAuton{"Far AWP", std::bind(&Autons::autoFarAWP, autons)};
-// Auto autoCloseInsaneAuton{"Close insane", std::bind(&Autons::autoCloseInsane, autons)};
+Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
-std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
-                           autoSkillsAuton, autoDisabledAuton, autoFarInsaneAuton};
+std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabledAuton, autoFarInsaneAuton, autoAWPAuton};
 int currentAuto = 4;
 
 ///////////////////////////////////////////////////
@@ -214,7 +211,7 @@ void opcontrol()
   if (autos[currentAuto].name == autoSkillsAuton.name)
   {
     autoCloseAuton.function();
-    //chassis.tank(-5, -10); // push back to mitigate cata momentum
+    // chassis.tank(-5, -10); // push back to mitigate cata momentum
     cataFire = true;
   }
 
