@@ -239,13 +239,12 @@ void Autons::autoAWP()
   autoCloseBackwards();
   chassis.moveToPose(blueGoalRightSide.x + tile, tile / 2.0, -135, 1500, {}, false); // back up and turn to face the other way
   setVertWings(HIGH);
-  // chassis.tank(-100, -100); //ram backwards
   chassis.moveToPose(fieldX, tile * 1.25, -135, 2000, {.forwards = false}, false); // back up
   setVertWings(LOW);
   chassis.setPose(fieldX - tile / 2.0, tile + botWidth / 2.0, -135);
   //chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false);                                          // forward a bit
   chassis.moveToPose(fieldX - 16, tile * 1.5, 0, 1500, {}, false);                                            // turn
-  chassis.moveToPose(fieldX - 16, redElevationHorizontalMid.y - 10, 0, 1500, {}, false); // go to bar
+  chassis.moveToPose(fieldX - 16, redElevationHorizontalMid.y - 6, 0, 1500, {.minSpeed = 60}, false); // go to bar
 }
 
 // start the same as autoClose

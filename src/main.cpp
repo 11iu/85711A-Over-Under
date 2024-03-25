@@ -36,7 +36,7 @@ lemlib::Drivetrain drivetrain(
     12,                         // 12 inch track width (left to right wheels)
     lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
     360,                        // drivetrain rpm is 360
-    8 // chase power is 2. If we had traction wheels, it would have been 8
+    8                           // chase power is 2. If we had traction wheels, it would have been 8
 );
 
 lemlib::ControllerSettings
@@ -92,7 +92,8 @@ pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
               distIntake);
 
-struct Auto {
+struct Auto
+{
   std::string name;
   std::function<void()> function;
 };
@@ -106,8 +107,8 @@ Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
-std::vector<Auto> autos = {autoFarAuton,       autoCloseAuton,
-                           autoSkillsAuton,    autoDisabledAuton,
+std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
+                           autoSkillsAuton, autoDisabledAuton,
                            autoFarInsaneAuton, autoAWPAuton};
 int currentAuto = 1;
 
@@ -115,31 +116,41 @@ int currentAuto = 1;
 // Utility Functions
 ///////////////////////////////////////////////////
 
-double logDrive(double v, double pow) {
-  if (v > 0) {
+double logDrive(double v, double pow)
+{
+  if (v > 0)
+  {
     return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  } else {
+  }
+  else
+  {
     return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
   }
 }
 
-void set_braking(bool brakeCoast = true) {
-  if (brakeCoast) {
+void set_braking(bool brakeCoast = true)
+{
+  if (brakeCoast)
+  {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  } else {
+  }
+  else
+  {
     leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
     rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
   }
 }
 
-void pgUp() {
+void pgUp()
+{
   currentAuto = currentAuto + 1;
   if (currentAuto > autos.size() - 1)
     currentAuto = 0;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 }
-void pgDown() {
+void pgDown()
+{
   currentAuto = currentAuto - 1;
   if (currentAuto < 0)
     currentAuto = autos.size() - 1;
@@ -150,7 +161,8 @@ void pgDown() {
 // Main Functions
 ///////////////////////////////////////////////////
 
-void initialize() {
+void initialize()
+{
   pros::delay(500); // Stop the user from doing anything while
                     // legacy ports configure.
   pros::lcd::initialize();
@@ -159,7 +171,8 @@ void initialize() {
 
 bool comp = false;
 
-void competition_initialize() {
+void competition_initialize()
+{
   comp = true;
   pros::ADIDigitalIn limit_left('b');
   pros::ADIDigitalIn limit_right('c');
@@ -167,11 +180,15 @@ void competition_initialize() {
   pros::lcd::register_btn2_cb(pgUp);
   pros::lcd::print(0, "%s", autos[currentAuto].name);
 
-  while (true) {
-    if (limit_left.get_value()) {
+  while (true)
+  {
+    if (limit_left.get_value())
+    {
       pgUp();
       pros::delay(500);
-    } else if (limit_right.get_value()) {
+    }
+    else if (limit_right.get_value())
+    {
       pgDown();
       pros::delay(500);
     }
@@ -181,7 +198,8 @@ void competition_initialize() {
 
 void autonomous() { autos[currentAuto].function(); }
 
-void opcontrol() {
+void opcontrol()
+{
   // toggles
   bool flipDrive = false;
   bool cataFire = false;
@@ -193,14 +211,16 @@ void opcontrol() {
   int delayFlip = 0;
 
   // auto close at start of driver skills
-  if (autos[currentAuto].name == autoSkillsAuton.name) {
+  if (autos[currentAuto].name == autoSkillsAuton.name)
+  {
     autoCloseAuton.function();
     // chassis.tank(-5, -10); // push back to mitigate cata momentum
     cataFire = true;
   }
   set_braking();
 
-  while (true) {
+  while (true)
+  {
 
     // log distance sensor
     // int reading = distBack.get_value();
@@ -242,54 +262,76 @@ void opcontrol() {
     chassis.arcade(leftY, rightX);
 
     // wings
-    if (delayWings) {
+    if (delayWings)
+    {
       delayWings--;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+    {
       autons.toggleWings();
       delayWings = 40;
     }
 
     // wing
-    if (delayVertWing) {
+    if (delayVertWing)
+    {
       delayVertWing--;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+    {
       autons.toggleVertWings();
       delayVertWing = 40;
     }
 
     // cata toggle
-    if (!delayCata) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (!delayCata)
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+      {
         cataFire = !cataFire;
         delayCata = 40;
       }
-    } else {
+    }
+    else
+    {
       delayCata--;
     }
 
     // cata firing
-    if (cataFire) {
+    if (cataFire)
+    {
       autons.fireCata();
-    } else {
+    }
+    else
+    {
       cata.brake(); // coast up
     }
 
     // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+    {
       intake = 127;
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+    {
       intake = -127;
-    } else {
+    }
+    else
+    {
       intake.brake();
     }
 
     // filpDrive
-    if (!delayFlip) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    if (!delayFlip)
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+      {
         flipDrive = !flipDrive;
         delayFlip = 40;
       }
-    } else {
+    }
+    else
+    {
       delayFlip--;
     }
 
