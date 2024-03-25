@@ -149,11 +149,11 @@ void Autons::autoClose()
 void Autons::autoCloseBackwards()
 {
   chassis.setPose(closeStart.x, closeStart.y, closeStart.angle + 180);
-  chassis.moveToPose(blueGoalRightSide.x + 2, 13, 90, 1500, {.forwards = false, .minSpeed = 80}, false);
+  chassis.moveToPose(blueGoalRightSide.x - 2, 13, 90, 1500, {.forwards = false, .minSpeed = 80}, false);
 
   // reshove in
-  chassis.moveToPose(blueGoalRightSide.x + tile, 13, 90, 1000, {.minSpeed = 80}, false);
-  chassis.moveToPose(blueGoalRightSide.x - 4, 13, 90, 1000, {.forwards = false, .minSpeed = 100}, false);
+  // chassis.moveToPose(blueGoalRightSide.x + tile, 13, 90, 1000, {.minSpeed = 80}, false);
+  // chassis.moveToPose(blueGoalRightSide.x - 4, 13, 90, 1000, {.forwards = false, .minSpeed = 100}, false);
   chassis.setPose(blueGoalRightSide.x + botLength / 2.0, 13, 90);
 }
 
@@ -206,9 +206,9 @@ void Autons::autoFarInsane()
   autoCloseOpposite();
   // pick up triball to the side and push in triball closer to goal using wings
   intake = -127;
-  chassis.moveToPose(redCenterLeftTriball.x, redCenterLeftTriball.y - 10, 22.5, 2000, {.maxSpeed = 80}, false); // pick up
+  chassis.moveToPose(redCenterLeftTriball.x, redCenterLeftTriball.y - 10, 22.5, 2000, {.minSpeed = 60}, false); // pick up
   intake = 0;
-  chassis.moveToPose(redCenterLeftTriball.x + tile * 1.0, tile * 1.9, 170, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
+  chassis.moveToPose(redCenterLeftTriball.x + tile * 0.9, tile * 1.8, 173, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
   setWings(HIGH);
   intake = 127;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 6, 180, 2000, {}, false); // score
@@ -239,14 +239,13 @@ void Autons::autoAWP()
   autoCloseBackwards();
   chassis.moveToPose(blueGoalRightSide.x + tile, tile / 2.0, -135, 1500, {}, false); // back up and turn to face the other way
   setVertWings(HIGH);
-  chassis.tank(-100, -100); //ram backwards
-  chassis.setPose(fieldX - botLength / 2.0, tile + botWidth / 2.0, -90);
-  chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false); // forward a bit
-  chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, 0, 1500, {}, false); // turn
-  chassis.moveToPose(redElevationHorizontalMid.x, redElevationHorizontalMid.y, 0, 1500, {.minSpeed = 80}, false); // go to bar
-
-
-
+  // chassis.tank(-100, -100); //ram backwards
+  chassis.moveToPose(fieldX, tile * 1.25, -135, 2000, {.forwards = false}, false); // back up
+  setVertWings(LOW);
+  chassis.setPose(fieldX - tile / 2.0, tile + botWidth / 2.0, -135);
+  //chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false);                                          // forward a bit
+  chassis.moveToPose(fieldX - 16, tile * 1.5, 0, 1500, {}, false);                                            // turn
+  chassis.moveToPose(fieldX - 16, redElevationHorizontalMid.y - 10, 0, 1500, {}, false); // go to bar
 }
 
 // start the same as autoClose

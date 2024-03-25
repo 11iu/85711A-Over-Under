@@ -107,7 +107,7 @@ Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton, autoSkillsAuton, autoDisabledAuton, autoFarInsaneAuton, autoAWPAuton};
-int currentAuto = 4;
+int currentAuto = 1;
 
 ///////////////////////////////////////////////////
 // Utility Functions
