@@ -89,3 +89,5 @@ Pose2d closeStart = Pose2d(fieldX - closeOppStart.x, closeOppStart.y, -closeOppS
 Pose2d closeEnd = Pose2d(fieldX - closeOppEnd.x, closeOppEnd.y, -closeOppEnd.angle);
 Pose2d farStart = Pose2d((fieldX - tile / 2.0), (fieldY - tile * 1.5), -90);
 Pose2d farAWPStart = Pose2d(fieldX - tile / 2.0, fieldY - tile - 3, 135);
+Pose2d farInsaneStart = Pose2d(tile / 2.0, tile * 1.5, 90);
+

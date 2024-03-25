@@ -99,8 +99,7 @@ struct Auto
 };
 
 Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
-Auto autoFarInsaneAuton{"Far insane",
-                        std::bind(&Autons::autoFarInsane, autons)};
+Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
 Auto autoCloseAuton{"Close", std::bind(&Autons::autoCloseBackwards, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};

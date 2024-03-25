@@ -203,33 +203,41 @@ void Autons::autoFar()
 // set up like close opposite(~1 inch gap from wing to angled bar)
 void Autons::autoFarInsane()
 {
-  autoCloseOpposite();
+  chassis.setPose(farInsaneStart.x, farInsaneStart.y, farInsaneStart.angle);
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, farInsaneStart.y, farInsaneStart.angle, 2000, {.minSpeed = 80}, false); // Moves to in front of goal
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, farInsaneStart.y, 180, 1000, {}, false); // turn to face goal
+  intake = 127;
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + 6, 180, 1500, {.minSpeed = 100}, false); // Shoves preload in
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + tile, 180, 1500, {.forwards = false, .minSpeed = 80}, false); // back out
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + tile, -5, 1500, {.forwards = false}, false); // turn towards triball
+  intake = 0;
+
   // pick up triball to the side and push in triball closer to goal using wings
   intake = -127;
-  chassis.moveToPose(redCenterLeftTriball.x, redCenterLeftTriball.y - 10, 22.5, 2000, {.minSpeed = 60}, false); // pick up
+  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 13, -5, 1200, {.maxSpeed = 80}, false); // pick up
   intake = 0;
-  chassis.moveToPose(redCenterLeftTriball.x + tile * 0.9, tile * 1.8, 173, 1000, {.maxSpeed = 80}, false); // go towards 2nd ball
+  chassis.moveToPose(redCenterLeftTriball.x + tile * 1.0, tile * 1.8, 173, 1000, {.maxSpeed = 60}, false); // go towards 2nd ball
   setWings(HIGH);
   intake = 127;
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 6, 180, 2000, {}, false); // score
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + 4, 180, 2000, {.minSpeed = 80}, false); // score
   setWings(LOW);
   intake = 0;
 
   // get the triball closer to pipe
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {}, false);                                    // turn towards field center
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {.minSpeed = 60}, false);                                    // turn towards field center
   intake = -127;
   chassis.moveToPose(redCenterUpperTriball.x + 2, redCenterUpperTriball.y - 10, 0, 1500, {.maxSpeed = 80}, false); // get the triball
   intake = 0;
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.forwards = false}, false);   // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false}, false); // turn towards goal
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.forwards = false, .minSpeed = 60}, false);   // back up
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 60}, false); // turn towards goal
   setWings(HIGH);
   intake = 127;
-  chassis.moveToPose(blueGoalCenter.x + tile * 0.3, blueGoalCenter.y - 4, 180, 2000, {.minSpeed = 100}, false); // score
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y - 4, 180, 2000, {.minSpeed = 100}, false); // score
   setWings(LOW);
   intake = 0;
-  chassis.moveToPose(blueGoalCenter.x + tile * 0.3, blueGoalCenter.y + tile, 180, 2000, {.forwards = false}, false); // reset
-  chassis.moveToPose(blueGoalCenter.x + tile * 0.3, blueGoalCenter.y + tile, 0, 2000, {}, false);                    // reset
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 0.5, 180, 2000, {.forwards = false, .minSpeed = 80}, false); // reset
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 0.5, 0, 2000, {.minSpeed = 60}, false);                    // reset
 }
 
 // starts in far side facing the goal, completes awp(score, descore, touch bar)
