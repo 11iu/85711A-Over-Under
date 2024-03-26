@@ -18,6 +18,9 @@
 #define INTAKE_ULTRASONIC_OUT 'g'
 #define DISTANCE_RIGHT 3
 
+#define LED_PORT 'b' // TODO - CHANGE
+#define LED_LENGTH 60 // TODO - CHANGE
+
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15
 

@@ -89,6 +89,8 @@ pros::Distance distRight(DISTANCE_RIGHT);
 pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
 pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
+pros::ADILed leds(LED_PORT, LED_LENGTH);
+
 Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
               distIntake);
 
@@ -246,6 +248,15 @@ void opcontrol()
       autons.autoTest();
     }
     */
+
+    // test leds
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+    {
+      leds.set_all(0x808080);
+      leds.update();
+    } else {
+      leds.clear_all();
+    }
 
     // drive
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
