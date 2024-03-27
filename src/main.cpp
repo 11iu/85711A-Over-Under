@@ -102,13 +102,15 @@ struct Auto
 
 Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-Auto autoCloseAuton{"Close", std::bind(&Autons::autoCloseBackwards, autons)};
+Auto autoCloseAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons)};
+Auto autoCloseAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
+                           autoCloseAnnoyingAuton,
                            autoSkillsAuton, autoDisabledAuton,
                            autoFarInsaneAuton, autoAWPAuton};
 int currentAuto = 1;
@@ -254,7 +256,9 @@ void opcontrol()
     {
       leds.set_all(0x808080);
       leds.update();
-    } else {
+    }
+    else
+    {
       leds.clear_all();
     }
 

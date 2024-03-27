@@ -36,6 +36,7 @@ public:
     void autoCloseOpposite();
     void autoClose();
     void autoCloseBackwards();
+    void autoCloseBackwardsAnnoying();
     void autoFar();
     void autoFarInsane();
     void autoAWP();

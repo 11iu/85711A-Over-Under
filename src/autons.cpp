@@ -150,12 +150,19 @@ void Autons::autoCloseBackwards()
 {
     chassis.setPose(closeStart.x, closeStart.y, closeStart.angle + 180);
     chassis.moveToPose(blueGoalRightSide.x - 2, 13, 90, 1500, {.forwards = false, .minSpeed = 80}, false);
-
-    // reshove in
-    // chassis.moveToPose(blueGoalRightSide.x + tile, 13, 90, 1000, {.minSpeed = 80}, false);
-    // chassis.moveToPose(blueGoalRightSide.x - 4, 13, 90, 1000, {.forwards = false, .minSpeed = 100}, false);
     chassis.setPose(blueGoalRightSide.x + botLength / 2.0, 13, 90);
 }
+
+// same pos as auto close but backwards
+void Autons::autoCloseBackwardsAnnoying()
+{
+    autoCloseBackwards();
+    chassis.moveToPose(fieldX - tile, tile * 1.5, -90, 1500, { .minSpeed = 80}, false); // move towards center of field
+    chassis.moveToPose(fieldX + 8, tile * 2, -90, 1500, {.minSpeed = 60}, false); // park in the neutral zone and mess up the center triball
+
+}
+
+
 
 // start in farthest full starting tile, facing the center of the field
 // starts at upper
