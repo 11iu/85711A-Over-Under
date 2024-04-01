@@ -226,29 +226,29 @@ void Autons::autoFarInsane()
   intake = 0;
 
   // moving backwards to get that lower triball with wings
-  chassis.moveToPose(redCenterLeftTriball.x + 4, redCenterLeftTriball.y - 10, -45, 800, {.forwards = false}, false); // turn
+  chassis.moveToPose(redCenterLeftTriball.x + 4, redCenterLeftTriball.y - 10, -45, 800, {.forwards = false}, false);         // turn
   chassis.moveToPose(redCenterLowerTriball.x - tile * 0.5, tile * 2, -45, 1000, {.forwards = false, .minSpeed = 60}, false); // back up into the lower triball
   setWings(HIGH);
-  chassis.moveToPose(redCenterLowerTriball.x - tile * 0.5, tile * 2, 45, 1000, {}, false);                                  // turn a lot to swing the triball around
+  chassis.moveToPose(redCenterLowerTriball.x - tile * 0.5, tile * 2, 45, 1000, {}, false); // turn a lot to swing the triball around
 
   // score the left and lower triballs
-  chassis.moveToPose(blueGoalCenter.x, tile * 2.5, 0, 1200, {.minSpeed = 80}, false); // move forward
+  chassis.moveToPose(blueGoalCenter.x, tile * 2.5, 0, 1200, {.minSpeed = 80}, false);   // move forward
   chassis.moveToPose(blueGoalCenter.x, tile * 2.5, 180, 1000, {.minSpeed = 80}, false); // turn back around
   intake = 127;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y, 180, 2000, {.minSpeed = 100}, false); // score
   intake = 0;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1200, {.forwards = false, .minSpeed = 80}, false); // back out
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 800, {}, false); // turn towards center
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 800, {}, false);                                     // turn towards center
 
   // get the triball closer to center and score
   intake = -127;
-  chassis.moveToPose(redCenterUpperTriball.x + 4, redCenterUpperTriball.y - 10, 0, 1500, {.maxSpeed = 100}, false); // get the triball
-  //setWings(LOW);
+  chassis.moveToPose(redCenterUpperTriball.x + 4, redCenterUpperTriball.y - 12, 0, 1500, {.maxSpeed = 100}, false); // get the upper triball
+  // setWings(LOW);
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.forwards = false, .minSpeed = 80}, false); // back up
   intake = 0;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 100}, false); // turn towards goal
   intake = 127;
-  //setWings(HIGH);
+  // setWings(HIGH);
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y - 2, 180, 2000, {.minSpeed = 100}, false); // score
 
   // reset for teleop
