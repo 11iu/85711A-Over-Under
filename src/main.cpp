@@ -98,22 +98,23 @@ struct Auto
 {
   std::string name;
   std::function<void()> function;
+  int color;
 };
 
-Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons)};
-Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
-Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons)};
-Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons)};
-Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
-Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
-Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
-// Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
+Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x00FFFF};
+Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons), 0x800000};
+Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons), 0xFF0000};
+Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons), 0x008080};
+Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons), 0x000080};
+Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons), 0x0000FF};
+Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons), 0xFFFF00};
+Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x000000};
 
-std::vector<Auto> autos = {autoFarAuton, autoCloseBackAuton,
-                           autoCloseBackAnnoyingAuton,
-                           autoSkillsAuton, autoDisabledAuton,
-                           autoFarInsaneAuton, autoAWPAuton};
+// Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
+
+std::vector<Auto> autos = {autoFarAuton, autoFarInsaneAuton, autoCloseBackAuton,
+                           autoCloseBackAnnoyingAuton, autoAWPAuton,
+                           autoSkillsAuton, autoDisabledAuton};
 int currentAuto = 1;
 
 ///////////////////////////////////////////////////
@@ -148,17 +149,31 @@ void set_braking(bool brakeCoast = true)
 
 void pgUp()
 {
-  currentAuto = currentAuto + 1;
+  currentAuto++;
   if (currentAuto > autos.size() - 1)
     currentAuto = 0;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
+  leds.set_all(autos[currentAuto].color);
 }
+
 void pgDown()
 {
-  currentAuto = currentAuto - 1;
+  currentAuto--;
   if (currentAuto < 0)
     currentAuto = autos.size() - 1;
   pros::lcd::print(0, "%s", autos[currentAuto].name);
+  leds.set_all(autos[currentAuto].color);
+}
+
+void flash_lights(void *param)
+{
+  while (true)
+  {
+    leds.set_all(0xFFFFFF);
+    pros::delay(500);
+    leds.clear_all();
+    pros::delay(500);
+  }
 }
 
 ///////////////////////////////////////////////////
@@ -183,6 +198,7 @@ void competition_initialize()
   pros::lcd::register_btn0_cb(pgDown);
   pros::lcd::register_btn2_cb(pgUp);
   pros::lcd::print(0, "%s", autos[currentAuto].name);
+  leds.set_all(autos[currentAuto].color);
 
   while (true)
   {
@@ -200,7 +216,13 @@ void competition_initialize()
   }
 }
 
-void autonomous() { autos[currentAuto].function(); }
+void autonomous()
+{
+  leds.clear_all();
+  pros::Task flash_task(flash_lights);
+  autos[currentAuto]
+      .function();
+}
 
 void opcontrol()
 {
@@ -228,7 +250,7 @@ void opcontrol()
 
   while (true)
   {
-    
+
     uint32_t current = pros::millis();
     if (current - start > 60000)
     {
@@ -240,7 +262,6 @@ void opcontrol()
       leds[(current - start) / 1000] = 0x0000FF;
       leds.update();
     }
-    
 
     // log distance sensor
     // int reading = distBack.get_value();
