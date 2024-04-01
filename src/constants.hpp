@@ -12,6 +12,9 @@
 #define WINGS 'a'
 #define VERT_WINGS 'd'
 
+#define LEFT_BUMP 'b'
+#define RiGHT_BUMP 'c'
+
 #define BACK_ULTRASONIC_IN 'f'
 #define BACK_ULTRASONIC_OUT 'e'
 #define INTAKE_ULTRASONIC_IN 'h'  // not used

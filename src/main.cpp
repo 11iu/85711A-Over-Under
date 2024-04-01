@@ -188,13 +188,10 @@ void initialize()
   chassis.calibrate();
 }
 
-bool comp = false;
-
 void competition_initialize()
 {
-  comp = true;
-  pros::ADIDigitalIn limit_left('b');
-  pros::ADIDigitalIn limit_right('c');
+  pros::ADIDigitalIn limit_left(LEFT_BUMP);
+  pros::ADIDigitalIn limit_right(RiGHT_BUMP);
   pros::lcd::register_btn0_cb(pgDown);
   pros::lcd::register_btn2_cb(pgUp);
   pros::lcd::print(0, "%s", autos[currentAuto].name);
