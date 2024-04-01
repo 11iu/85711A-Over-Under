@@ -12,14 +12,14 @@
 #define WINGS 'a'
 #define VERT_WINGS 'd'
 
-#define BACK_ULTRASONIC_IN 'f' 
-#define BACK_ULTRASONIC_OUT 'e' 
-#define INTAKE_ULTRASONIC_IN 'h'
-#define INTAKE_ULTRASONIC_OUT 'g'
+#define BACK_ULTRASONIC_IN 'f'
+#define BACK_ULTRASONIC_OUT 'e'
+#define INTAKE_ULTRASONIC_IN 'h'  // not used
+#define INTAKE_ULTRASONIC_OUT 'g' // not used
 #define DISTANCE_RIGHT 3
 
-#define LED_PORT 'b' // TODO - CHANGE
-#define LED_LENGTH 60 // TODO - CHANGE
+#define LED_PORT 'g'
+#define LED_LENGTH 60
 
 // chassis
 #define JOYSTICK_THRESHOLD_AMT 15

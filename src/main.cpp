@@ -100,17 +100,18 @@ struct Auto
   std::function<void()> function;
 };
 
+Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons)};
 Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-Auto autoCloseAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons)};
-Auto autoCloseAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons)};
+Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons)};
+Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
-std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
-                           autoCloseAnnoyingAuton,
+std::vector<Auto> autos = {autoFarAuton, autoCloseBackAuton,
+                           autoCloseBackAnnoyingAuton,
                            autoSkillsAuton, autoDisabledAuton,
                            autoFarInsaneAuton, autoAWPAuton};
 int currentAuto = 1;
@@ -222,8 +223,24 @@ void opcontrol()
   }
   set_braking();
 
+  uint32_t start = pros::millis();
+  leds.clear_all();
+
   while (true)
   {
+    
+    uint32_t current = pros::millis();
+    if (current - start > 60000)
+    {
+      leds.clear_all();
+      start = current;
+    }
+    else
+    {
+      leds[(current - start) / 1000] = 0x0000FF;
+      leds.update();
+    }
+    
 
     // log distance sensor
     // int reading = distBack.get_value();
@@ -250,17 +267,6 @@ void opcontrol()
       autons.autoTest();
     }
     */
-
-    // test leds
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
-    {
-      leds.set_all(0x808080);
-      leds.update();
-    }
-    else
-    {
-      leds.clear_all();
-    }
 
     // drive
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
