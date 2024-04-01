@@ -67,11 +67,13 @@ std::pair<float, float> Autons::localizeRobot()
 bool Autons::hasTriball()
 {
   int threshold = 200;
-  return distIntake.get_value() < threshold;
+  // return distIntake.get_value() < threshold;
+  return false; // placeholder not using the distance sensor
 }
 
 void Autons::fireCata()
 {
+  /*
   u_int32_t start = pros::millis();
   u_int32_t timeout = 2000;
 
@@ -81,6 +83,7 @@ void Autons::fireCata()
     pros::delay(200);
   }
   intake = 0;
+  */
 
   cata = CATAMAXVOLTAGE;
 }
@@ -205,11 +208,11 @@ void Autons::autoFarInsane()
 {
   chassis.setPose(farInsaneStart.x, farInsaneStart.y, farInsaneStart.angle);
   chassis.moveToPose(blueGoalCenter.x - tile * 0.4, farInsaneStart.y, farInsaneStart.angle, 2000, {.minSpeed = 80}, false); // Moves to in front of goal
-  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, farInsaneStart.y, 180, 1000, {}, false); // turn to face goal
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, farInsaneStart.y, 180, 1000, {}, false);                                // turn to face goal
   intake = 127;
-  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + 6, 180, 1500, {.minSpeed = 100}, false); // Shoves preload in
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + 6, 180, 1500, {.minSpeed = 100}, false);                      // Shoves preload in
   chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + tile, 180, 1500, {.forwards = false, .minSpeed = 80}, false); // back out
-  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + tile, -5, 1500, {.forwards = false}, false); // turn towards triball
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.4, blueGoalCenter.y + tile, -5, 1500, {.forwards = false}, false);                  // turn towards triball
   intake = 0;
 
   // pick up triball to the side and push in triball closer to goal using wings
@@ -225,7 +228,7 @@ void Autons::autoFarInsane()
 
   // get the triball closer to pipe
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1000, {.forwards = false, .minSpeed = 80}, false); // back up
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {.minSpeed = 60}, false);                                    // turn towards field center
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 1000, {.minSpeed = 60}, false);                      // turn towards field center
   intake = -127;
   chassis.moveToPose(redCenterUpperTriball.x + 2, redCenterUpperTriball.y - 10, 0, 1500, {.maxSpeed = 80}, false); // get the triball
   intake = 0;
@@ -237,7 +240,7 @@ void Autons::autoFarInsane()
   setWings(LOW);
   intake = 0;
   chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 0.5, 180, 2000, {.forwards = false, .minSpeed = 80}, false); // reset
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 0.5, 0, 2000, {.minSpeed = 60}, false);                    // reset
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 0.5, 0, 2000, {.minSpeed = 60}, false);                      // reset
 }
 
 // starts in far side facing the goal, completes awp(score, descore, touch bar)
@@ -250,8 +253,8 @@ void Autons::autoAWP()
   chassis.moveToPose(fieldX, tile * 1.25, -135, 2000, {.forwards = false}, false); // back up
   setVertWings(LOW);
   chassis.setPose(fieldX - tile / 2.0, tile + botWidth / 2.0, -135);
-  //chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false);                                          // forward a bit
-  chassis.moveToPose(fieldX - 16, tile * 1.5, 0, 1500, {}, false);                                            // turn
+  // chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false);                                          // forward a bit
+  chassis.moveToPose(fieldX - 16, tile * 1.5, 0, 1500, {}, false);                                    // turn
   chassis.moveToPose(fieldX - 16, redElevationHorizontalMid.y - 6, 0, 1500, {.minSpeed = 60}, false); // go to bar
 }
 
