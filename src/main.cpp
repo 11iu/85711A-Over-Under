@@ -89,6 +89,8 @@ pros::Distance distRight(DISTANCE_RIGHT);
 pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
 pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
+pros::ADILed leds(LED_PORT, LED_LENGTH);
+
 Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
               distIntake);
 
@@ -100,13 +102,15 @@ struct Auto
 
 Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons)};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons)};
-Auto autoCloseAuton{"Close", std::bind(&Autons::autoCloseBackwards, autons)};
+Auto autoCloseAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons)};
+Auto autoCloseAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons)};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons)};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons)};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons)};
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons)};
 
 std::vector<Auto> autos = {autoFarAuton, autoCloseAuton,
+                           autoCloseAnnoyingAuton,
                            autoSkillsAuton, autoDisabledAuton,
                            autoFarInsaneAuton, autoAWPAuton};
 int currentAuto = 1;
@@ -246,6 +250,17 @@ void opcontrol()
       autons.autoTest();
     }
     */
+
+    // test leds
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+    {
+      leds.set_all(0x808080);
+      leds.update();
+    }
+    else
+    {
+      leds.clear_all();
+    }
 
     // drive
     int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
