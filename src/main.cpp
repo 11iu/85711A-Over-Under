@@ -1,6 +1,6 @@
-#include "main.h"
 #include "autons.hpp"
 #include "display/lv_misc/lv_color.h"
+#include "main.h"
 #include "pros/adi.hpp"
 #include "pros/llemu.hpp"
 #include "pros/misc.h"
@@ -96,9 +96,9 @@ Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
 
 struct Auto
 {
-  std::string name;
-  std::function<void()> function;
-  int color;
+    std::string name;
+    std::function<void()> function;
+    int color;
 };
 
 Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x00FFFF};
@@ -123,57 +123,57 @@ int currentAuto = 1;
 
 double logDrive(double v, double pow)
 {
-  if (v > 0)
-  {
-    return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
-  else
-  {
-    return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
-  }
+    if (v > 0)
+    {
+        return (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+    }
+    else
+    {
+        return -1 * (std::pow(std::abs(v), pow) / std::pow(127, pow)) * 127;
+    }
 }
 
 void set_braking(bool brakeCoast = true)
 {
-  if (brakeCoast)
-  {
-    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-  }
-  else
-  {
-    leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-    rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
-  }
+    if (brakeCoast)
+    {
+        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    }
+    else
+    {
+        leftMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+        rightMotors.set_brake_modes(pros::E_MOTOR_BRAKE_BRAKE);
+    }
 }
 
 void pgUp()
 {
-  currentAuto++;
-  if (currentAuto > autos.size() - 1)
-    currentAuto = 0;
-  pros::lcd::print(0, "%s", autos[currentAuto].name);
-  leds.set_all(autos[currentAuto].color);
+    currentAuto++;
+    if (currentAuto > autos.size() - 1)
+        currentAuto = 0;
+    pros::lcd::print(0, "%s", autos[currentAuto].name);
+    leds.set_all(autos[currentAuto].color);
 }
 
 void pgDown()
 {
-  currentAuto--;
-  if (currentAuto < 0)
-    currentAuto = autos.size() - 1;
-  pros::lcd::print(0, "%s", autos[currentAuto].name);
-  leds.set_all(autos[currentAuto].color);
+    currentAuto--;
+    if (currentAuto < 0)
+        currentAuto = autos.size() - 1;
+    pros::lcd::print(0, "%s", autos[currentAuto].name);
+    leds.set_all(autos[currentAuto].color);
 }
 
 void flash_lights(void *param)
 {
-  while (true)
-  {
-    leds.set_all(0xFFFFFF);
-    pros::delay(500);
-    leds.clear_all();
-    pros::delay(500);
-  }
+    while (pros::competition::is_autonomous())
+    {
+        leds.set_all(0xFFFFFF);
+        pros::delay(500);
+        leds.clear_all();
+        pros::delay(500);
+    }
 }
 
 ///////////////////////////////////////////////////
@@ -182,91 +182,91 @@ void flash_lights(void *param)
 
 void initialize()
 {
-  pros::delay(500); // Stop the user from doing anything while
-                    // legacy ports configure.
-  pros::lcd::initialize();
-  chassis.calibrate();
+    pros::delay(500); // Stop the user from doing anything while
+                      // legacy ports configure.
+    pros::lcd::initialize();
+    chassis.calibrate();
 }
 
 void competition_initialize()
 {
-  pros::ADIDigitalIn limit_left(LEFT_BUMP);
-  pros::ADIDigitalIn limit_right(RiGHT_BUMP);
-  pros::lcd::register_btn0_cb(pgDown);
-  pros::lcd::register_btn2_cb(pgUp);
-  pros::lcd::print(0, "%s", autos[currentAuto].name);
-  leds.set_all(autos[currentAuto].color);
+    pros::ADIDigitalIn limit_left(LEFT_BUMP);
+    pros::ADIDigitalIn limit_right(RiGHT_BUMP);
+    pros::lcd::register_btn0_cb(pgDown);
+    pros::lcd::register_btn2_cb(pgUp);
+    pros::lcd::print(0, "%s", autos[currentAuto].name);
+    leds.set_all(autos[currentAuto].color);
 
-  while (true)
-  {
-    if (limit_left.get_value())
+    while (true)
     {
-      pgUp();
-      pros::delay(500);
+        if (limit_left.get_value())
+        {
+            pgUp();
+            pros::delay(500);
+        }
+        else if (limit_right.get_value())
+        {
+            pgDown();
+            pros::delay(500);
+        }
+        pros::delay(20);
     }
-    else if (limit_right.get_value())
-    {
-      pgDown();
-      pros::delay(500);
-    }
-    pros::delay(20);
-  }
 }
 
 void autonomous()
 {
-  leds.clear_all();
-  pros::Task flash_task(flash_lights);
-  autos[currentAuto]
-      .function();
+    leds.clear_all();
+    pros::Task flash_task(flash_lights);
+    autos[currentAuto]
+        .function();
 }
 
 void opcontrol()
 {
-  // toggles
-  bool flipDrive = false;
-  bool cataFire = false;
+    // toggles
+    bool flipDrive = false;
+    bool cataFire = false;
 
-  // debounce timer
-  int delayVertWing = 0;
-  int delayWings = 0;
-  int delayCata = 0;
-  int delayFlip = 0;
+    // debounce timer
+    int delayVertWing = 0;
+    int delayWings = 0;
+    int delayCata = 0;
+    int delayFlip = 0;
 
-  // auto close at start of driver skills
-  if (autos[currentAuto].name == autoSkillsAuton.name)
-  {
-    autoCloseAuton.function();
-    // chassis.tank(-5, -10); // push back to mitigate cata momentum
-    cataFire = true;
-  }
-  set_braking();
-
-  uint32_t start = pros::millis();
-  leds.clear_all();
-
-  while (true)
-  {
-
-    uint32_t current = pros::millis();
-    if (current - start > 60000)
+    // auto close at start of driver skills
+    if (autos[currentAuto].name == autoSkillsAuton.name)
     {
-      leds.clear_all();
-      start = current;
+        autoCloseAuton.function();
+        // chassis.tank(-5, -10); // push back to mitigate cata momentum
+        cataFire = true;
     }
-    else
+    set_braking();
+
+    uint32_t start = pros::millis();
+    leds.clear_all();
+
+    while (true)
     {
-      leds[(current - start) / 1000] = 0x0000FF;
-      leds.update();
-    }
 
-    // log distance sensor
-    // int reading = distBack.get_value();
-    // pros::lcd::print(0, "%i", reading);
-    // int right = distRight.get();
-    // pros::lcd::print(0, "%i", right);
+        uint32_t current = pros::millis();
+        if (current - start > 60000)
+        {
+            leds.clear_all();
+            start = current;
+        }
+        else
+        {
+            leds[(current - start) / 1000] = 0x0000FF;
+            leds.update();
+        }
 
-    /*
+        // log distance sensor
+        // int reading = distBack.get_value();
+        // pros::lcd::print(0, "%i", reading);
+        // int right = distRight.get();
+        // pros::lcd::print(0, "%i", right);
+
+        /*
     // testing autos
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
     {
@@ -286,93 +286,93 @@ void opcontrol()
     }
     */
 
-    // drive
-    int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        // drive
+        int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-    int leftY = logDrive(forward, 2);
-    int rightX = logDrive(turn, 2);
+        int leftY = logDrive(forward, 2);
+        int rightX = logDrive(turn, 2);
 
-    if (flipDrive)
-      leftY *= -1;
+        if (flipDrive)
+            leftY *= -1;
 
-    // move the chassis with arcade drive
-    chassis.arcade(leftY, rightX);
+        // move the chassis with arcade drive
+        chassis.arcade(leftY, rightX);
 
-    // wings
-    if (delayWings)
-    {
-      delayWings--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
-      autons.toggleWings();
-      delayWings = 40;
-    }
+        // wings
+        if (delayWings)
+        {
+            delayWings--;
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        {
+            autons.toggleWings();
+            delayWings = 40;
+        }
 
-    // wing
-    if (delayVertWing)
-    {
-      delayVertWing--;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
-    {
-      autons.toggleVertWings();
-      delayVertWing = 40;
-    }
+        // wing
+        if (delayVertWing)
+        {
+            delayVertWing--;
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+        {
+            autons.toggleVertWings();
+            delayVertWing = 40;
+        }
 
-    // cata toggle
-    if (!delayCata)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-      {
-        cataFire = !cataFire;
-        delayCata = 40;
-      }
-    }
-    else
-    {
-      delayCata--;
-    }
+        // cata toggle
+        if (!delayCata)
+        {
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+            {
+                cataFire = !cataFire;
+                delayCata = 40;
+            }
+        }
+        else
+        {
+            delayCata--;
+        }
 
-    // cata firing
-    if (cataFire)
-    {
-      autons.fireCata();
-    }
-    else
-    {
-      cata.brake(); // coast up
-    }
+        // cata firing
+        if (cataFire)
+        {
+            autons.fireCata();
+        }
+        else
+        {
+            cata.brake(); // coast up
+        }
 
-    // intake
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
-      intake = 127;
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
-      intake = -127;
-    }
-    else
-    {
-      intake.brake();
-    }
+        // intake
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+        {
+            intake = 127;
+        }
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+        {
+            intake = -127;
+        }
+        else
+        {
+            intake.brake();
+        }
 
-    // filpDrive
-    if (!delayFlip)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
-      {
-        flipDrive = !flipDrive;
-        delayFlip = 40;
-      }
-    }
-    else
-    {
-      delayFlip--;
-    }
+        // filpDrive
+        if (!delayFlip)
+        {
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+            {
+                flipDrive = !flipDrive;
+                delayFlip = 40;
+            }
+        }
+        else
+        {
+            delayFlip--;
+        }
 
-    pros::delay(20);
-  }
+        pros::delay(20);
+    }
 }
