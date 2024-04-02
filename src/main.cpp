@@ -152,7 +152,7 @@ void pgUp()
     currentAuto++;
     if (currentAuto > autos.size() - 1)
         currentAuto = 0;
-    pros::lcd::print(0, "%s", autos[currentAuto].name);
+    pros::lcd::print(0, "%s",     autos[currentAuto].name);
     leds.set_all(autos[currentAuto].color);
 }
 
@@ -259,32 +259,6 @@ void opcontrol()
             leds[(current - start) / 1000] = 0x0000FF;
             leds.update();
         }
-
-        // log distance sensor
-        // int reading = distBack.get_value();
-        // pros::lcd::print(0, "%i", reading);
-        // int right = distRight.get();
-        // pros::lcd::print(0, "%i", right);
-
-        /*
-    // testing autos
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
-    {
-      autons.autoFar();
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
-    {
-      autons.autoClose();
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT))
-    {
-      autons.autoSkills();
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT))
-    {
-      autons.autoTest();
-    }
-    */
 
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
