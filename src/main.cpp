@@ -170,9 +170,9 @@ void flash_lights(void *param)
     while (pros::competition::is_autonomous())
     {
         leds.set_all(0xFFFFFF);
-        pros::delay(500);
+        pros::delay(200);
         leds.clear_all();
-        pros::delay(500);
+        pros::delay(200);
     }
 }
 
