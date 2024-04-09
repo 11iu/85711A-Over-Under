@@ -6,6 +6,7 @@
 #include "pros/misc.h"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
+#include "./subsystems/leds.hpp"
 
 ///////////////////////////////////////////////////
 // Chassis
@@ -89,7 +90,7 @@ pros::Distance distRight(DISTANCE_RIGHT);
 pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
 pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
-pros::ADILed leds(LED_PORT, LED_LENGTH);
+Leds leds(LED_PORT, LED_LENGTH);
 
 Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
               distIntake);
@@ -101,10 +102,10 @@ struct Auto
     int color;
 };
 
-Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x00FFFF};
-Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons), 0x800000};
+Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x000000};
+Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons), 0x000000};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons), 0xFF0000};
-Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons), 0x008080};
+Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons), 0x000000};
 Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons), 0x000080};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons), 0x0000FF};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons), 0xFFFF00};
@@ -165,16 +166,12 @@ void pgDown()
     leds.set_all(autos[currentAuto].color);
 }
 
-void flash_lights(void *param)
-{
-    while (pros::competition::is_autonomous())
-    {
-        leds.set_all(0xFFFFFF);
-        pros::delay(200);
-        leds.clear_all();
-        pros::delay(200);
-    }
+// making bs static
+void flashing_seizure_static(void *param) {
+    Leds* leds_instance = static_cast<Leds*>(param);
+    leds_instance->flashing_seizure(param);
 }
+
 
 ///////////////////////////////////////////////////
 // Main Functions
@@ -216,7 +213,8 @@ void competition_initialize()
 void autonomous()
 {
     leds.clear_all();
-    pros::Task flash_task(flash_lights);
+
+    pros::Task flash_task(flashing_seizure_static);
     autos[currentAuto]
         .function();
 }
