@@ -1,14 +1,13 @@
 #include "leds.hpp"
-#include "pros/rtos.hpp"
 #include "pros/adi.hpp"
+#include "pros/misc.h"
+#include "pros/rtos.hpp"
 
-Leds::Leds(std::uint8_t adi_port, std::uint32_t length) : pros::ADILed(adi_port, length)
-{  
-};
+Leds::Leds(std::uint8_t adi_port, std::uint32_t length) : pros::ADILed(adi_port, length){};
 
 void Leds::flashing_seizure(void *param)
 {
-    while (true)
+    while ((pros::c::competition_get_status() & COMPETITION_AUTONOMOUS) != 0)
     {
         set_all(0xFFFFFF);
         pros::delay(200);
