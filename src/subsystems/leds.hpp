@@ -9,7 +9,7 @@ class Leds : public pros::ADILed
 public:
     Leds(std::uint8_t adi_port, std::uint32_t length);
     void flashing_seizure(void *param);
-    
+    void sequential_individual(void *param);
 };
 
 #endif

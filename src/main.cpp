@@ -240,23 +240,8 @@ void opcontrol()
     }
     set_braking();
 
-    uint32_t start = pros::millis();
-    leds.clear_all();
-
     while (true)
     {
-
-        uint32_t current = pros::millis();
-        if (current - start > 60000)
-        {
-            leds.clear_all();
-            start = current;
-        }
-        else
-        {
-            leds[(current - start) / 1000] = 0x0000FF;
-            leds.update();
-        }
 
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
