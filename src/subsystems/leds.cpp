@@ -15,3 +15,23 @@ void Leds::flashing_seizure(void *param)
         pros::delay(200);
     }
 }
+
+void Leds::sequential_individual(void *param)
+{
+    uint32_t start = pros::millis();
+    clear_all();
+
+    while(true) {
+        uint32_t current = pros::millis();
+        if (current - start > 60000)
+        {
+            clear_all();
+            start = current;
+        }
+        else
+        {
+            _buffer[(current - start) / 1000] = 0x0000FF;
+            update();
+        }
+    }
+}
