@@ -282,7 +282,7 @@ void Autons::autoFarInsane()
     chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 2000, {.minSpeed = 100}, false); // reset
 }
 
-// starts in far side facing the goal, completes awp(score, descore, touch bar)
+// starts in close side facing the goal, completes awp(score, descore, touch bar)
 // start parallel to angled bar with back of robot towards side of goal
 void Autons::autoAWP()
 {
@@ -455,13 +455,13 @@ void Autons::autoTest()
     // test pid
     chassis.setPose(0, 0, 0);
 
-    for (int i = 0; i < 6; i++)
-    {
-        chassis.moveToPose(0, 2 * tile, 0, 2000);
-        chassis.moveToPose(0, 0, 0, 2000, {.forwards = false});
-        chassis.moveToPose(0, 0, 180, 2000);
-        chassis.moveToPose(0, 0, 0, 2000);
-    }
+    // for (int i = 0; i < 6; i++)
+    // {
+    // chassis.moveToPose(0, tile, 0, 2000);
+    // chassis.moveToPose(0, 0, 0, 2000, {.forwards = false});
+    chassis.moveToPose(0, 0, 180, 2000);
+    // chassis.moveToPose(0, 0, 0, 2000);
+    // }
     /*
 chassis.follow(path_txt, 15, 60000, true, false);
 chassis.waitUntil(35);
