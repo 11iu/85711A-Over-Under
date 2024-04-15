@@ -1,13 +1,13 @@
 #ifndef AUTONS_HPP
 #define AUTONS_HPP
 
-#include "lemlib/api.hpp"
 #include "constants.hpp"
+#include "lemlib/api.hpp"
 #include "pros/distance.hpp"
 
 class Autons
 {
-private:
+  private:
     lemlib::Chassis &chassis;
     pros::ADIDigitalOut &wings;
     pros::ADIDigitalOut &vertWings;
@@ -19,7 +19,7 @@ private:
     pros::ADIUltrasonic &distBack;
     pros::ADIUltrasonic &distIntake;
 
-public:
+  public:
     Autons(lemlib::Chassis &chassis, pros::ADIDigitalOut &wings,
            pros::ADIDigitalOut &vertWings, pros::Motor &intake,
            pros::Motor &cata, pros::Distance &distRight,
@@ -27,7 +27,6 @@ public:
 
     // Function declarations
     std::pair<float, float> localizeRobot();
-    bool hasTriball();
     void fireCata();
     void toggleWings();
     void toggleVertWings();

@@ -1,3 +1,4 @@
+#include "./subsystems/leds.hpp"
 #include "autons.hpp"
 #include "display/lv_misc/lv_color.h"
 #include "main.h"
@@ -6,7 +7,6 @@
 #include "pros/misc.h"
 #include "pros/misc.hpp"
 #include "pros/rtos.hpp"
-#include "./subsystems/leds.hpp"
 
 ///////////////////////////////////////////////////
 // Chassis
@@ -153,7 +153,7 @@ void pgUp()
     currentAuto++;
     if (currentAuto > autos.size() - 1)
         currentAuto = 0;
-    pros::lcd::print(0, "%s",     autos[currentAuto].name);
+    pros::lcd::print(0, "%s", autos[currentAuto].name);
     leds.set_all(autos[currentAuto].color);
 }
 
@@ -167,11 +167,11 @@ void pgDown()
 }
 
 // making bs static
-void flashing_seizure_static(void *param) {
-    Leds* leds_instance = static_cast<Leds*>(param);
+void flashing_seizure_static(void *param)
+{
+    Leds *leds_instance = static_cast<Leds *>(param);
     leds_instance->flashing_seizure(param);
 }
-
 
 ///////////////////////////////////////////////////
 // Main Functions
@@ -231,6 +231,8 @@ void opcontrol()
     int delayCata = 0;
     int delayFlip = 0;
 
+    bool intakeOn = false;
+
     // auto close at start of driver skills
     if (autos[currentAuto].name == autoSkillsAuton.name)
     {
@@ -240,23 +242,10 @@ void opcontrol()
     }
     set_braking();
 
-    uint32_t start = pros::millis();
     leds.clear_all();
 
     while (true)
     {
-
-        uint32_t current = pros::millis();
-        if (current - start > 60000)
-        {
-            leds.clear_all();
-            start = current;
-        }
-        else
-        {
-            leds[(current - start) / 1000] = 0x0000FF;
-            leds.update();
-        }
 
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -317,6 +306,8 @@ void opcontrol()
             cata.brake(); // coast up
         }
 
+        intakeOn = distIntake.get_value() < 10;
+
         // intake
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
@@ -328,7 +319,23 @@ void opcontrol()
         }
         else
         {
-            intake.brake();
+            if (intakeOn)
+            {
+                intake = -127;
+            }
+            else
+            {
+                intake.brake();
+            }
+        }
+
+        if (intakeOn)
+        {
+            leds.set_all(LV_COLOR_GREEN.full);
+        }
+        else
+        {
+            leds.clear_all();
         }
 
         // filpDrive

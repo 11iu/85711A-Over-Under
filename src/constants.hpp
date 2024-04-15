@@ -15,13 +15,13 @@
 #define LEFT_BUMP 'b'
 #define RiGHT_BUMP 'c'
 
-#define BACK_ULTRASONIC_IN 'f'
-#define BACK_ULTRASONIC_OUT 'e'
-#define INTAKE_ULTRASONIC_IN 'h'  // not used
-#define INTAKE_ULTRASONIC_OUT 'g' // not used
+#define BACK_ULTRASONIC_IN 'f'  // not used
+#define BACK_ULTRASONIC_OUT 'e' // not used
+#define INTAKE_ULTRASONIC_IN 'h'
+#define INTAKE_ULTRASONIC_OUT 'g'
 #define DISTANCE_RIGHT 3
 
-#define LED_PORT 'g'
+#define LED_PORT 'e'
 #define LED_LENGTH 64
 
 // chassis
