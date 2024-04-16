@@ -106,16 +106,15 @@ Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x000000
 // Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons), 0x000000};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons), 0xFF0000};
 // Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons), 0x000000};
-// Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons), 0x000080};
+Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons), 0x000080};
 Auto autoAWPAuton{"AWP close", std::bind(&Autons::autoAWP, autons), 0x0000FF};
 Auto autoSkillsAuton{"Skills", std::bind(&Autons::autoSkills, autons), 0xFFFF00};
 Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x000000};
 
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
 
-std::vector<Auto> autos = {autoFarInsaneAuton, autoAWPAuton,
-                           autoSkillsAuton, autoDisabledAuton};
-int currentAuto = 1;
+std::vector<Auto> autos = {autoFarInsaneAuton};
+int currentAuto = 0;
 
 ///////////////////////////////////////////////////
 // Utility Functions
@@ -213,7 +212,7 @@ void autonomous()
 {
     leds.clear_all();
 
-    pros::Task flash_task(flashing_seizure_static);
+    //pros::Task flash_task(flashing_seizure_static);
     autos[currentAuto]
         .function();
 }
