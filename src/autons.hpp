@@ -38,6 +38,7 @@ class Autons
     void autoCloseBackwardsAnnoying();
     void autoFar();
     void autoFarInsane();
+    void autoFarDiabolical();
     void autoAWP();
     void autoSkills();
     void autoDisabled();

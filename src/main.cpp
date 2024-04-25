@@ -81,7 +81,7 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController,
 pros::ADIDigitalOut wings(WINGS, LOW);
 pros::ADIDigitalOut vertWings(VERT_WINGS, LOW);
 
-pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_18, false,
+pros::Motor intake(INTAKE_PORT, pros::E_MOTOR_GEARSET_06, false,
                    pros ::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(CATA_PORT, pros::E_MOTOR_GEARSET_36, true);
 
@@ -248,8 +248,6 @@ void bouncy(void *param)
         }
     }
 }
-
-
 
 ///////////////////////////////////////////////////
 // Main Functions

@@ -7,7 +7,7 @@
 #define RIGHT_FRONT_LOWER_PORT 1
 
 #define IMU_PORT 4
-#define INTAKE_PORT 9
+#define INTAKE_PORT 18
 #define CATA_PORT 8
 #define WINGS 'a'
 #define VERT_WINGS 'd'
