@@ -112,7 +112,7 @@ Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x0
 
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
 
-std::vector<Auto> autos = {autoFarInsaneAuton, autoDisabledAuton};
+std::vector<Auto> autos = {autoFarInsaneAuton, autoCloseBackAnnoyingAuton, autoAWPAuton, autoSkillsAuton, autoCloseAuton};
 int currentAuto = 1;
 
 ///////////////////////////////////////////////////
@@ -195,10 +195,18 @@ void sequential_individual(void *param)
     }
 }
 
+// does not work bruh
 void bouncy(void *param)
 {
+    int start = 0;
     while(true) {
-
+        
+        for (int i = start; i < start+5; i++) {
+            leds[i%LED_LENGTH] = 0x0000FF;
+        }
+        leds.update();
+        pros::delay(50);
+        start++;
     }
 }
 
@@ -244,7 +252,7 @@ void autonomous()
 {
     leds.clear_all();
 
-    pros::Task flash_task(flashing_seizure);
+    pros::Task flash_task(bouncy);
     autos[currentAuto].function();
 }
 
@@ -347,7 +355,7 @@ void opcontrol()
         {
             intake = -127;
         }
-        else if (intakeOn)
+        else if (intakeOn && intake.get_temperature() < 45)
         {
             intake = -90;
         }
