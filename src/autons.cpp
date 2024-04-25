@@ -220,7 +220,7 @@ void Autons::autoFarInsane()
   intake = 0;
 
   // moving backwards to get that lower triball with wings
-  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 18, 135, 2000, {.minSpeed = 100}, false); // back up and turn  chassis.moveToPose(redCenterLowerTriball.x, tile * 1.6, -45, 1500, {.forwards = false, .minSpeed = 100}, false); // back up into the lower triball
+  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 18, 135, 2000, {.minSpeed = 100}, false); // back up and turn  
   setWings(HIGH);
   chassis.moveToPose(redCenterLowerTriball.x + 5, tile * 2, 180, 1500, {.minSpeed = 40}, false); // scoop lower triball
 
