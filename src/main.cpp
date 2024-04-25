@@ -1,4 +1,3 @@
-#include "./subsystems/leds.hpp"
 #include "autons.hpp"
 #include "display/lv_misc/lv_color.h"
 #include "main.h"
@@ -90,7 +89,7 @@ pros::Distance distRight(DISTANCE_RIGHT);
 pros::ADIUltrasonic distBack(BACK_ULTRASONIC_OUT, BACK_ULTRASONIC_IN);
 pros::ADIUltrasonic distIntake(INTAKE_ULTRASONIC_OUT, INTAKE_ULTRASONIC_IN);
 
-Leds leds(LED_PORT, LED_LENGTH);
+pros::ADILed leds(LED_PORT, LED_LENGTH);
 
 Autons autons(chassis, wings, vertWings, intake, cata, distRight, distBack,
               distIntake);
@@ -113,8 +112,8 @@ Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x0
 
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
 
-std::vector<Auto> autos = {autoFarInsaneAuton};
-int currentAuto = 0;
+std::vector<Auto> autos = {autoFarInsaneAuton, autoDisabledAuton};
+int currentAuto = 1;
 
 ///////////////////////////////////////////////////
 // Utility Functions
@@ -164,12 +163,45 @@ void pgDown()
     leds.set_all(autos[currentAuto].color);
 }
 
-// making bs static
-void flashing_seizure_static(void *param)
+/* LED SHIT */
+void flashing_seizure(void *param)
 {
-    Leds *leds_instance = static_cast<Leds *>(param);
-    leds_instance->flashing_seizure(param);
+    while ((pros::c::competition_get_status() & COMPETITION_AUTONOMOUS) != 0)
+    {
+        leds.set_all(0xFFFFFF);
+        pros::delay(200);
+        leds.clear_all();
+        pros::delay(200);
+    }
 }
+
+void sequential_individual(void *param)
+{
+    uint32_t start = pros::millis();
+    leds.clear_all();
+
+    while(true) {
+        uint32_t current = pros::millis();
+        if (current - start > 60000)
+        {
+            leds.clear_all();
+            start = current;
+        }
+        else
+        {
+            leds[(current - start) / 1000] = 0x0000FF;
+            leds.update();
+        }
+    }
+}
+
+void bouncy(void *param)
+{
+    while(true) {
+
+    }
+}
+
 
 ///////////////////////////////////////////////////
 // Main Functions
@@ -212,10 +244,10 @@ void autonomous()
 {
     leds.clear_all();
 
-    //pros::Task flash_task(flashing_seizure_static);
-    autos[currentAuto]
-        .function();
+    pros::Task flash_task(flashing_seizure);
+    autos[currentAuto].function();
 }
+
 
 void opcontrol()
 {
@@ -304,7 +336,7 @@ void opcontrol()
             cata.brake(); // coast up
         }
 
-        intakeOn = distIntake.get_value() < 10;
+        intakeOn = distIntake.get_value() < 160;
 
         // intake
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
@@ -315,21 +347,18 @@ void opcontrol()
         {
             intake = -127;
         }
-        else
+        else if (intakeOn)
         {
-            if (intakeOn)
-            {
-                intake = -127;
-            }
-            else
-            {
-                intake.brake();
-            }
+            intake = -90;
+        }
+        else {
+            intake = 0;
         }
 
+        // indicate if triball in
         if (intakeOn)
         {
-            leds.set_all(LV_COLOR_GREEN.full);
+            leds.set_all(LV_COLOR_BLUE.full);
         }
         else
         {
