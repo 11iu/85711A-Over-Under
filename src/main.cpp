@@ -112,7 +112,7 @@ Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x0
 
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
 
-std::vector<Auto> autos = {autoFarInsaneAuton, autoCloseBackAnnoyingAuton, autoAWPAuton, autoSkillsAuton, autoCloseAuton};
+std::vector<Auto> autos = {autoFarInsaneAuton, autoCloseBackAnnoyingAuton, autoAWPAuton, autoSkillsAuton, autoCloseAuton, autoDisabledAuton};
 int currentAuto = 1;
 
 ///////////////////////////////////////////////////
@@ -180,7 +180,8 @@ void sequential_individual(void *param)
     uint32_t start = pros::millis();
     leds.clear_all();
 
-    while(true) {
+    while (true)
+    {
         uint32_t current = pros::millis();
         if (current - start > 60000)
         {
@@ -199,16 +200,55 @@ void sequential_individual(void *param)
 void bouncy(void *param)
 {
     int start = 0;
-    while(true) {
-        
-        for (int i = start; i < start+5; i++) {
-            leds[i%LED_LENGTH] = 0x0000FF;
+    bool forwards = true;
+    int size = 15;
+    int last = -1;
+
+    // initial lit up
+    for (int i = 0; i < size; i++)
+    {
+        leds[i] = 0x0000FF;
+        last++;
+    }
+
+    while (true)
+    {
+
+        if (forwards)
+        {
+            if (last == LED_LENGTH - 1)
+            {
+                forwards = false;
+                last = LED_LENGTH - size;
+            }
+            else
+            {
+                leds[last + 1] = 0x0000FF;
+                leds[last - size + 1] = 0x000000;
+                leds.update();
+                pros::delay(30);
+                last++;
+            }
         }
-        leds.update();
-        pros::delay(50);
-        start++;
+        else
+        {
+            if (last == 0)
+            {
+                forwards = true;
+                last = size - 1;
+            }
+            else
+            {
+                leds[last - 1] = 0x0000FF;
+                leds[last + size - 1] = 0x000000;
+                leds.update();
+                pros::delay(30);
+                last--;
+            }
+        }
     }
 }
+
 
 
 ///////////////////////////////////////////////////
@@ -255,7 +295,6 @@ void autonomous()
     pros::Task flash_task(bouncy);
     autos[currentAuto].function();
 }
-
 
 void opcontrol()
 {
@@ -359,7 +398,8 @@ void opcontrol()
         {
             intake = -90;
         }
-        else {
+        else
+        {
             intake = 0;
         }
 
