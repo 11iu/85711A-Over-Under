@@ -25,19 +25,13 @@
 #define LED_LENGTH 64
 
 // chassis
-#define JOYSTICK_THRESHOLD_AMT 15
-
-// auto drive
-#define DRIVE_SPEED \
-    100 // This is 110/127 (around 87% of max speed).  We don't suggest making     \
-        // this 127. If this is 127 and the robot tries to heading correct, it's   \
-        // only correcting by making one side slower.  When this is 87%, it's      \
-        // correcting by making one side faster and one side slower, giving better \
-        // heading correction.
-#define TURN_SPEED 90
-#define SWING_SPEED 90
+const int JOYSTICK_THRESHOLD_AMT = 15;
 
 // catapult
-#define CATA_THRESHOLD 2250
-#define CATAMAXVOLTAGE -127
-#define CATAHOLDVOLTAGE 0
+const int CATA_THRESHOLD = 2250;
+const int CATAMAXVOLTAGE = -127;
+const int CATAHOLDVOLTAGE = 0;
+
+// driving multipliers
+const double FORWARD_AMT = 1.0;
+const double TURN_AMT = 0.8;

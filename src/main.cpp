@@ -326,8 +326,8 @@ void opcontrol()
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-        int leftY = logDrive(forward, 2);
-        int rightX = logDrive(turn, 2);
+        int leftY = logDrive(forward, 2) * FORWARD_AMT;
+        int rightX = logDrive(turn, 2) * TURN_AMT;
 
         if (flipDrive)
             leftY *= -1;
@@ -340,18 +340,18 @@ void opcontrol()
         {
             delayWings--;
         }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             autons.toggleWings();
             delayWings = 40;
         }
 
-        // wing
+        // vert wing
         if (delayVertWing)
         {
             delayVertWing--;
         }
-        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y))
+        else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
             autons.toggleVertWings();
             delayVertWing = 40;
@@ -360,7 +360,7 @@ void opcontrol()
         // cata toggle
         if (!delayCata)
         {
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A))
             {
                 cataFire = !cataFire;
                 delayCata = 40;

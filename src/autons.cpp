@@ -211,23 +211,24 @@ void Autons::autoFarInsane()
   chassis.moveToPose(blueGoalCenter.x - tile * 0.5, farInsaneStart.y, 180, 1000, {.minSpeed = 60}, false);                   // turn to face goal
   intake = 127;
   chassis.moveToPose(blueGoalCenter.x - tile * 0.5, blueGoalCenter.y - 2, 180, 1500, {.minSpeed = 100}, false);                            // Shoves preload in
-  chassis.moveToPose(blueGoalCenter.x - tile * 0.5, blueGoalCenter.y + tile * 0.5, 180, 1500, {.forwards = false, .minSpeed = 80}, false); // back out
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.5, blueGoalCenter.y + tile * 0.4, 180, 1500, {.forwards = false, .minSpeed = 80}, false); // back out
   intake = -127;
-  chassis.moveToPose(blueGoalCenter.x - tile * 0.5, blueGoalCenter.y + tile * 0.5, -5, 800, {.forwards = false, .minSpeed = 80}, false); // turn towards triball
+  chassis.moveToPose(blueGoalCenter.x - tile * 0.5, blueGoalCenter.y + tile * 0.4, -5, 800, {.forwards = false, .minSpeed = 80}, false); // turn towards triball
 
   // pick up triball to the left side
-  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 11, -5, 2000, {.minSpeed = 60}, false); // pick up
+  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 11, 0, 2000, {.minSpeed = 60}, false); // pick up
   intake = 0;
 
   // moving backwards to get that lower triball with wings
-  chassis.moveToPose(redCenterLeftTriball.x + 5, redCenterLeftTriball.y - 18, 135, 2000, {.minSpeed = 100}, false); // back up and turn  
+  chassis.moveToPose(redCenterLeftTriball.x + 5, tile * 2.5, 0, 2000, {.forwards = false, .minSpeed = 100}, false); // back up and turn
+  chassis.moveToPose(redCenterLeftTriball.x + 5, tile * 2.5, 135, 2000, {.minSpeed = 100}, false);                  // back up and turn
   setWings(HIGH);
   chassis.moveToPose(redCenterLowerTriball.x + 5, tile * 2, 180, 1500, {.minSpeed = 40}, false); // scoop lower triball
 
   // score the left and lower triballs
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y - 2, 180, 1000, {.minSpeed = 100}, false);                      // score both
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1200, {.forwards = false, .minSpeed = 80}, false); // back out
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 800, {.minSpeed = 60}, false);                       // turn towards center
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y - 2, 180, 1000, {.minSpeed = 100}, false);                       // score both
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1200, {.forwards = false, .minSpeed = 100}, false); // back out
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 0, 800, {.minSpeed = 60}, false);                        // turn towards center
 
   // get the triball closer to center and score
   intake = -127;
@@ -239,7 +240,7 @@ void Autons::autoFarInsane()
   intake = 127;
 
   // reset for teleop
-  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile, 180, 1500, {.forwards = false, .minSpeed = 100}, false); // reset
+  chassis.moveToPose(blueGoalCenter.x, blueGoalCenter.y + tile * 1.5, 180, 1500, {.forwards = false, .minSpeed = 100}, false); // reset
   setWings(LOW);
   intake = 0;
 }
@@ -259,13 +260,12 @@ void Autons::autoAWP()
   autoCloseBackwards();
   chassis.moveToPose(blueGoalRightSide.x + tile * 1.1, tile / 2.0, -135, 1500, {.minSpeed = 60}, false); // back up and turn to face the other way
   setVertWings(HIGH);
-  chassis.moveToPose(fieldX, tile * 1.3, -135, 2000, {.forwards = false, .minSpeed = 60}, false); // scoop up triball
-
+  chassis.moveToPose(fieldX, tile * 1.4, -135, 2000, {.forwards = false, .minSpeed = 60}, false); // scoop up triball
   setVertWings(LOW);
   chassis.setPose(fieldX - tile * 0.4, tile + botWidth / 2.0, -135);
-  // chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -90, 1500, {}, false);                                          // forward a bit
-  chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, 0, 1500, {}, false);                                    // turn
-  chassis.moveToPose(fieldX - tile / 2.0, redElevationHorizontalMid.y - 6, 0, 1500, {.minSpeed = 60}, false); // go to bar
+  // chassis.moveToPose(fieldX - tile / 2.0, tile * 1.5, -180, 1500, {}, false);                                 // keep driving back MAY NOT WORK DELETE
+  chassis.moveToPose(fieldX - tile * 0.6, tile * 1.5, 0, 1500, {}, false);                                    // turn
+  chassis.moveToPose(fieldX - tile * 0.6, redElevationHorizontalMid.y - 8, 0, 1500, {.minSpeed = 60}, false); // go to bar
 }
 
 // start the same as autoClose
