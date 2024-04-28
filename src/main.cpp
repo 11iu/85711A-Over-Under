@@ -102,7 +102,7 @@ struct Auto
 };
 
 Auto autoCloseAuton{"Close reg", std::bind(&Autons::autoClose, autons), 0x000000};
-// Auto autoFarAuton{"Far", std::bind(&Autons::autoFar, autons), 0x000000};
+Auto autoFarAuton{"Far Regular", std::bind(&Autons::autoFar, autons), 0x000000};
 Auto autoFarInsaneAuton{"Far insane", std::bind(&Autons::autoFarInsane, autons), 0xFF0000};
 // Auto autoCloseBackAuton{"Close (backwards)", std::bind(&Autons::autoCloseBackwards, autons), 0x000000};
 Auto autoCloseBackAnnoyingAuton{"Close (backwards) annoying", std::bind(&Autons::autoCloseBackwardsAnnoying, autons), 0x000080};
@@ -112,7 +112,7 @@ Auto autoDisabledAuton{"Disabled", std::bind(&Autons::autoDisabled, autons), 0x0
 
 // Auto autoTestAuton{"Test", std::bind(&Autons::autoTest, autons), 0xFFFFFF};
 
-std::vector<Auto> autos = {autoFarInsaneAuton, autoCloseBackAnnoyingAuton, autoAWPAuton, autoSkillsAuton, autoCloseAuton, autoDisabledAuton};
+std::vector<Auto> autos = {autoFarAuton, autoCloseBackAnnoyingAuton, autoAWPAuton, autoSkillsAuton, autoCloseAuton, autoDisabledAuton};
 int currentAuto = 1;
 
 ///////////////////////////////////////////////////
@@ -166,12 +166,12 @@ void pgDown()
 /* LED SHIT */
 void flashing_seizure(void *param)
 {
-    while ((pros::c::competition_get_status() & COMPETITION_AUTONOMOUS) != 0)
+    while (true)
     {
         leds.set_all(0xFFFFFF);
-        pros::delay(200);
+        pros::delay(80);
         leds.clear_all();
-        pros::delay(200);
+        pros::delay(80);
     }
 }
 
@@ -249,6 +249,17 @@ void bouncy(void *param)
     }
 }
 
+void intakeFlash(void *param) {
+    leds.set_all(LV_COLOR_GREEN.full);
+    pros::delay(600);
+    leds.clear_all();
+    pros::delay(600);
+    leds.set_all(LV_COLOR_GREEN.full);
+    pros::delay(600);
+    leds.clear_all();
+    pros::delay(200);
+}
+
 ///////////////////////////////////////////////////
 // Main Functions
 ///////////////////////////////////////////////////
@@ -302,7 +313,7 @@ void opcontrol()
 
     // debounce timer
     int delayVertWing = 0;
-    int delayWings = 0;
+    int delayWings = 0;                          
     int delayCata = 0;
     int delayFlip = 0;
 
@@ -321,13 +332,17 @@ void opcontrol()
 
     while (true)
     {
-
         // drive
         int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-        int leftY = logDrive(forward, 2) * FORWARD_AMT;
-        int rightX = logDrive(turn, 2) * TURN_AMT;
+        int leftY = logDrive(forward, 3) * FORWARD_AMT;
+        int rightX = logDrive(turn, 3) * TURN_AMT;
+
+        if (abs(rightX) > 120)
+        {
+            leftY *= 0.7;
+        }
 
         if (flipDrive)
             leftY *= -1;
@@ -404,11 +419,12 @@ void opcontrol()
         // indicate if triball in
         if (intakeOn)
         {
-            leds.set_all(LV_COLOR_BLUE.full);
+            leds.set_all(LV_COLOR_GREEN.full);
         }
         else
         {
             leds.clear_all();
+            leds.set_all(LV_COLOR_BLUE.full);
         }
 
         // filpDrive

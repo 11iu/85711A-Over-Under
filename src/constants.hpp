@@ -34,4 +34,4 @@ const int CATAHOLDVOLTAGE = 0;
 
 // driving multipliers
 const double FORWARD_AMT = 1.0;
-const double TURN_AMT = 0.8;
+const double TURN_AMT = 1.0;
